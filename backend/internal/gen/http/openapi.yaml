@@ -13,18 +13,42 @@ produces:
 - application/xml
 - application/gob
 paths:
-  /api/v1/user/register:
+  /api/v1/account/login:
     post:
       tags:
-      - user
-      summary: register user
-      operationId: user#register
+      - account
+      summary: login account
+      operationId: account#login
+      parameters:
+      - name: LoginRequestBody
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/AccountLoginRequestBody'
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/AccountLoginResponseBody'
+            required:
+            - email
+            - token
+            - refresh_token
+            - role
+      schemes:
+      - http
+  /api/v1/account/register:
+    post:
+      tags:
+      - account
+      summary: register account
+      operationId: account#register
       parameters:
       - name: RegisterRequestBody
         in: body
         required: true
         schema:
-          $ref: '#/definitions/UserRegisterRequestBody'
+          $ref: '#/definitions/AccountRegisterRequestBody'
           required:
           - email
           - password
@@ -33,45 +57,90 @@ paths:
         "200":
           description: OK response.
           schema:
-            $ref: '#/definitions/UserRegisterResponseBody'
+            $ref: '#/definitions/AccountRegisterResponseBody'
             required:
             - message
       schemes:
       - http
 definitions:
-  UserRegisterRequestBody:
-    title: UserRegisterRequestBody
+  AccountLoginRequestBody:
+    title: AccountLoginRequestBody
+    type: object
+    properties:
+      email:
+        type: string
+        description: Email of the user
+        example: Molestias exercitationem molestias.
+      password:
+        type: string
+        description: Password of the user
+        example: In minus sint rerum.
+    example:
+      email: Ad quo et quasi sint accusamus.
+      password: Illum cupiditate corporis aut vero.
+  AccountLoginResponseBody:
+    title: AccountLoginResponseBody
+    type: object
+    properties:
+      email:
+        type: string
+        description: User's email
+        example: Cumque quisquam dolorem adipisci.
+      refresh_token:
+        type: string
+        description: Refresh token
+        example: Numquam quos excepturi vero ad est.
+      role:
+        type: string
+        description: User's role
+        example: Ab facilis odio facere et.
+      token:
+        type: string
+        description: JWT Token
+        example: Voluptates id recusandae temporibus et dolore.
+    example:
+      email: Iusto non mollitia qui non culpa laborum.
+      refresh_token: Tempora recusandae nobis.
+      role: Reiciendis harum asperiores.
+      token: Corrupti voluptas officia nostrum quia voluptatum.
+    required:
+    - email
+    - token
+    - refresh_token
+    - role
+  AccountRegisterRequestBody:
+    title: AccountRegisterRequestBody
     type: object
     properties:
       confirmedPassword:
         type: string
         description: Confirmed password of the user
-        example: Maxime suscipit quia cupiditate.
+        example: Libero ut magnam.
       email:
         type: string
         description: Email of the user
-        example: Ut ipsa expedita.
+        example: Dolorum reprehenderit repellendus praesentium sed neque incidunt.
       password:
         type: string
         description: Password of the user
-        example: Esse dolorem.
+        example: Rerum distinctio minus facilis consectetur facere.
     example:
-      confirmedPassword: Deserunt maiores id ratione quia.
-      email: Omnis aspernatur consequatur vel.
-      password: Facilis aut veritatis dolores doloribus aut quaerat.
+      confirmedPassword: Molestiae voluptas dolorum et.
+      email: Odit vel assumenda eum quibusdam.
+      password: Nemo provident eos quis ut ut ipsum.
     required:
     - email
     - password
     - confirmedPassword
-  UserRegisterResponseBody:
-    title: UserRegisterResponseBody
+  AccountRegisterResponseBody:
+    title: AccountRegisterResponseBody
     type: object
     properties:
       message:
         type: string
         description: Operation completion status
-        example: Qui quaerat sint.
+        example: Ex dolorum.
     example:
-      message: Quia fugit officia architecto nihil autem consectetur.
+      message: Sit aperiam.
     required:
     - message

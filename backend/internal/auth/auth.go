@@ -25,7 +25,6 @@ func GenerateJWT() string {
 	return "Hello"
 }
 
-func ValidateJWT(token string) string{
+func ValidateJWT(token string) string {
 	return "Hello"
 }
-

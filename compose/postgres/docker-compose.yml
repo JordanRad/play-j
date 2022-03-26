@@ -1,13 +1,26 @@
 version: '3'
 
 services:
-  db:
+  accounts-db:
     image: "postgres"
     restart: "always"
-    container_name: "playj_db"
+    container_name: "playj_accounts_db"
     ports:
-      - "5432:5432"
+      - "5433:5432"
 
     environment:
       POSTGRES_PASSWORD: "playj1307"
       POSTGRES_USER: "playj"
+      POSTGRES_DB: "playj-accounts-db"
+
+  player-db:
+    image: "postgres"
+    restart: "always"
+    container_name: "playj_player_db"
+    ports:
+      - "5434:5432"
+
+    environment:
+      POSTGRES_PASSWORD: "playj1307"
+      POSTGRES_USER: "playj"
+      POSTGRES_DB: "playj-player-db"

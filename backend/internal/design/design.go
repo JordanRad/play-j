@@ -9,11 +9,11 @@ var _ = API("accounts", func() {
 	Description("Microservice for account management & operations")
 })
 
-var _ = Service("user", func() {
-	Description("User operations")
+var _ = Service("account", func() {
+	Description("Account operations")
 
 	HTTP(func() {
-		Path("/api/v1/user") // Prefix to HTTP path of all requests.
+		Path("/api/v1/account") // Prefix to HTTP path of all requests.
 	})
 
 	Method("register", func() {
@@ -26,6 +26,17 @@ var _ = Service("user", func() {
 		Result(RegisterResponse)
 		HTTP(func() {
 			POST("/register")
+		})
+	})
+
+	Method("login", func() {
+		Payload(func() {
+			Attribute("email", String, "Email of the user")
+			Attribute("password", String, "Password of the user")
+		})
+		Result(LoginResponse)
+		HTTP(func() {
+			POST("/login")
 		})
 	})
 })
