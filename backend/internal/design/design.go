@@ -39,6 +39,18 @@ var _ = Service("account", func() {
 			POST("/login")
 		})
 	})
+
+	Method("getPlaylistsByUser", func() {
+		Payload(func() {
+			Attribute("email", String, "Email of the user")
+			Attribute("password", String, "Password of the user")
+		})
+		Result(LoginResponse)
+		HTTP(func() {
+			GET("/{accountId}/playlists")
+			Param("accountId", UInt64, "ID of the account, accessing the resources")
+		})
+	})
 })
 
 var RegisterResponse = Type("RegisterResponse", func() {
@@ -56,7 +68,22 @@ var LoginResponse = Type("LoginResponse", func() {
 
 var UserPlaylistsResponse = Type("UserPlaylistsResponse", func() {
 	Attribute("total", Int32, "Number of resources")
-	Attribute("resources", ArrayOf(Int32), "Operation completion status")
+	Attribute("resources", ArrayOf(UserSinglePlaylistResponse), "Operation completion status")
 
 	Required("total", "resources")
+})
+
+var UserSinglePlaylistResponse = Type("UserSinglePlaylistResponse", func() {
+	Attribute("id", Int32, "Playlist id")
+	Attribute("name", String, "Playlist name")
+	Attribute("tracks", ArrayOf(TrackResponse), "Operation completion status")
+
+	Required("id", "name", "tracks")
+})
+
+var TrackResponse = Type("UserSinglePlaylistResponse", func() {
+	Attribute("id", Int32, "Track id")
+	Attribute("name", String, "Track name")
+
+	Required("id", "name")
 })

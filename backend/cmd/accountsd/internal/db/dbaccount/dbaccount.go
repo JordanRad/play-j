@@ -4,9 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"strconv"
 
 	account "git.fhict.nl/I425652/jordan-portfolio-s6/backend/cmd/accountsd/internal/account"
+	"git.fhict.nl/I425652/jordan-portfolio-s6/backend/cmd/accountsd/internal/db/dbmodels"
 )
 
 type Store struct {
@@ -14,15 +14,6 @@ type Store struct {
 }
 
 var _ account.Store = (*Store)(nil)
-
-type Account struct {
-	ID        uint
-	FirstName string
-	LastName  string
-	Username  string
-	Email     string
-	Password  string
-}
 
 func (s *Store) CreateUser(ctx context.Context, user *account.User) (bool, error) {
 
@@ -40,8 +31,8 @@ func (s *Store) CreateUser(ctx context.Context, user *account.User) (bool, error
 	return false, nil
 }
 
-func (s *Store) GetUserByEmail(ctx context.Context, email string) (*account.UserEntry, error) {
-	var result Account
+func (s *Store) GetUserByEmail(ctx context.Context, email string) (*dbmodels.Account, error) {
+	var result dbmodels.Account
 
 	row := s.DB.QueryRow(`SELECT * FROM accounts WHERE email = $1;`, email)
 	err := row.Scan(&result.ID, &result.FirstName, &result.LastName,
@@ -52,16 +43,16 @@ func (s *Store) GetUserByEmail(ctx context.Context, email string) (*account.User
 		return nil, fmt.Errorf("invalid credentials: %w", err)
 	}
 
-	id := strconv.Itoa(int(result.ID))
-	user := &account.UserEntry{
-		ID:        id,
-		Email:     result.Email,
-		Password:  result.Password,
-		Username:  result.Username,
-		FirstName: result.FirstName,
-		LastName:  result.LastName,
-	}
+	// id := strconv.Itoa(int(result.ID))
+	// user := &account.UserEntry{
+	// 	ID:        id,
+	// 	Email:     result.Email,
+	// 	Password:  result.Password,
+	// 	Username:  result.Username,
+	// 	FirstName: result.FirstName,
+	// 	LastName:  result.LastName,
+	// }
 
-	return user, nil
+	return &result, nil
 
 }

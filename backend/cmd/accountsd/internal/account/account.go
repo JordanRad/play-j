@@ -5,13 +5,14 @@ import (
 	"errors"
 	"fmt"
 
+	"git.fhict.nl/I425652/jordan-portfolio-s6/backend/cmd/accountsd/internal/db/dbmodels"
 	auth "git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/auth"
 	"git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/gen/account"
 )
 
 type Store interface {
 	CreateUser(context.Context, *User) (bool, error)
-	GetUserByEmail(context.Context, string) (*UserEntry, error)
+	GetUserByEmail(context.Context, string) (*dbmodels.Account, error)
 }
 
 type Service struct {
@@ -77,22 +78,29 @@ func (s *Service) Register(ctx context.Context, p *account.RegisterPayload) (*ac
 
 func (s *Service) Login(ctx context.Context, p *account.LoginPayload) (*account.LoginResponse, error) {
 	// Get the user by email
-	user, err := s.store.GetUserByEmail(ctx, *p.Email)
+	foundAccount, err := s.store.GetUserByEmail(ctx, *p.Email)
 
 	if err != nil {
 		return nil, errors.New("invalid credentials")
 	}
 
+	fmt.Printf("Token is: ")
+
 	// Verify the password hash
-	isPasswordCorrect := auth.CheckPassword(user.Password, *p.Password)
+	isPasswordCorrect := auth.CheckPassword(foundAccount.Password, *p.Password)
 
 	if !isPasswordCorrect {
 		return nil, errors.New("invalid credentials")
 	}
 
+	// Generate JWT
+	token, err := auth.GenerateJWT(foundAccount.ID)
+	if err != nil {
+		return nil, fmt.Errorf("error extracting jwt: %w", err)
+	}
 	r := &account.LoginResponse{
 		Email:        *p.Email,
-		Token:        "573489yhjerh",
+		Token:        token,
 		RefreshToken: "dfsdvsdfjv sjf",
 		Role:         "ROLE_REG_USER",
 	}
