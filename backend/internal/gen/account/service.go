@@ -20,6 +20,10 @@ type Service interface {
 	Login(context.Context, *LoginPayload) (res *LoginResponse, err error)
 	// GetUserPlaylists implements getUserPlaylists.
 	GetUserPlaylists(context.Context, *GetUserPlaylistsPayload) (res *UserPlaylistsResponse, err error)
+	// CreateUserPlaylist implements createUserPlaylist.
+	CreateUserPlaylist(context.Context, *CreateUserPlaylistPayload) (res *CreatePlaylistResponse, err error)
+	// DeleteUserPlaylist implements deleteUserPlaylist.
+	DeleteUserPlaylist(context.Context, *DeleteUserPlaylistPayload) (res *DeletePlaylistResponse, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -30,7 +34,7 @@ const ServiceName = "account"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [3]string{"register", "login", "getUserPlaylists"}
+var MethodNames = [5]string{"register", "login", "getUserPlaylists", "createUserPlaylist", "deleteUserPlaylist"}
 
 // RegisterPayload is the payload type of the account service register method.
 type RegisterPayload struct {
@@ -84,6 +88,39 @@ type UserPlaylistsResponse struct {
 	Total int32
 	// Operation completion status
 	Resources []*UserSinglePlaylistResponse
+}
+
+// CreateUserPlaylistPayload is the payload type of the account service
+// createUserPlaylist method.
+type CreateUserPlaylistPayload struct {
+	// Account ID
+	AccountID *uint
+	// Authorization Header
+	Auth *string
+	// Playlist name
+	Name *string
+}
+
+// CreatePlaylistResponse is the result type of the account service
+// createUserPlaylist method.
+type CreatePlaylistResponse struct {
+	// Operation completion status
+	Message string
+}
+
+// DeleteUserPlaylistPayload is the payload type of the account service
+// deleteUserPlaylist method.
+type DeleteUserPlaylistPayload struct {
+	AccountID  *uint
+	Auth       *string
+	PlaylistID *uint
+}
+
+// DeletePlaylistResponse is the result type of the account service
+// deleteUserPlaylist method.
+type DeletePlaylistResponse struct {
+	// Operation completion status
+	Message string
 }
 
 type UserSinglePlaylistResponse struct {

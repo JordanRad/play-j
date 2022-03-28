@@ -33,6 +33,13 @@ type LoginRequestBody struct {
 	Password *string `form:"password,omitempty" json:"password,omitempty" xml:"password,omitempty"`
 }
 
+// CreateUserPlaylistRequestBody is the type of the "account" service
+// "createUserPlaylist" endpoint HTTP request body.
+type CreateUserPlaylistRequestBody struct {
+	// Playlist name
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+}
+
 // RegisterResponseBody is the type of the "account" service "register"
 // endpoint HTTP response body.
 type RegisterResponseBody struct {
@@ -64,6 +71,20 @@ type GetUserPlaylistsResponseBody struct {
 	Resources []*UserSinglePlaylistResponseResponseBody `form:"resources,omitempty" json:"resources,omitempty" xml:"resources,omitempty"`
 }
 
+// CreateUserPlaylistResponseBody is the type of the "account" service
+// "createUserPlaylist" endpoint HTTP response body.
+type CreateUserPlaylistResponseBody struct {
+	// Operation completion status
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+}
+
+// DeleteUserPlaylistResponseBody is the type of the "account" service
+// "deleteUserPlaylist" endpoint HTTP response body.
+type DeleteUserPlaylistResponseBody struct {
+	// Operation completion status
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+}
+
 // UserSinglePlaylistResponseResponseBody is used to define fields on response
 // body types.
 type UserSinglePlaylistResponseResponseBody struct {
@@ -92,6 +113,15 @@ func NewLoginRequestBody(p *account.LoginPayload) *LoginRequestBody {
 	body := &LoginRequestBody{
 		Email:    p.Email,
 		Password: p.Password,
+	}
+	return body
+}
+
+// NewCreateUserPlaylistRequestBody builds the HTTP request body from the
+// payload of the "createUserPlaylist" endpoint of the "account" service.
+func NewCreateUserPlaylistRequestBody(p *account.CreateUserPlaylistPayload) *CreateUserPlaylistRequestBody {
+	body := &CreateUserPlaylistRequestBody{
+		Name: p.Name,
 	}
 	return body
 }
@@ -129,6 +159,26 @@ func NewGetUserPlaylistsUserPlaylistsResponseOK(body *GetUserPlaylistsResponseBo
 	v.Resources = make([]*account.UserSinglePlaylistResponse, len(body.Resources))
 	for i, val := range body.Resources {
 		v.Resources[i] = unmarshalUserSinglePlaylistResponseResponseBodyToAccountUserSinglePlaylistResponse(val)
+	}
+
+	return v
+}
+
+// NewCreateUserPlaylistCreatePlaylistResponseOK builds a "account" service
+// "createUserPlaylist" endpoint result from a HTTP "OK" response.
+func NewCreateUserPlaylistCreatePlaylistResponseOK(body *CreateUserPlaylistResponseBody) *account.CreatePlaylistResponse {
+	v := &account.CreatePlaylistResponse{
+		Message: *body.Message,
+	}
+
+	return v
+}
+
+// NewDeleteUserPlaylistDeletePlaylistResponseOK builds a "account" service
+// "deleteUserPlaylist" endpoint result from a HTTP "OK" response.
+func NewDeleteUserPlaylistDeletePlaylistResponseOK(body *DeleteUserPlaylistResponseBody) *account.DeletePlaylistResponse {
+	v := &account.DeletePlaylistResponse{
+		Message: *body.Message,
 	}
 
 	return v
@@ -175,6 +225,24 @@ func ValidateGetUserPlaylistsResponseBody(body *GetUserPlaylistsResponseBody) (e
 				err = goa.MergeErrors(err, err2)
 			}
 		}
+	}
+	return
+}
+
+// ValidateCreateUserPlaylistResponseBody runs the validations defined on
+// CreateUserPlaylistResponseBody
+func ValidateCreateUserPlaylistResponseBody(body *CreateUserPlaylistResponseBody) (err error) {
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	return
+}
+
+// ValidateDeleteUserPlaylistResponseBody runs the validations defined on
+// DeleteUserPlaylistResponseBody
+func ValidateDeleteUserPlaylistResponseBody(body *DeleteUserPlaylistResponseBody) (err error) {
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
 	}
 	return
 }

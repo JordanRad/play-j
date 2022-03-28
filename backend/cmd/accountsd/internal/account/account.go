@@ -19,6 +19,7 @@ type PlaylistStore interface {
 	CreateAccountPlaylist(context.Context, uint, string) (bool, error)
 	GetUserPlaylist(context.Context, uint, uint) (string, error)
 	GetAllUserPlaylists(context.Context, uint) ([]*dbmodels.Playlist, error)
+	DeleteAccountPlaylist(context.Context, uint, uint) (bool, error)
 }
 
 type Service struct {
@@ -32,6 +33,7 @@ type User struct {
 	Password        string
 	ConfirmPassword string
 }
+
 type UserEntry struct {
 	ID        string
 	Email     string
@@ -40,6 +42,7 @@ type UserEntry struct {
 	FirstName string
 	LastName  string
 }
+
 type LoginCredentials struct {
 	Email    string
 	Password string
@@ -137,8 +140,36 @@ func (s *Service) GetUserPlaylists(ctx context.Context, p *account.GetUserPlayli
 	}
 
 	response := &account.UserPlaylistsResponse{
-		Total:     2,
+		Total:     int32(len(playlists)),
 		Resources: resources,
+	}
+
+	return response, nil
+}
+
+func (s *Service) CreateUserPlaylist(ctx context.Context, p *account.CreateUserPlaylistPayload) (*account.CreatePlaylistResponse, error) {
+
+	_, err := s.playlistStore.CreateAccountPlaylist(ctx, *p.AccountID, *p.Name)
+	if err != nil {
+		return nil, fmt.Errorf("error creating new playlist: %w", err)
+	}
+
+	response := &account.CreatePlaylistResponse{
+		Message: "Playlist created successfully",
+	}
+
+	return response, nil
+}
+
+func (s *Service) DeleteUserPlaylist(ctx context.Context, p *account.DeleteUserPlaylistPayload) (*account.DeletePlaylistResponse, error) {
+
+	_, err := s.playlistStore.DeleteAccountPlaylist(ctx, *p.AccountID, *p.PlaylistID)
+	if err != nil {
+		return nil, fmt.Errorf("error deleting a playlist: %w", err)
+	}
+
+	response := &account.DeletePlaylistResponse{
+		Message: "Playlist deleted successfully",
 	}
 
 	return response, nil

@@ -18,6 +18,10 @@ var protectedRoutes = []ProtectedRoute{
 		HTTPMethod:  "GET",
 		URLContains: "/playlists",
 	},
+	{
+		HTTPMethod:  "POST",
+		URLContains: "/playlists",
+	},
 }
 
 func AuthenticateRequest() func(http.Handler) http.Handler {

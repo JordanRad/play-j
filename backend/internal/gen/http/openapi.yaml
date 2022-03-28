@@ -40,6 +40,67 @@ paths:
             - resources
       schemes:
       - http
+    post:
+      tags:
+      - account
+      summary: createUserPlaylist account
+      operationId: account#createUserPlaylist
+      parameters:
+      - name: accountID
+        in: path
+        description: Account ID
+        required: true
+        type: integer
+      - name: Authorization
+        in: header
+        description: JSON Web Token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      - name: CreateUserPlaylistRequestBody
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/AccountCreateUserPlaylistRequestBody'
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/AccountCreateUserPlaylistResponseBody'
+            required:
+            - message
+      schemes:
+      - http
+  /api/v1/account/{accountID}/playlists/{playlistID}:
+    delete:
+      tags:
+      - account
+      summary: deleteUserPlaylist account
+      operationId: account#deleteUserPlaylist
+      parameters:
+      - name: accountID
+        in: path
+        required: true
+        type: integer
+      - name: playlistID
+        in: path
+        required: true
+        type: integer
+      - name: Authorization
+        in: header
+        description: JSON Web Token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/AccountDeleteUserPlaylistResponseBody'
+            required:
+            - message
+      schemes:
+      - http
   /api/v1/account/login:
     post:
       tags:
@@ -90,6 +151,40 @@ paths:
       schemes:
       - http
 definitions:
+  AccountCreateUserPlaylistRequestBody:
+    title: AccountCreateUserPlaylistRequestBody
+    type: object
+    properties:
+      name:
+        type: string
+        description: Playlist name
+        example: Omnis est debitis ut aliquid iste.
+    example:
+      name: Deserunt similique aliquam consequatur ex ratione.
+  AccountCreateUserPlaylistResponseBody:
+    title: AccountCreateUserPlaylistResponseBody
+    type: object
+    properties:
+      message:
+        type: string
+        description: Operation completion status
+        example: Voluptas modi quo.
+    example:
+      message: Qui ullam voluptas libero id est.
+    required:
+    - message
+  AccountDeleteUserPlaylistResponseBody:
+    title: AccountDeleteUserPlaylistResponseBody
+    type: object
+    properties:
+      message:
+        type: string
+        description: Operation completion status
+        example: Ipsum suscipit.
+    example:
+      message: Nobis asperiores voluptate saepe ut omnis voluptatem.
+    required:
+    - message
   AccountGetUserPlaylistsResponseBody:
     title: AccountGetUserPlaylistsResponseBody
     type: object
@@ -100,54 +195,54 @@ definitions:
           $ref: '#/definitions/UserSinglePlaylistResponseResponseBody'
         description: Operation completion status
         example:
-        - id: 149591344
-          name: Id recusandae temporibus et dolore ut.
+        - id: 181822346
+          name: Nobis ut reiciendis.
           tracks:
-          - Excepturi vero ad est.
-          - Ab facilis odio facere et.
-        - id: 149591344
-          name: Id recusandae temporibus et dolore ut.
+          - Sit molestias exercitationem.
+          - Nobis in minus sint rerum.
+        - id: 181822346
+          name: Nobis ut reiciendis.
           tracks:
-          - Excepturi vero ad est.
-          - Ab facilis odio facere et.
-        - id: 149591344
-          name: Id recusandae temporibus et dolore ut.
+          - Sit molestias exercitationem.
+          - Nobis in minus sint rerum.
+        - id: 181822346
+          name: Nobis ut reiciendis.
           tracks:
-          - Excepturi vero ad est.
-          - Ab facilis odio facere et.
-        - id: 149591344
-          name: Id recusandae temporibus et dolore ut.
+          - Sit molestias exercitationem.
+          - Nobis in minus sint rerum.
+        - id: 181822346
+          name: Nobis ut reiciendis.
           tracks:
-          - Excepturi vero ad est.
-          - Ab facilis odio facere et.
+          - Sit molestias exercitationem.
+          - Nobis in minus sint rerum.
       total:
         type: integer
         description: Number of resources
-        example: 1970666728
+        example: 1605565041
         format: int32
     example:
       resources:
-      - id: 149591344
-        name: Id recusandae temporibus et dolore ut.
+      - id: 181822346
+        name: Nobis ut reiciendis.
         tracks:
-        - Excepturi vero ad est.
-        - Ab facilis odio facere et.
-      - id: 149591344
-        name: Id recusandae temporibus et dolore ut.
+        - Sit molestias exercitationem.
+        - Nobis in minus sint rerum.
+      - id: 181822346
+        name: Nobis ut reiciendis.
         tracks:
-        - Excepturi vero ad est.
-        - Ab facilis odio facere et.
-      - id: 149591344
-        name: Id recusandae temporibus et dolore ut.
+        - Sit molestias exercitationem.
+        - Nobis in minus sint rerum.
+      - id: 181822346
+        name: Nobis ut reiciendis.
         tracks:
-        - Excepturi vero ad est.
-        - Ab facilis odio facere et.
-      - id: 149591344
-        name: Id recusandae temporibus et dolore ut.
+        - Sit molestias exercitationem.
+        - Nobis in minus sint rerum.
+      - id: 181822346
+        name: Nobis ut reiciendis.
         tracks:
-        - Excepturi vero ad est.
-        - Ab facilis odio facere et.
-      total: 1087434479
+        - Sit molestias exercitationem.
+        - Nobis in minus sint rerum.
+      total: 1995910554
     required:
     - total
     - resources
@@ -158,14 +253,14 @@ definitions:
       email:
         type: string
         description: Email of the user
-        example: Libero aut accusamus sequi quae accusantium praesentium.
+        example: Nisi aut sapiente ut a libero.
       password:
         type: string
         description: Password of the user
-        example: Corporis ullam eius et quasi repudiandae voluptatem.
+        example: Aliquid voluptas ut tempore a praesentium.
     example:
-      email: Eos voluptas soluta.
-      password: Debitis doloremque fuga.
+      email: Accusamus occaecati velit.
+      password: Asperiores est voluptatibus voluptas ut rem.
   AccountLoginResponseBody:
     title: AccountLoginResponseBody
     type: object
@@ -173,29 +268,29 @@ definitions:
       accountID:
         type: string
         description: User's role
-        example: Odit sed nostrum aut voluptatem sequi.
+        example: Modi eos voluptas soluta velit debitis doloremque.
       email:
         type: string
         description: User's email
-        example: Expedita quidem cupiditate ipsam quis.
+        example: Sed libero aut.
       refresh_token:
         type: string
         description: Refresh token
-        example: Et repudiandae cum corporis autem repellendus laudantium.
+        example: Ullam eius.
       role:
         type: string
         description: User's role
-        example: Veniam est fuga vel et est quasi.
+        example: Quasi repudiandae.
       token:
         type: string
         description: JWT Token
-        example: Commodi id delectus dolor ex voluptatem eum.
+        example: Sequi quae accusantium praesentium sequi.
     example:
-      accountID: Quasi modi qui qui.
-      email: Iure dolorem.
-      refresh_token: Praesentium commodi ratione.
-      role: Et eius minima quo.
-      token: Itaque ut.
+      accountID: Nemo itaque.
+      email: Non praesentium quo molestiae.
+      refresh_token: Omnis deserunt consectetur ipsa.
+      role: Quibusdam enim ratione ut ea.
+      token: Voluptatem voluptate.
     required:
     - email
     - token
@@ -208,19 +303,19 @@ definitions:
       confirmedPassword:
         type: string
         description: Confirmed password of the user
-        example: Minus sint rerum exercitationem.
+        example: Aut voluptatem.
       email:
         type: string
         description: Email of the user
-        example: Recusandae nobis ut reiciendis.
+        example: Non veniam est.
       password:
         type: string
         description: Password of the user
-        example: Asperiores sit molestias exercitationem molestias nobis.
+        example: Vel et est quasi unde odit sed.
     example:
-      confirmedPassword: Natus et enim consectetur sit.
-      email: Quo et quasi sint.
-      password: Ipsum illum cupiditate corporis aut.
+      confirmedPassword: Quo officia quasi modi qui.
+      email: Adipisci iure dolorem nesciunt itaque ut quo.
+      password: Commodi ratione dolor et eius.
     required:
     - email
     - password
@@ -232,9 +327,9 @@ definitions:
       message:
         type: string
         description: Operation completion status
-        example: Mollitia qui non culpa laborum eos corrupti.
+        example: Ex voluptatem eum dolorem.
     example:
-      message: Officia nostrum quia voluptatum ut.
+      message: Repudiandae cum corporis autem repellendus.
     required:
     - message
   UserSinglePlaylistResponseResponseBody:
@@ -244,31 +339,28 @@ definitions:
       id:
         type: integer
         description: Playlist id
-        example: 1455991758
+        example: 264291667
         format: int32
       name:
         type: string
         description: Playlist name
-        example: Molestiae id voluptatem.
+        example: Assumenda consequatur nam nam et vitae.
       tracks:
         type: array
         items:
           type: string
-          example: Dolor omnis deserunt consectetur.
+          example: Temporibus dolore porro.
         description: Operation completion status
         example:
-        - Quibusdam enim ratione ut ea.
-        - Nemo itaque.
-        - Nisi aut sapiente ut a libero.
-        - Aliquid voluptas ut tempore a praesentium.
+        - Veniam ipsam.
+        - Et aut maxime recusandae iste.
+        - Omnis suscipit.
     example:
-      id: 1405140337
-      name: Occaecati velit.
+      id: 2073718892
+      name: A minima ut atque est error voluptas.
       tracks:
-      - Est voluptatibus voluptas.
-      - Rem autem voluptatem nisi assumenda consequatur nam.
-      - Et vitae dolore temporibus dolore.
-      - Delectus rerum veniam ipsam iste et.
+      - Et culpa doloremque sint ex unde sequi.
+      - Asperiores et eius ducimus.
     required:
     - id
     - name

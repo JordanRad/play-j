@@ -133,6 +133,114 @@ func DecodeGetUserPlaylistsRequest(mux goahttp.Muxer, decoder func(*http.Request
 	}
 }
 
+// EncodeCreateUserPlaylistResponse returns an encoder for responses returned
+// by the account createUserPlaylist endpoint.
+func EncodeCreateUserPlaylistResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res, _ := v.(*account.CreatePlaylistResponse)
+		enc := encoder(ctx, w)
+		body := NewCreateUserPlaylistResponseBody(res)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeCreateUserPlaylistRequest returns a decoder for requests sent to the
+// account createUserPlaylist endpoint.
+func DecodeCreateUserPlaylistRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			body CreateUserPlaylistRequestBody
+			err  error
+		)
+		err = decoder(r).Decode(&body)
+		if err != nil {
+			if err == io.EOF {
+				return nil, goa.MissingPayloadError()
+			}
+			return nil, goa.DecodePayloadError(err.Error())
+		}
+
+		var (
+			accountID uint
+			auth      *string
+
+			params = mux.Vars(r)
+		)
+		{
+			accountIDRaw := params["accountID"]
+			v, err2 := strconv.ParseUint(accountIDRaw, 10, strconv.IntSize)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("accountID", accountIDRaw, "unsigned integer"))
+			}
+			accountID = uint(v)
+		}
+		authRaw := r.Header.Get("Authorization")
+		if authRaw != "" {
+			auth = &authRaw
+		}
+		if err != nil {
+			return nil, err
+		}
+		payload := NewCreateUserPlaylistPayload(&body, accountID, auth)
+
+		return payload, nil
+	}
+}
+
+// EncodeDeleteUserPlaylistResponse returns an encoder for responses returned
+// by the account deleteUserPlaylist endpoint.
+func EncodeDeleteUserPlaylistResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res, _ := v.(*account.DeletePlaylistResponse)
+		enc := encoder(ctx, w)
+		body := NewDeleteUserPlaylistResponseBody(res)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeDeleteUserPlaylistRequest returns a decoder for requests sent to the
+// account deleteUserPlaylist endpoint.
+func DecodeDeleteUserPlaylistRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			accountID  uint
+			playlistID uint
+			auth       *string
+			err        error
+
+			params = mux.Vars(r)
+		)
+		{
+			accountIDRaw := params["accountID"]
+			v, err2 := strconv.ParseUint(accountIDRaw, 10, strconv.IntSize)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("accountID", accountIDRaw, "unsigned integer"))
+			}
+			accountID = uint(v)
+		}
+		{
+			playlistIDRaw := params["playlistID"]
+			v, err2 := strconv.ParseUint(playlistIDRaw, 10, strconv.IntSize)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("playlistID", playlistIDRaw, "unsigned integer"))
+			}
+			playlistID = uint(v)
+		}
+		authRaw := r.Header.Get("Authorization")
+		if authRaw != "" {
+			auth = &authRaw
+		}
+		if err != nil {
+			return nil, err
+		}
+		payload := NewDeleteUserPlaylistPayload(accountID, playlistID, auth)
+
+		return payload, nil
+	}
+}
+
 // marshalAccountUserSinglePlaylistResponseToUserSinglePlaylistResponseResponseBody
 // builds a value of type *UserSinglePlaylistResponseResponseBody from a value
 // of type *account.UserSinglePlaylistResponse.

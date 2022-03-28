@@ -24,16 +24,16 @@ import (
 //    command (subcommand1|subcommand2|...)
 //
 func UsageCommands() string {
-	return `account (register|login|get-user-playlists)
+	return `account (register|login|get-user-playlists|create-user-playlist|delete-user-playlist)
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` account register --body '{
-      "confirmedPassword": "Corporis voluptas et.",
-      "email": "Cum sed reprehenderit et alias asperiores.",
-      "password": "Magnam voluptatem sunt maiores quo est est."
+      "confirmedPassword": "Libero ut magnam.",
+      "email": "Dolorum reprehenderit repellendus praesentium sed neque incidunt.",
+      "password": "Rerum distinctio minus facilis consectetur facere."
    }'` + "\n" +
 		""
 }
@@ -59,11 +59,23 @@ func ParseEndpoint(
 		accountGetUserPlaylistsFlags         = flag.NewFlagSet("get-user-playlists", flag.ExitOnError)
 		accountGetUserPlaylistsAccountIDFlag = accountGetUserPlaylistsFlags.String("account-id", "REQUIRED", "")
 		accountGetUserPlaylistsAuthFlag      = accountGetUserPlaylistsFlags.String("auth", "", "")
+
+		accountCreateUserPlaylistFlags         = flag.NewFlagSet("create-user-playlist", flag.ExitOnError)
+		accountCreateUserPlaylistBodyFlag      = accountCreateUserPlaylistFlags.String("body", "REQUIRED", "")
+		accountCreateUserPlaylistAccountIDFlag = accountCreateUserPlaylistFlags.String("account-id", "REQUIRED", "Account ID")
+		accountCreateUserPlaylistAuthFlag      = accountCreateUserPlaylistFlags.String("auth", "", "")
+
+		accountDeleteUserPlaylistFlags          = flag.NewFlagSet("delete-user-playlist", flag.ExitOnError)
+		accountDeleteUserPlaylistAccountIDFlag  = accountDeleteUserPlaylistFlags.String("account-id", "REQUIRED", "")
+		accountDeleteUserPlaylistPlaylistIDFlag = accountDeleteUserPlaylistFlags.String("playlist-id", "REQUIRED", "")
+		accountDeleteUserPlaylistAuthFlag       = accountDeleteUserPlaylistFlags.String("auth", "", "")
 	)
 	accountFlags.Usage = accountUsage
 	accountRegisterFlags.Usage = accountRegisterUsage
 	accountLoginFlags.Usage = accountLoginUsage
 	accountGetUserPlaylistsFlags.Usage = accountGetUserPlaylistsUsage
+	accountCreateUserPlaylistFlags.Usage = accountCreateUserPlaylistUsage
+	accountDeleteUserPlaylistFlags.Usage = accountDeleteUserPlaylistUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -108,6 +120,12 @@ func ParseEndpoint(
 			case "get-user-playlists":
 				epf = accountGetUserPlaylistsFlags
 
+			case "create-user-playlist":
+				epf = accountCreateUserPlaylistFlags
+
+			case "delete-user-playlist":
+				epf = accountDeleteUserPlaylistFlags
+
 			}
 
 		}
@@ -142,6 +160,12 @@ func ParseEndpoint(
 			case "get-user-playlists":
 				endpoint = c.GetUserPlaylists()
 				data, err = accountc.BuildGetUserPlaylistsPayload(*accountGetUserPlaylistsAccountIDFlag, *accountGetUserPlaylistsAuthFlag)
+			case "create-user-playlist":
+				endpoint = c.CreateUserPlaylist()
+				data, err = accountc.BuildCreateUserPlaylistPayload(*accountCreateUserPlaylistBodyFlag, *accountCreateUserPlaylistAccountIDFlag, *accountCreateUserPlaylistAuthFlag)
+			case "delete-user-playlist":
+				endpoint = c.DeleteUserPlaylist()
+				data, err = accountc.BuildDeleteUserPlaylistPayload(*accountDeleteUserPlaylistAccountIDFlag, *accountDeleteUserPlaylistPlaylistIDFlag, *accountDeleteUserPlaylistAuthFlag)
 			}
 		}
 	}
@@ -162,6 +186,8 @@ COMMAND:
     register: Register implements register.
     login: Login implements login.
     get-user-playlists: GetUserPlaylists implements getUserPlaylists.
+    create-user-playlist: CreateUserPlaylist implements createUserPlaylist.
+    delete-user-playlist: DeleteUserPlaylist implements deleteUserPlaylist.
 
 Additional help:
     %[1]s account COMMAND --help
@@ -175,9 +201,9 @@ Register implements register.
 
 Example:
     %[1]s account register --body '{
-      "confirmedPassword": "Corporis voluptas et.",
-      "email": "Cum sed reprehenderit et alias asperiores.",
-      "password": "Magnam voluptatem sunt maiores quo est est."
+      "confirmedPassword": "Libero ut magnam.",
+      "email": "Dolorum reprehenderit repellendus praesentium sed neque incidunt.",
+      "password": "Rerum distinctio minus facilis consectetur facere."
    }'
 `, os.Args[0])
 }
@@ -190,8 +216,8 @@ Login implements login.
 
 Example:
     %[1]s account login --body '{
-      "email": "Ex dolorum.",
-      "password": "Sit aperiam."
+      "email": "Nemo provident eos quis ut ut ipsum.",
+      "password": "Molestiae voluptas dolorum et."
    }'
 `, os.Args[0])
 }
@@ -204,6 +230,34 @@ GetUserPlaylists implements getUserPlaylists.
     -auth STRING: 
 
 Example:
-    %[1]s account get-user-playlists --account-id 9197517201641083092 --auth "Dolorum et labore cumque quisquam dolorem adipisci."
+    %[1]s account get-user-playlists --account-id 14495018338017383326 --auth "Officia nostrum quia voluptatum ut."
+`, os.Args[0])
+}
+
+func accountCreateUserPlaylistUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] account create-user-playlist -body JSON -account-id UINT -auth STRING
+
+CreateUserPlaylist implements createUserPlaylist.
+    -body JSON: 
+    -account-id UINT: Account ID
+    -auth STRING: 
+
+Example:
+    %[1]s account create-user-playlist --body '{
+      "name": "Quasi sint."
+   }' --account-id 17191411895924507890 --auth "Illum cupiditate corporis aut vero."
+`, os.Args[0])
+}
+
+func accountDeleteUserPlaylistUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] account delete-user-playlist -account-id UINT -playlist-id UINT -auth STRING
+
+DeleteUserPlaylist implements deleteUserPlaylist.
+    -account-id UINT: 
+    -playlist-id UINT: 
+    -auth STRING: 
+
+Example:
+    %[1]s account delete-user-playlist --account-id 13300033573427555022 --playlist-id 8495770996630836523 --auth "Ipsam quis aut."
 `, os.Args[0])
 }

@@ -58,14 +58,14 @@ func GenerateJWT(accountID uint, email string) (string, error) {
 	return tokenString, nil
 }
 
-func ExtractJWTCLaims(tokenString string) (*TokenClaims, error) {
+func ExtractJWTCLaims(tokenString string) (TokenClaims, error) {
 	//Parse the JWT Token
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return secret, nil
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("error casting claims: %w", err)
+		return TokenClaims{}, fmt.Errorf("error casting claims: %w", err)
 	}
 
 	// Extract the token's claims
@@ -77,7 +77,7 @@ func ExtractJWTCLaims(tokenString string) (*TokenClaims, error) {
 	accountID := data["accountID"].(uint)
 	email := data["email"].(string)
 
-	tokenClaims := &TokenClaims{
+	tokenClaims := TokenClaims{
 		AccountID: accountID,
 		Email:     email,
 		Exp:       exp,

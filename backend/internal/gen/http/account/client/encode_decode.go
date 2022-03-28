@@ -244,6 +244,182 @@ func DecodeGetUserPlaylistsResponse(decoder func(*http.Response) goahttp.Decoder
 	}
 }
 
+// BuildCreateUserPlaylistRequest instantiates a HTTP request object with
+// method and path set to call the "account" service "createUserPlaylist"
+// endpoint
+func (c *Client) BuildCreateUserPlaylistRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	var (
+		accountID uint
+	)
+	{
+		p, ok := v.(*account.CreateUserPlaylistPayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("account", "createUserPlaylist", "*account.CreateUserPlaylistPayload", v)
+		}
+		if p.AccountID != nil {
+			accountID = *p.AccountID
+		}
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: CreateUserPlaylistAccountPath(accountID)}
+	req, err := http.NewRequest("POST", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("account", "createUserPlaylist", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeCreateUserPlaylistRequest returns an encoder for requests sent to the
+// account createUserPlaylist server.
+func EncodeCreateUserPlaylistRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*account.CreateUserPlaylistPayload)
+		if !ok {
+			return goahttp.ErrInvalidType("account", "createUserPlaylist", "*account.CreateUserPlaylistPayload", v)
+		}
+		if p.Auth != nil {
+			head := *p.Auth
+			req.Header.Set("Authorization", head)
+		}
+		body := NewCreateUserPlaylistRequestBody(p)
+		if err := encoder(req).Encode(&body); err != nil {
+			return goahttp.ErrEncodingError("account", "createUserPlaylist", err)
+		}
+		return nil
+	}
+}
+
+// DecodeCreateUserPlaylistResponse returns a decoder for responses returned by
+// the account createUserPlaylist endpoint. restoreBody controls whether the
+// response body should be restored after having been read.
+func DecodeCreateUserPlaylistResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body CreateUserPlaylistResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("account", "createUserPlaylist", err)
+			}
+			err = ValidateCreateUserPlaylistResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("account", "createUserPlaylist", err)
+			}
+			res := NewCreateUserPlaylistCreatePlaylistResponseOK(&body)
+			return res, nil
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("account", "createUserPlaylist", resp.StatusCode, string(body))
+		}
+	}
+}
+
+// BuildDeleteUserPlaylistRequest instantiates a HTTP request object with
+// method and path set to call the "account" service "deleteUserPlaylist"
+// endpoint
+func (c *Client) BuildDeleteUserPlaylistRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	var (
+		accountID  uint
+		playlistID uint
+	)
+	{
+		p, ok := v.(*account.DeleteUserPlaylistPayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("account", "deleteUserPlaylist", "*account.DeleteUserPlaylistPayload", v)
+		}
+		if p.AccountID != nil {
+			accountID = *p.AccountID
+		}
+		if p.PlaylistID != nil {
+			playlistID = *p.PlaylistID
+		}
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: DeleteUserPlaylistAccountPath(accountID, playlistID)}
+	req, err := http.NewRequest("DELETE", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("account", "deleteUserPlaylist", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeDeleteUserPlaylistRequest returns an encoder for requests sent to the
+// account deleteUserPlaylist server.
+func EncodeDeleteUserPlaylistRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*account.DeleteUserPlaylistPayload)
+		if !ok {
+			return goahttp.ErrInvalidType("account", "deleteUserPlaylist", "*account.DeleteUserPlaylistPayload", v)
+		}
+		if p.Auth != nil {
+			head := *p.Auth
+			req.Header.Set("Authorization", head)
+		}
+		return nil
+	}
+}
+
+// DecodeDeleteUserPlaylistResponse returns a decoder for responses returned by
+// the account deleteUserPlaylist endpoint. restoreBody controls whether the
+// response body should be restored after having been read.
+func DecodeDeleteUserPlaylistResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body DeleteUserPlaylistResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("account", "deleteUserPlaylist", err)
+			}
+			err = ValidateDeleteUserPlaylistResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("account", "deleteUserPlaylist", err)
+			}
+			res := NewDeleteUserPlaylistDeletePlaylistResponseOK(&body)
+			return res, nil
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("account", "deleteUserPlaylist", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // unmarshalUserSinglePlaylistResponseResponseBodyToAccountUserSinglePlaylistResponse
 // builds a value of type *account.UserSinglePlaylistResponse from a value of
 // type *UserSinglePlaylistResponseResponseBody.

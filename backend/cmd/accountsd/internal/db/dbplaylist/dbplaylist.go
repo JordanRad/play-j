@@ -25,9 +25,26 @@ func (s *Store) CreateAccountPlaylist(ctx context.Context, accountID uint, playl
 	rowsAffected, _ := result.RowsAffected()
 
 	if rowsAffected == 1 {
-		return true, fmt.Errorf("error inserting the user")
+		return true, nil
 	}
-	return false, nil
+
+	return false, fmt.Errorf("error inserting a playlist")
+}
+
+func (s *Store) DeleteAccountPlaylist(ctx context.Context, accountID uint, playlistID uint) (bool, error) {
+	result, err := s.DB.Exec("DELETE FROM playlists WHERE id= $1 and accountid = $2;", playlistID, accountID)
+
+	if err != nil {
+		return false, fmt.Errorf("error deleting a playlist: %w", err)
+	}
+
+	rowsAffected, _ := result.RowsAffected()
+
+	if rowsAffected == 1 {
+		return true, nil
+	}
+
+	return false, fmt.Errorf("error removing a playlist")
 }
 
 func (s *Store) GetUserPlaylist(ctx context.Context, accountID uint, playlistID uint) (string, error) {

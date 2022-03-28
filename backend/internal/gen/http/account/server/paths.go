@@ -26,3 +26,13 @@ func LoginAccountPath() string {
 func GetUserPlaylistsAccountPath(accountID uint) string {
 	return fmt.Sprintf("/api/v1/account/%v/playlists", accountID)
 }
+
+// CreateUserPlaylistAccountPath returns the URL path to the account service createUserPlaylist HTTP endpoint.
+func CreateUserPlaylistAccountPath(accountID uint) string {
+	return fmt.Sprintf("/api/v1/account/%v/playlists", accountID)
+}
+
+// DeleteUserPlaylistAccountPath returns the URL path to the account service deleteUserPlaylist HTTP endpoint.
+func DeleteUserPlaylistAccountPath(accountID uint, playlistID uint) string {
+	return fmt.Sprintf("/api/v1/account/%v/playlists/%v", accountID, playlistID)
+}

@@ -16,17 +16,21 @@ import (
 
 // Endpoints wraps the "account" service endpoints.
 type Endpoints struct {
-	Register         goa.Endpoint
-	Login            goa.Endpoint
-	GetUserPlaylists goa.Endpoint
+	Register           goa.Endpoint
+	Login              goa.Endpoint
+	GetUserPlaylists   goa.Endpoint
+	CreateUserPlaylist goa.Endpoint
+	DeleteUserPlaylist goa.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "account" service with endpoints.
 func NewEndpoints(s Service) *Endpoints {
 	return &Endpoints{
-		Register:         NewRegisterEndpoint(s),
-		Login:            NewLoginEndpoint(s),
-		GetUserPlaylists: NewGetUserPlaylistsEndpoint(s),
+		Register:           NewRegisterEndpoint(s),
+		Login:              NewLoginEndpoint(s),
+		GetUserPlaylists:   NewGetUserPlaylistsEndpoint(s),
+		CreateUserPlaylist: NewCreateUserPlaylistEndpoint(s),
+		DeleteUserPlaylist: NewDeleteUserPlaylistEndpoint(s),
 	}
 }
 
@@ -35,6 +39,8 @@ func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.Register = m(e.Register)
 	e.Login = m(e.Login)
 	e.GetUserPlaylists = m(e.GetUserPlaylists)
+	e.CreateUserPlaylist = m(e.CreateUserPlaylist)
+	e.DeleteUserPlaylist = m(e.DeleteUserPlaylist)
 }
 
 // NewRegisterEndpoint returns an endpoint function that calls the method
@@ -61,5 +67,23 @@ func NewGetUserPlaylistsEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*GetUserPlaylistsPayload)
 		return s.GetUserPlaylists(ctx, p)
+	}
+}
+
+// NewCreateUserPlaylistEndpoint returns an endpoint function that calls the
+// method "createUserPlaylist" of service "account".
+func NewCreateUserPlaylistEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*CreateUserPlaylistPayload)
+		return s.CreateUserPlaylist(ctx, p)
+	}
+}
+
+// NewDeleteUserPlaylistEndpoint returns an endpoint function that calls the
+// method "deleteUserPlaylist" of service "account".
+func NewDeleteUserPlaylistEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*DeleteUserPlaylistPayload)
+		return s.DeleteUserPlaylist(ctx, p)
 	}
 }

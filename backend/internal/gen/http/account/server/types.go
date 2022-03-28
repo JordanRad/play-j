@@ -33,6 +33,13 @@ type LoginRequestBody struct {
 	Password *string `form:"password,omitempty" json:"password,omitempty" xml:"password,omitempty"`
 }
 
+// CreateUserPlaylistRequestBody is the type of the "account" service
+// "createUserPlaylist" endpoint HTTP request body.
+type CreateUserPlaylistRequestBody struct {
+	// Playlist name
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+}
+
 // RegisterResponseBody is the type of the "account" service "register"
 // endpoint HTTP response body.
 type RegisterResponseBody struct {
@@ -62,6 +69,20 @@ type GetUserPlaylistsResponseBody struct {
 	Total int32 `form:"total" json:"total" xml:"total"`
 	// Operation completion status
 	Resources []*UserSinglePlaylistResponseResponseBody `form:"resources" json:"resources" xml:"resources"`
+}
+
+// CreateUserPlaylistResponseBody is the type of the "account" service
+// "createUserPlaylist" endpoint HTTP response body.
+type CreateUserPlaylistResponseBody struct {
+	// Operation completion status
+	Message string `form:"message" json:"message" xml:"message"`
+}
+
+// DeleteUserPlaylistResponseBody is the type of the "account" service
+// "deleteUserPlaylist" endpoint HTTP response body.
+type DeleteUserPlaylistResponseBody struct {
+	// Operation completion status
+	Message string `form:"message" json:"message" xml:"message"`
 }
 
 // UserSinglePlaylistResponseResponseBody is used to define fields on response
@@ -112,6 +133,24 @@ func NewGetUserPlaylistsResponseBody(res *account.UserPlaylistsResponse) *GetUse
 	return body
 }
 
+// NewCreateUserPlaylistResponseBody builds the HTTP response body from the
+// result of the "createUserPlaylist" endpoint of the "account" service.
+func NewCreateUserPlaylistResponseBody(res *account.CreatePlaylistResponse) *CreateUserPlaylistResponseBody {
+	body := &CreateUserPlaylistResponseBody{
+		Message: res.Message,
+	}
+	return body
+}
+
+// NewDeleteUserPlaylistResponseBody builds the HTTP response body from the
+// result of the "deleteUserPlaylist" endpoint of the "account" service.
+func NewDeleteUserPlaylistResponseBody(res *account.DeletePlaylistResponse) *DeleteUserPlaylistResponseBody {
+	body := &DeleteUserPlaylistResponseBody{
+		Message: res.Message,
+	}
+	return body
+}
+
 // NewRegisterPayload builds a account service register endpoint payload.
 func NewRegisterPayload(body *RegisterRequestBody) *account.RegisterPayload {
 	v := &account.RegisterPayload{
@@ -138,6 +177,29 @@ func NewLoginPayload(body *LoginRequestBody) *account.LoginPayload {
 func NewGetUserPlaylistsPayload(accountID uint, auth *string) *account.GetUserPlaylistsPayload {
 	v := &account.GetUserPlaylistsPayload{}
 	v.AccountID = &accountID
+	v.Auth = auth
+
+	return v
+}
+
+// NewCreateUserPlaylistPayload builds a account service createUserPlaylist
+// endpoint payload.
+func NewCreateUserPlaylistPayload(body *CreateUserPlaylistRequestBody, accountID uint, auth *string) *account.CreateUserPlaylistPayload {
+	v := &account.CreateUserPlaylistPayload{
+		Name: body.Name,
+	}
+	v.AccountID = &accountID
+	v.Auth = auth
+
+	return v
+}
+
+// NewDeleteUserPlaylistPayload builds a account service deleteUserPlaylist
+// endpoint payload.
+func NewDeleteUserPlaylistPayload(accountID uint, playlistID uint, auth *string) *account.DeleteUserPlaylistPayload {
+	v := &account.DeleteUserPlaylistPayload{}
+	v.AccountID = &accountID
+	v.PlaylistID = &playlistID
 	v.Auth = auth
 
 	return v

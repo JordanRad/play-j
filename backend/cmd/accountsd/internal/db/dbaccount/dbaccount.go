@@ -26,9 +26,9 @@ func (s *Store) CreateUser(ctx context.Context, user *account.User) (bool, error
 	rowsAffected, _ := result.RowsAffected()
 
 	if rowsAffected == 1 {
-		return true, fmt.Errorf("error inserting the user")
+		return true, nil
 	}
-	return false, nil
+	return false, fmt.Errorf("error inserting the user")
 }
 
 func (s *Store) GetUserByEmail(ctx context.Context, email string) (*dbmodels.Account, error) {

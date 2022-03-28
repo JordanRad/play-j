@@ -29,6 +29,14 @@ type Client struct {
 	// getUserPlaylists endpoint.
 	GetUserPlaylistsDoer goahttp.Doer
 
+	// CreateUserPlaylist Doer is the HTTP client used to make requests to the
+	// createUserPlaylist endpoint.
+	CreateUserPlaylistDoer goahttp.Doer
+
+	// DeleteUserPlaylist Doer is the HTTP client used to make requests to the
+	// deleteUserPlaylist endpoint.
+	DeleteUserPlaylistDoer goahttp.Doer
+
 	// RestoreResponseBody controls whether the response bodies are reset after
 	// decoding so they can be read again.
 	RestoreResponseBody bool
@@ -49,14 +57,16 @@ func NewClient(
 	restoreBody bool,
 ) *Client {
 	return &Client{
-		RegisterDoer:         doer,
-		LoginDoer:            doer,
-		GetUserPlaylistsDoer: doer,
-		RestoreResponseBody:  restoreBody,
-		scheme:               scheme,
-		host:                 host,
-		decoder:              dec,
-		encoder:              enc,
+		RegisterDoer:           doer,
+		LoginDoer:              doer,
+		GetUserPlaylistsDoer:   doer,
+		CreateUserPlaylistDoer: doer,
+		DeleteUserPlaylistDoer: doer,
+		RestoreResponseBody:    restoreBody,
+		scheme:                 scheme,
+		host:                   host,
+		decoder:                dec,
+		encoder:                enc,
 	}
 }
 
@@ -127,6 +137,54 @@ func (c *Client) GetUserPlaylists() goa.Endpoint {
 		resp, err := c.GetUserPlaylistsDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("account", "getUserPlaylists", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// CreateUserPlaylist returns an endpoint that makes HTTP requests to the
+// account service createUserPlaylist server.
+func (c *Client) CreateUserPlaylist() goa.Endpoint {
+	var (
+		encodeRequest  = EncodeCreateUserPlaylistRequest(c.encoder)
+		decodeResponse = DecodeCreateUserPlaylistResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildCreateUserPlaylistRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.CreateUserPlaylistDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("account", "createUserPlaylist", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// DeleteUserPlaylist returns an endpoint that makes HTTP requests to the
+// account service deleteUserPlaylist server.
+func (c *Client) DeleteUserPlaylist() goa.Endpoint {
+	var (
+		encodeRequest  = EncodeDeleteUserPlaylistRequest(c.encoder)
+		decodeResponse = DecodeDeleteUserPlaylistResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildDeleteUserPlaylistRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.DeleteUserPlaylistDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("account", "deleteUserPlaylist", err)
 		}
 		return decodeResponse(resp)
 	}

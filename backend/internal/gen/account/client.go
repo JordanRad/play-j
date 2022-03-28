@@ -16,17 +16,21 @@ import (
 
 // Client is the "account" service client.
 type Client struct {
-	RegisterEndpoint         goa.Endpoint
-	LoginEndpoint            goa.Endpoint
-	GetUserPlaylistsEndpoint goa.Endpoint
+	RegisterEndpoint           goa.Endpoint
+	LoginEndpoint              goa.Endpoint
+	GetUserPlaylistsEndpoint   goa.Endpoint
+	CreateUserPlaylistEndpoint goa.Endpoint
+	DeleteUserPlaylistEndpoint goa.Endpoint
 }
 
 // NewClient initializes a "account" service client given the endpoints.
-func NewClient(register, login, getUserPlaylists goa.Endpoint) *Client {
+func NewClient(register, login, getUserPlaylists, createUserPlaylist, deleteUserPlaylist goa.Endpoint) *Client {
 	return &Client{
-		RegisterEndpoint:         register,
-		LoginEndpoint:            login,
-		GetUserPlaylistsEndpoint: getUserPlaylists,
+		RegisterEndpoint:           register,
+		LoginEndpoint:              login,
+		GetUserPlaylistsEndpoint:   getUserPlaylists,
+		CreateUserPlaylistEndpoint: createUserPlaylist,
+		DeleteUserPlaylistEndpoint: deleteUserPlaylist,
 	}
 }
 
@@ -59,4 +63,26 @@ func (c *Client) GetUserPlaylists(ctx context.Context, p *GetUserPlaylistsPayloa
 		return
 	}
 	return ires.(*UserPlaylistsResponse), nil
+}
+
+// CreateUserPlaylist calls the "createUserPlaylist" endpoint of the "account"
+// service.
+func (c *Client) CreateUserPlaylist(ctx context.Context, p *CreateUserPlaylistPayload) (res *CreatePlaylistResponse, err error) {
+	var ires interface{}
+	ires, err = c.CreateUserPlaylistEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*CreatePlaylistResponse), nil
+}
+
+// DeleteUserPlaylist calls the "deleteUserPlaylist" endpoint of the "account"
+// service.
+func (c *Client) DeleteUserPlaylist(ctx context.Context, p *DeleteUserPlaylistPayload) (res *DeletePlaylistResponse, err error) {
+	var ires interface{}
+	ires, err = c.DeleteUserPlaylistEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*DeletePlaylistResponse), nil
 }
