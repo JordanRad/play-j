@@ -16,15 +16,17 @@ import (
 
 // Client is the "account" service client.
 type Client struct {
-	RegisterEndpoint goa.Endpoint
-	LoginEndpoint    goa.Endpoint
+	RegisterEndpoint         goa.Endpoint
+	LoginEndpoint            goa.Endpoint
+	GetUserPlaylistsEndpoint goa.Endpoint
 }
 
 // NewClient initializes a "account" service client given the endpoints.
-func NewClient(register, login goa.Endpoint) *Client {
+func NewClient(register, login, getUserPlaylists goa.Endpoint) *Client {
 	return &Client{
-		RegisterEndpoint: register,
-		LoginEndpoint:    login,
+		RegisterEndpoint:         register,
+		LoginEndpoint:            login,
+		GetUserPlaylistsEndpoint: getUserPlaylists,
 	}
 }
 
@@ -46,4 +48,15 @@ func (c *Client) Login(ctx context.Context, p *LoginPayload) (res *LoginResponse
 		return
 	}
 	return ires.(*LoginResponse), nil
+}
+
+// GetUserPlaylists calls the "getUserPlaylists" endpoint of the "account"
+// service.
+func (c *Client) GetUserPlaylists(ctx context.Context, p *GetUserPlaylistsPayload) (res *UserPlaylistsResponse, err error) {
+	var ires interface{}
+	ires, err = c.GetUserPlaylistsEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*UserPlaylistsResponse), nil
 }

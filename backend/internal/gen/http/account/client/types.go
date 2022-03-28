@@ -51,6 +51,28 @@ type LoginResponseBody struct {
 	RefreshToken *string `form:"refresh_token,omitempty" json:"refresh_token,omitempty" xml:"refresh_token,omitempty"`
 	// User's role
 	Role *string `form:"role,omitempty" json:"role,omitempty" xml:"role,omitempty"`
+	// User's role
+	AccountID *string `form:"accountID,omitempty" json:"accountID,omitempty" xml:"accountID,omitempty"`
+}
+
+// GetUserPlaylistsResponseBody is the type of the "account" service
+// "getUserPlaylists" endpoint HTTP response body.
+type GetUserPlaylistsResponseBody struct {
+	// Number of resources
+	Total *int32 `form:"total,omitempty" json:"total,omitempty" xml:"total,omitempty"`
+	// Operation completion status
+	Resources []*UserSinglePlaylistResponseResponseBody `form:"resources,omitempty" json:"resources,omitempty" xml:"resources,omitempty"`
+}
+
+// UserSinglePlaylistResponseResponseBody is used to define fields on response
+// body types.
+type UserSinglePlaylistResponseResponseBody struct {
+	// Playlist id
+	ID *int32 `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Playlist name
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// Operation completion status
+	Tracks []string `form:"tracks,omitempty" json:"tracks,omitempty" xml:"tracks,omitempty"`
 }
 
 // NewRegisterRequestBody builds the HTTP request body from the payload of the
@@ -92,6 +114,21 @@ func NewLoginResponseOK(body *LoginResponseBody) *account.LoginResponse {
 		Token:        *body.Token,
 		RefreshToken: *body.RefreshToken,
 		Role:         *body.Role,
+		AccountID:    body.AccountID,
+	}
+
+	return v
+}
+
+// NewGetUserPlaylistsUserPlaylistsResponseOK builds a "account" service
+// "getUserPlaylists" endpoint result from a HTTP "OK" response.
+func NewGetUserPlaylistsUserPlaylistsResponseOK(body *GetUserPlaylistsResponseBody) *account.UserPlaylistsResponse {
+	v := &account.UserPlaylistsResponse{
+		Total: *body.Total,
+	}
+	v.Resources = make([]*account.UserSinglePlaylistResponse, len(body.Resources))
+	for i, val := range body.Resources {
+		v.Resources[i] = unmarshalUserSinglePlaylistResponseResponseBodyToAccountUserSinglePlaylistResponse(val)
 	}
 
 	return v
@@ -119,6 +156,40 @@ func ValidateLoginResponseBody(body *LoginResponseBody) (err error) {
 	}
 	if body.Role == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("role", "body"))
+	}
+	return
+}
+
+// ValidateGetUserPlaylistsResponseBody runs the validations defined on
+// GetUserPlaylistsResponseBody
+func ValidateGetUserPlaylistsResponseBody(body *GetUserPlaylistsResponseBody) (err error) {
+	if body.Total == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("total", "body"))
+	}
+	if body.Resources == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("resources", "body"))
+	}
+	for _, e := range body.Resources {
+		if e != nil {
+			if err2 := ValidateUserSinglePlaylistResponseResponseBody(e); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	return
+}
+
+// ValidateUserSinglePlaylistResponseResponseBody runs the validations defined
+// on UserSinglePlaylistResponseResponseBody
+func ValidateUserSinglePlaylistResponseResponseBody(body *UserSinglePlaylistResponseResponseBody) (err error) {
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.Tracks == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("tracks", "body"))
 	}
 	return
 }

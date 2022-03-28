@@ -12,6 +12,7 @@ import (
 	"context"
 	"io"
 	"net/http"
+	"strconv"
 
 	account "git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/gen/account"
 	goahttp "goa.design/goa/v3/http"
@@ -86,4 +87,66 @@ func DecodeLoginRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.D
 
 		return payload, nil
 	}
+}
+
+// EncodeGetUserPlaylistsResponse returns an encoder for responses returned by
+// the account getUserPlaylists endpoint.
+func EncodeGetUserPlaylistsResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res, _ := v.(*account.UserPlaylistsResponse)
+		enc := encoder(ctx, w)
+		body := NewGetUserPlaylistsResponseBody(res)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeGetUserPlaylistsRequest returns a decoder for requests sent to the
+// account getUserPlaylists endpoint.
+func DecodeGetUserPlaylistsRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			accountID uint
+			auth      *string
+			err       error
+
+			params = mux.Vars(r)
+		)
+		{
+			accountIDRaw := params["accountID"]
+			v, err2 := strconv.ParseUint(accountIDRaw, 10, strconv.IntSize)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("accountID", accountIDRaw, "unsigned integer"))
+			}
+			accountID = uint(v)
+		}
+		authRaw := r.Header.Get("Authorization")
+		if authRaw != "" {
+			auth = &authRaw
+		}
+		if err != nil {
+			return nil, err
+		}
+		payload := NewGetUserPlaylistsPayload(accountID, auth)
+
+		return payload, nil
+	}
+}
+
+// marshalAccountUserSinglePlaylistResponseToUserSinglePlaylistResponseResponseBody
+// builds a value of type *UserSinglePlaylistResponseResponseBody from a value
+// of type *account.UserSinglePlaylistResponse.
+func marshalAccountUserSinglePlaylistResponseToUserSinglePlaylistResponseResponseBody(v *account.UserSinglePlaylistResponse) *UserSinglePlaylistResponseResponseBody {
+	res := &UserSinglePlaylistResponseResponseBody{
+		ID:   v.ID,
+		Name: v.Name,
+	}
+	if v.Tracks != nil {
+		res.Tracks = make([]string, len(v.Tracks))
+		for i, val := range v.Tracks {
+			res.Tracks[i] = val
+		}
+	}
+
+	return res
 }

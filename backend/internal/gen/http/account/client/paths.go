@@ -8,6 +8,10 @@
 
 package client
 
+import (
+	"fmt"
+)
+
 // RegisterAccountPath returns the URL path to the account service register HTTP endpoint.
 func RegisterAccountPath() string {
 	return "/api/v1/account/register"
@@ -16,4 +20,9 @@ func RegisterAccountPath() string {
 // LoginAccountPath returns the URL path to the account service login HTTP endpoint.
 func LoginAccountPath() string {
 	return "/api/v1/account/login"
+}
+
+// GetUserPlaylistsAccountPath returns the URL path to the account service getUserPlaylists HTTP endpoint.
+func GetUserPlaylistsAccountPath(accountID uint) string {
+	return fmt.Sprintf("/api/v1/account/%v/playlists", accountID)
 }

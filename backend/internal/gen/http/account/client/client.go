@@ -25,6 +25,10 @@ type Client struct {
 	// Login Doer is the HTTP client used to make requests to the login endpoint.
 	LoginDoer goahttp.Doer
 
+	// GetUserPlaylists Doer is the HTTP client used to make requests to the
+	// getUserPlaylists endpoint.
+	GetUserPlaylistsDoer goahttp.Doer
+
 	// RestoreResponseBody controls whether the response bodies are reset after
 	// decoding so they can be read again.
 	RestoreResponseBody bool
@@ -45,13 +49,14 @@ func NewClient(
 	restoreBody bool,
 ) *Client {
 	return &Client{
-		RegisterDoer:        doer,
-		LoginDoer:           doer,
-		RestoreResponseBody: restoreBody,
-		scheme:              scheme,
-		host:                host,
-		decoder:             dec,
-		encoder:             enc,
+		RegisterDoer:         doer,
+		LoginDoer:            doer,
+		GetUserPlaylistsDoer: doer,
+		RestoreResponseBody:  restoreBody,
+		scheme:               scheme,
+		host:                 host,
+		decoder:              dec,
+		encoder:              enc,
 	}
 }
 
@@ -98,6 +103,30 @@ func (c *Client) Login() goa.Endpoint {
 		resp, err := c.LoginDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("account", "login", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// GetUserPlaylists returns an endpoint that makes HTTP requests to the account
+// service getUserPlaylists server.
+func (c *Client) GetUserPlaylists() goa.Endpoint {
+	var (
+		encodeRequest  = EncodeGetUserPlaylistsRequest(c.encoder)
+		decodeResponse = DecodeGetUserPlaylistsResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildGetUserPlaylistsRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.GetUserPlaylistsDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("account", "getUserPlaylists", err)
 		}
 		return decodeResponse(resp)
 	}

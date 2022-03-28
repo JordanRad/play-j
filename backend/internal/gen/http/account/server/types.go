@@ -51,6 +51,28 @@ type LoginResponseBody struct {
 	RefreshToken string `form:"refresh_token" json:"refresh_token" xml:"refresh_token"`
 	// User's role
 	Role string `form:"role" json:"role" xml:"role"`
+	// User's role
+	AccountID *string `form:"accountID,omitempty" json:"accountID,omitempty" xml:"accountID,omitempty"`
+}
+
+// GetUserPlaylistsResponseBody is the type of the "account" service
+// "getUserPlaylists" endpoint HTTP response body.
+type GetUserPlaylistsResponseBody struct {
+	// Number of resources
+	Total int32 `form:"total" json:"total" xml:"total"`
+	// Operation completion status
+	Resources []*UserSinglePlaylistResponseResponseBody `form:"resources" json:"resources" xml:"resources"`
+}
+
+// UserSinglePlaylistResponseResponseBody is used to define fields on response
+// body types.
+type UserSinglePlaylistResponseResponseBody struct {
+	// Playlist id
+	ID int32 `form:"id" json:"id" xml:"id"`
+	// Playlist name
+	Name string `form:"name" json:"name" xml:"name"`
+	// Operation completion status
+	Tracks []string `form:"tracks" json:"tracks" xml:"tracks"`
 }
 
 // NewRegisterResponseBody builds the HTTP response body from the result of the
@@ -70,6 +92,22 @@ func NewLoginResponseBody(res *account.LoginResponse) *LoginResponseBody {
 		Token:        res.Token,
 		RefreshToken: res.RefreshToken,
 		Role:         res.Role,
+		AccountID:    res.AccountID,
+	}
+	return body
+}
+
+// NewGetUserPlaylistsResponseBody builds the HTTP response body from the
+// result of the "getUserPlaylists" endpoint of the "account" service.
+func NewGetUserPlaylistsResponseBody(res *account.UserPlaylistsResponse) *GetUserPlaylistsResponseBody {
+	body := &GetUserPlaylistsResponseBody{
+		Total: res.Total,
+	}
+	if res.Resources != nil {
+		body.Resources = make([]*UserSinglePlaylistResponseResponseBody, len(res.Resources))
+		for i, val := range res.Resources {
+			body.Resources[i] = marshalAccountUserSinglePlaylistResponseToUserSinglePlaylistResponseResponseBody(val)
+		}
 	}
 	return body
 }
@@ -91,6 +129,16 @@ func NewLoginPayload(body *LoginRequestBody) *account.LoginPayload {
 		Email:    body.Email,
 		Password: body.Password,
 	}
+
+	return v
+}
+
+// NewGetUserPlaylistsPayload builds a account service getUserPlaylists
+// endpoint payload.
+func NewGetUserPlaylistsPayload(accountID uint, auth *string) *account.GetUserPlaylistsPayload {
+	v := &account.GetUserPlaylistsPayload{}
+	v.AccountID = &accountID
+	v.Auth = auth
 
 	return v
 }

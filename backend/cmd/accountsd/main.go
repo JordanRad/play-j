@@ -11,6 +11,8 @@ import (
 	accountsrv "git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/gen/http/account/server"
 	goahttp "goa.design/goa/v3/http"
 
+	"git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/middleware"
+
 	"database/sql"
 	"time"
 
@@ -50,7 +52,7 @@ func main() {
 
 	accountService := account.NewService(dbAccountStore, dbPlaylistStore)
 
-	var userEndpoints *accountsvc.Endpoints = accountsvc.NewEndpoints(accountService)
+	var accountEndpoints *accountsvc.Endpoints = accountsvc.NewEndpoints(accountService)
 
 	// Provide the transport specific request decoder and response encoder.
 	var (
@@ -65,10 +67,10 @@ func main() {
 		mux = goahttp.NewMuxer()
 	}
 
-	var accountServer *accountsrv.Server = accountsrv.New(userEndpoints, mux, dec, enc, nil, nil)
-
+	var accountServer *accountsrv.Server = accountsrv.New(accountEndpoints, mux, dec, enc, nil, nil)
+	accountServer.Use(middleware.AuthenticateRequest())
 	accountsrv.Mount(mux, accountServer)
 
-	fmt.Println("Account service has just started...")
+	fmt.Print("Account service has just started...\n")
 	http.ListenAndServe("localhost:8091", mux)
 }

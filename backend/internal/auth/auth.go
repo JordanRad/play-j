@@ -36,11 +36,10 @@ func CheckPassword(hashString string, passwordString string) bool {
 }
 
 func GenerateJWT(accountID uint, email string) (string, error) {
-
 	// Set custom claims to JWT
 	claims := &jwt.MapClaims{
 		"iss": "playj-account-service",
-		"exp": time.Now().Add(time.Hour * 12).Unix(),
+		"exp": time.Now().Add(time.Hour * 24).Unix(),
 		"data": map[string]string{
 			"accountID": strconv.Itoa(int(accountID)),
 			"email":     email,
@@ -60,6 +59,7 @@ func GenerateJWT(accountID uint, email string) (string, error) {
 }
 
 func ExtractJWTCLaims(tokenString string) (*TokenClaims, error) {
+	//Parse the JWT Token
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return secret, nil
 	})
@@ -86,6 +86,21 @@ func ExtractJWTCLaims(tokenString string) (*TokenClaims, error) {
 	return tokenClaims, nil
 }
 
-func ValidateJWT(token string) string {
-	return "Hello"
+func ValidateJWT(tokenString string) (bool, error) {
+	// //Parse the JWT Token
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("there was an error")
+		}
+		return secret, nil
+	})
+	if err != nil {
+		if err == jwt.ErrSignatureInvalid {
+			return false, fmt.Errorf("error signing the token: %w", err)
+		}
+	}
+	if !token.Valid {
+		return false, fmt.Errorf("invalid token")
+	}
+	return true, nil
 }

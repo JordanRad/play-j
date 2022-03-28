@@ -19,9 +19,10 @@ import (
 
 // Server lists the account service endpoint HTTP handlers.
 type Server struct {
-	Mounts   []*MountPoint
-	Register http.Handler
-	Login    http.Handler
+	Mounts           []*MountPoint
+	Register         http.Handler
+	Login            http.Handler
+	GetUserPlaylists http.Handler
 }
 
 // ErrorNamer is an interface implemented by generated error structs that
@@ -59,9 +60,11 @@ func New(
 		Mounts: []*MountPoint{
 			{"Register", "POST", "/api/v1/account/register"},
 			{"Login", "POST", "/api/v1/account/login"},
+			{"GetUserPlaylists", "GET", "/api/v1/account/{accountID}/playlists"},
 		},
-		Register: NewRegisterHandler(e.Register, mux, decoder, encoder, errhandler, formatter),
-		Login:    NewLoginHandler(e.Login, mux, decoder, encoder, errhandler, formatter),
+		Register:         NewRegisterHandler(e.Register, mux, decoder, encoder, errhandler, formatter),
+		Login:            NewLoginHandler(e.Login, mux, decoder, encoder, errhandler, formatter),
+		GetUserPlaylists: NewGetUserPlaylistsHandler(e.GetUserPlaylists, mux, decoder, encoder, errhandler, formatter),
 	}
 }
 
@@ -72,12 +75,14 @@ func (s *Server) Service() string { return "account" }
 func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.Register = m(s.Register)
 	s.Login = m(s.Login)
+	s.GetUserPlaylists = m(s.GetUserPlaylists)
 }
 
 // Mount configures the mux to serve the account endpoints.
 func Mount(mux goahttp.Muxer, h *Server) {
 	MountRegisterHandler(mux, h.Register)
 	MountLoginHandler(mux, h.Login)
+	MountGetUserPlaylistsHandler(mux, h.GetUserPlaylists)
 }
 
 // Mount configures the mux to serve the account endpoints.
@@ -166,6 +171,57 @@ func NewLoginHandler(
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
 		ctx = context.WithValue(ctx, goa.MethodKey, "login")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "account")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+		}
+	})
+}
+
+// MountGetUserPlaylistsHandler configures the mux to serve the "account"
+// service "getUserPlaylists" endpoint.
+func MountGetUserPlaylistsHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := h.(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("GET", "/api/v1/account/{accountID}/playlists", f)
+}
+
+// NewGetUserPlaylistsHandler creates a HTTP handler which loads the HTTP
+// request and calls the "account" service "getUserPlaylists" endpoint.
+func NewGetUserPlaylistsHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeGetUserPlaylistsRequest(mux, decoder)
+		encodeResponse = EncodeGetUserPlaylistsResponse(encoder)
+		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "getUserPlaylists")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "account")
 		payload, err := decodeRequest(r)
 		if err != nil {

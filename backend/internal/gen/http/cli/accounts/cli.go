@@ -24,16 +24,16 @@ import (
 //    command (subcommand1|subcommand2|...)
 //
 func UsageCommands() string {
-	return `account (register|login)
+	return `account (register|login|get-user-playlists)
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` account register --body '{
-      "confirmedPassword": "Maxime suscipit quia cupiditate.",
-      "email": "Ut ipsa expedita.",
-      "password": "Esse dolorem."
+      "confirmedPassword": "Corporis voluptas et.",
+      "email": "Cum sed reprehenderit et alias asperiores.",
+      "password": "Magnam voluptatem sunt maiores quo est est."
    }'` + "\n" +
 		""
 }
@@ -55,10 +55,15 @@ func ParseEndpoint(
 
 		accountLoginFlags    = flag.NewFlagSet("login", flag.ExitOnError)
 		accountLoginBodyFlag = accountLoginFlags.String("body", "REQUIRED", "")
+
+		accountGetUserPlaylistsFlags         = flag.NewFlagSet("get-user-playlists", flag.ExitOnError)
+		accountGetUserPlaylistsAccountIDFlag = accountGetUserPlaylistsFlags.String("account-id", "REQUIRED", "")
+		accountGetUserPlaylistsAuthFlag      = accountGetUserPlaylistsFlags.String("auth", "", "")
 	)
 	accountFlags.Usage = accountUsage
 	accountRegisterFlags.Usage = accountRegisterUsage
 	accountLoginFlags.Usage = accountLoginUsage
+	accountGetUserPlaylistsFlags.Usage = accountGetUserPlaylistsUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -100,6 +105,9 @@ func ParseEndpoint(
 			case "login":
 				epf = accountLoginFlags
 
+			case "get-user-playlists":
+				epf = accountGetUserPlaylistsFlags
+
 			}
 
 		}
@@ -131,6 +139,9 @@ func ParseEndpoint(
 			case "login":
 				endpoint = c.Login()
 				data, err = accountc.BuildLoginPayload(*accountLoginBodyFlag)
+			case "get-user-playlists":
+				endpoint = c.GetUserPlaylists()
+				data, err = accountc.BuildGetUserPlaylistsPayload(*accountGetUserPlaylistsAccountIDFlag, *accountGetUserPlaylistsAuthFlag)
 			}
 		}
 	}
@@ -150,6 +161,7 @@ Usage:
 COMMAND:
     register: Register implements register.
     login: Login implements login.
+    get-user-playlists: GetUserPlaylists implements getUserPlaylists.
 
 Additional help:
     %[1]s account COMMAND --help
@@ -163,9 +175,9 @@ Register implements register.
 
 Example:
     %[1]s account register --body '{
-      "confirmedPassword": "Maxime suscipit quia cupiditate.",
-      "email": "Ut ipsa expedita.",
-      "password": "Esse dolorem."
+      "confirmedPassword": "Corporis voluptas et.",
+      "email": "Cum sed reprehenderit et alias asperiores.",
+      "password": "Magnam voluptatem sunt maiores quo est est."
    }'
 `, os.Args[0])
 }
@@ -178,8 +190,20 @@ Login implements login.
 
 Example:
     %[1]s account login --body '{
-      "email": "Facilis aut veritatis dolores doloribus aut quaerat.",
-      "password": "Deserunt maiores id ratione quia."
+      "email": "Ex dolorum.",
+      "password": "Sit aperiam."
    }'
+`, os.Args[0])
+}
+
+func accountGetUserPlaylistsUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] account get-user-playlists -account-id UINT -auth STRING
+
+GetUserPlaylists implements getUserPlaylists.
+    -account-id UINT: 
+    -auth STRING: 
+
+Example:
+    %[1]s account get-user-playlists --account-id 9197517201641083092 --auth "Dolorum et labore cumque quisquam dolorem adipisci."
 `, os.Args[0])
 }

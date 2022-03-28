@@ -40,15 +40,17 @@ var _ = Service("account", func() {
 		})
 	})
 
-	Method("getPlaylistsByUser", func() {
+	Method("getUserPlaylists", func() {
+		Result(UserPlaylistsResponse)
 		Payload(func() {
-			Attribute("email", String, "Email of the user")
-			Attribute("password", String, "Password of the user")
+			Attribute("accountID", UInt)
+			Attribute("auth", String)
 		})
-		Result(LoginResponse)
 		HTTP(func() {
-			GET("/{accountId}/playlists")
-			Param("accountId", UInt64, "ID of the account, accessing the resources")
+			Header("auth:Authorization", String, "JSON Web Token", func() {
+				Pattern("^Bearer [^ ]+$")
+			})
+			GET("/{accountID}/playlists")
 		})
 	})
 })
@@ -63,6 +65,7 @@ var LoginResponse = Type("LoginResponse", func() {
 	Attribute("token", String, "JWT Token")
 	Attribute("refresh_token", String, "Refresh token")
 	Attribute("role", String, "User's role")
+	Attribute("accountID", String, "User's role")
 	Required("email", "token", "refresh_token", "role")
 })
 
@@ -76,12 +79,12 @@ var UserPlaylistsResponse = Type("UserPlaylistsResponse", func() {
 var UserSinglePlaylistResponse = Type("UserSinglePlaylistResponse", func() {
 	Attribute("id", Int32, "Playlist id")
 	Attribute("name", String, "Playlist name")
-	Attribute("tracks", ArrayOf(TrackResponse), "Operation completion status")
+	Attribute("tracks", ArrayOf(String), "Operation completion status")
 
 	Required("id", "name", "tracks")
 })
 
-var TrackResponse = Type("UserSinglePlaylistResponse", func() {
+var TrackResponse = Type("TrackResponse", func() {
 	Attribute("id", Int32, "Track id")
 	Attribute("name", String, "Track name")
 

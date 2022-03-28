@@ -16,15 +16,17 @@ import (
 
 // Endpoints wraps the "account" service endpoints.
 type Endpoints struct {
-	Register goa.Endpoint
-	Login    goa.Endpoint
+	Register         goa.Endpoint
+	Login            goa.Endpoint
+	GetUserPlaylists goa.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "account" service with endpoints.
 func NewEndpoints(s Service) *Endpoints {
 	return &Endpoints{
-		Register: NewRegisterEndpoint(s),
-		Login:    NewLoginEndpoint(s),
+		Register:         NewRegisterEndpoint(s),
+		Login:            NewLoginEndpoint(s),
+		GetUserPlaylists: NewGetUserPlaylistsEndpoint(s),
 	}
 }
 
@@ -32,6 +34,7 @@ func NewEndpoints(s Service) *Endpoints {
 func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.Register = m(e.Register)
 	e.Login = m(e.Login)
+	e.GetUserPlaylists = m(e.GetUserPlaylists)
 }
 
 // NewRegisterEndpoint returns an endpoint function that calls the method
@@ -49,5 +52,14 @@ func NewLoginEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*LoginPayload)
 		return s.Login(ctx, p)
+	}
+}
+
+// NewGetUserPlaylistsEndpoint returns an endpoint function that calls the
+// method "getUserPlaylists" of service "account".
+func NewGetUserPlaylistsEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*GetUserPlaylistsPayload)
+		return s.GetUserPlaylists(ctx, p)
 	}
 }

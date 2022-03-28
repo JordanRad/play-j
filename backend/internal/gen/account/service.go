@@ -18,6 +18,8 @@ type Service interface {
 	Register(context.Context, *RegisterPayload) (res *RegisterResponse, err error)
 	// Login implements login.
 	Login(context.Context, *LoginPayload) (res *LoginResponse, err error)
+	// GetUserPlaylists implements getUserPlaylists.
+	GetUserPlaylists(context.Context, *GetUserPlaylistsPayload) (res *UserPlaylistsResponse, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -28,7 +30,7 @@ const ServiceName = "account"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [2]string{"register", "login"}
+var MethodNames = [3]string{"register", "login", "getUserPlaylists"}
 
 // RegisterPayload is the payload type of the account service register method.
 type RegisterPayload struct {
@@ -64,4 +66,31 @@ type LoginResponse struct {
 	RefreshToken string
 	// User's role
 	Role string
+	// User's role
+	AccountID *string
+}
+
+// GetUserPlaylistsPayload is the payload type of the account service
+// getUserPlaylists method.
+type GetUserPlaylistsPayload struct {
+	AccountID *uint
+	Auth      *string
+}
+
+// UserPlaylistsResponse is the result type of the account service
+// getUserPlaylists method.
+type UserPlaylistsResponse struct {
+	// Number of resources
+	Total int32
+	// Operation completion status
+	Resources []*UserSinglePlaylistResponse
+}
+
+type UserSinglePlaylistResponse struct {
+	// Playlist id
+	ID int32
+	// Playlist name
+	Name string
+	// Operation completion status
+	Tracks []string
 }

@@ -18,7 +18,7 @@ type AccountStore interface {
 type PlaylistStore interface {
 	CreateAccountPlaylist(context.Context, uint, string) (bool, error)
 	GetUserPlaylist(context.Context, uint, uint) (string, error)
-	GetAllUserPlaylists(context.Context, uint) ([]string, error)
+	GetAllUserPlaylists(context.Context, uint) ([]*dbmodels.Playlist, error)
 }
 
 type Service struct {
@@ -107,12 +107,39 @@ func (s *Service) Login(ctx context.Context, p *account.LoginPayload) (*account.
 	if err != nil {
 		return nil, fmt.Errorf("error extracting jwt: %w", err)
 	}
-	r := &account.LoginResponse{
+	response := &account.LoginResponse{
 		Email:        *p.Email,
 		Token:        token,
 		RefreshToken: "dfsdvsdfjv sjf",
 		Role:         "ROLE_REG_USER",
 	}
-	return r, nil
+	return response, nil
+}
 
+func (s *Service) GetUserPlaylists(ctx context.Context, p *account.GetUserPlaylistsPayload) (*account.UserPlaylistsResponse, error) {
+
+	// Get playlists by user
+	playlists, err := s.playlistStore.GetAllUserPlaylists(ctx, *p.AccountID)
+
+	if err != nil {
+		return &account.UserPlaylistsResponse{}, fmt.Errorf("error displaying user's playlists: %w", err)
+	}
+
+	resources := make([]*account.UserSinglePlaylistResponse, 0, len(playlists))
+
+	for _, playlist := range playlists {
+		resource := &account.UserSinglePlaylistResponse{
+			ID:     int32(playlist.ID),
+			Name:   playlist.Name,
+			Tracks: playlist.Tracks,
+		}
+		resources = append(resources, resource)
+	}
+
+	response := &account.UserPlaylistsResponse{
+		Total:     2,
+		Resources: resources,
+	}
+
+	return response, nil
 }

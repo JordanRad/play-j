@@ -11,6 +11,7 @@ package client
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	account "git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/gen/account"
 )
@@ -23,7 +24,7 @@ func BuildRegisterPayload(accountRegisterBody string) (*account.RegisterPayload,
 	{
 		err = json.Unmarshal([]byte(accountRegisterBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"confirmedPassword\": \"Maxime suscipit quia cupiditate.\",\n      \"email\": \"Ut ipsa expedita.\",\n      \"password\": \"Esse dolorem.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"confirmedPassword\": \"Corporis voluptas et.\",\n      \"email\": \"Cum sed reprehenderit et alias asperiores.\",\n      \"password\": \"Magnam voluptatem sunt maiores quo est est.\"\n   }'")
 		}
 	}
 	v := &account.RegisterPayload{
@@ -43,13 +44,39 @@ func BuildLoginPayload(accountLoginBody string) (*account.LoginPayload, error) {
 	{
 		err = json.Unmarshal([]byte(accountLoginBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"email\": \"Facilis aut veritatis dolores doloribus aut quaerat.\",\n      \"password\": \"Deserunt maiores id ratione quia.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"email\": \"Ex dolorum.\",\n      \"password\": \"Sit aperiam.\"\n   }'")
 		}
 	}
 	v := &account.LoginPayload{
 		Email:    body.Email,
 		Password: body.Password,
 	}
+
+	return v, nil
+}
+
+// BuildGetUserPlaylistsPayload builds the payload for the account
+// getUserPlaylists endpoint from CLI flags.
+func BuildGetUserPlaylistsPayload(accountGetUserPlaylistsAccountID string, accountGetUserPlaylistsAuth string) (*account.GetUserPlaylistsPayload, error) {
+	var err error
+	var accountID uint
+	{
+		var v uint64
+		v, err = strconv.ParseUint(accountGetUserPlaylistsAccountID, 10, 64)
+		accountID = uint(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for accountID, must be UINT")
+		}
+	}
+	var auth *string
+	{
+		if accountGetUserPlaylistsAuth != "" {
+			auth = &accountGetUserPlaylistsAuth
+		}
+	}
+	v := &account.GetUserPlaylistsPayload{}
+	v.AccountID = &accountID
+	v.Auth = auth
 
 	return v, nil
 }

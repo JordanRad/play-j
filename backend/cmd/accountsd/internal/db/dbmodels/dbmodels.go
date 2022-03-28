@@ -11,7 +11,8 @@ type Account struct {
 }
 
 type Playlist struct {
-	ID     uint
-	Name   string
-	Tracks []string
+	ID        uint
+	Name      string
+	AccountID uint
+	Tracks    []string
 }
