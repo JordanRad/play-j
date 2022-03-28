@@ -24,10 +24,12 @@ func BuildRegisterPayload(accountRegisterBody string) (*account.RegisterPayload,
 	{
 		err = json.Unmarshal([]byte(accountRegisterBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"confirmedPassword\": \"Libero ut magnam.\",\n      \"email\": \"Dolorum reprehenderit repellendus praesentium sed neque incidunt.\",\n      \"password\": \"Rerum distinctio minus facilis consectetur facere.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"confirmedPassword\": \"Ipsum et molestiae.\",\n      \"email\": \"Et odit vel assumenda.\",\n      \"firstName\": \"Porro rerum distinctio minus facilis.\",\n      \"lastName\": \"Facere corrupti libero ut.\",\n      \"password\": \"Quibusdam omnis nemo provident eos quis ut.\"\n   }'")
 		}
 	}
 	v := &account.RegisterPayload{
+		FirstName:         body.FirstName,
+		LastName:          body.LastName,
 		Email:             body.Email,
 		Password:          body.Password,
 		ConfirmedPassword: body.ConfirmedPassword,
@@ -44,7 +46,7 @@ func BuildLoginPayload(accountLoginBody string) (*account.LoginPayload, error) {
 	{
 		err = json.Unmarshal([]byte(accountLoginBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"email\": \"Nemo provident eos quis ut ut ipsum.\",\n      \"password\": \"Molestiae voluptas dolorum et.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"email\": \"Voluptates id recusandae temporibus et dolore.\",\n      \"password\": \"Numquam quos excepturi vero ad est.\"\n   }'")
 		}
 	}
 	v := &account.LoginPayload{
@@ -55,14 +57,14 @@ func BuildLoginPayload(accountLoginBody string) (*account.LoginPayload, error) {
 	return v, nil
 }
 
-// BuildGetUserPlaylistsPayload builds the payload for the account
-// getUserPlaylists endpoint from CLI flags.
-func BuildGetUserPlaylistsPayload(accountGetUserPlaylistsAccountID string, accountGetUserPlaylistsAuth string) (*account.GetUserPlaylistsPayload, error) {
+// BuildGetAccountPlaylistCollectionPayload builds the payload for the account
+// getAccountPlaylistCollection endpoint from CLI flags.
+func BuildGetAccountPlaylistCollectionPayload(accountGetAccountPlaylistCollectionAccountID string, accountGetAccountPlaylistCollectionAuth string) (*account.GetAccountPlaylistCollectionPayload, error) {
 	var err error
 	var accountID uint
 	{
 		var v uint64
-		v, err = strconv.ParseUint(accountGetUserPlaylistsAccountID, 10, 64)
+		v, err = strconv.ParseUint(accountGetAccountPlaylistCollectionAccountID, 10, 64)
 		accountID = uint(v)
 		if err != nil {
 			return nil, fmt.Errorf("invalid value for accountID, must be UINT")
@@ -70,32 +72,32 @@ func BuildGetUserPlaylistsPayload(accountGetUserPlaylistsAccountID string, accou
 	}
 	var auth *string
 	{
-		if accountGetUserPlaylistsAuth != "" {
-			auth = &accountGetUserPlaylistsAuth
+		if accountGetAccountPlaylistCollectionAuth != "" {
+			auth = &accountGetAccountPlaylistCollectionAuth
 		}
 	}
-	v := &account.GetUserPlaylistsPayload{}
+	v := &account.GetAccountPlaylistCollectionPayload{}
 	v.AccountID = &accountID
 	v.Auth = auth
 
 	return v, nil
 }
 
-// BuildCreateUserPlaylistPayload builds the payload for the account
-// createUserPlaylist endpoint from CLI flags.
-func BuildCreateUserPlaylistPayload(accountCreateUserPlaylistBody string, accountCreateUserPlaylistAccountID string, accountCreateUserPlaylistAuth string) (*account.CreateUserPlaylistPayload, error) {
+// BuildCreateAccountPlaylistPayload builds the payload for the account
+// createAccountPlaylist endpoint from CLI flags.
+func BuildCreateAccountPlaylistPayload(accountCreateAccountPlaylistBody string, accountCreateAccountPlaylistAccountID string, accountCreateAccountPlaylistAuth string) (*account.CreateAccountPlaylistPayload, error) {
 	var err error
-	var body CreateUserPlaylistRequestBody
+	var body CreateAccountPlaylistRequestBody
 	{
-		err = json.Unmarshal([]byte(accountCreateUserPlaylistBody), &body)
+		err = json.Unmarshal([]byte(accountCreateAccountPlaylistBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"name\": \"Quasi sint.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"name\": \"Enim consectetur sit omnis expedita.\"\n   }'")
 		}
 	}
 	var accountID uint
 	{
 		var v uint64
-		v, err = strconv.ParseUint(accountCreateUserPlaylistAccountID, 10, 64)
+		v, err = strconv.ParseUint(accountCreateAccountPlaylistAccountID, 10, 64)
 		accountID = uint(v)
 		if err != nil {
 			return nil, fmt.Errorf("invalid value for accountID, must be UINT")
@@ -103,11 +105,11 @@ func BuildCreateUserPlaylistPayload(accountCreateUserPlaylistBody string, accoun
 	}
 	var auth *string
 	{
-		if accountCreateUserPlaylistAuth != "" {
-			auth = &accountCreateUserPlaylistAuth
+		if accountCreateAccountPlaylistAuth != "" {
+			auth = &accountCreateAccountPlaylistAuth
 		}
 	}
-	v := &account.CreateUserPlaylistPayload{
+	v := &account.CreateAccountPlaylistPayload{
 		Name: body.Name,
 	}
 	v.AccountID = &accountID
@@ -116,14 +118,14 @@ func BuildCreateUserPlaylistPayload(accountCreateUserPlaylistBody string, accoun
 	return v, nil
 }
 
-// BuildDeleteUserPlaylistPayload builds the payload for the account
-// deleteUserPlaylist endpoint from CLI flags.
-func BuildDeleteUserPlaylistPayload(accountDeleteUserPlaylistAccountID string, accountDeleteUserPlaylistPlaylistID string, accountDeleteUserPlaylistAuth string) (*account.DeleteUserPlaylistPayload, error) {
+// BuildDeleteAccountPlaylistPayload builds the payload for the account
+// deleteAccountPlaylist endpoint from CLI flags.
+func BuildDeleteAccountPlaylistPayload(accountDeleteAccountPlaylistAccountID string, accountDeleteAccountPlaylistPlaylistID string, accountDeleteAccountPlaylistAuth string) (*account.DeleteAccountPlaylistPayload, error) {
 	var err error
 	var accountID uint
 	{
 		var v uint64
-		v, err = strconv.ParseUint(accountDeleteUserPlaylistAccountID, 10, 64)
+		v, err = strconv.ParseUint(accountDeleteAccountPlaylistAccountID, 10, 64)
 		accountID = uint(v)
 		if err != nil {
 			return nil, fmt.Errorf("invalid value for accountID, must be UINT")
@@ -132,7 +134,7 @@ func BuildDeleteUserPlaylistPayload(accountDeleteUserPlaylistAccountID string, a
 	var playlistID uint
 	{
 		var v uint64
-		v, err = strconv.ParseUint(accountDeleteUserPlaylistPlaylistID, 10, 64)
+		v, err = strconv.ParseUint(accountDeleteAccountPlaylistPlaylistID, 10, 64)
 		playlistID = uint(v)
 		if err != nil {
 			return nil, fmt.Errorf("invalid value for playlistID, must be UINT")
@@ -140,11 +142,47 @@ func BuildDeleteUserPlaylistPayload(accountDeleteUserPlaylistAccountID string, a
 	}
 	var auth *string
 	{
-		if accountDeleteUserPlaylistAuth != "" {
-			auth = &accountDeleteUserPlaylistAuth
+		if accountDeleteAccountPlaylistAuth != "" {
+			auth = &accountDeleteAccountPlaylistAuth
 		}
 	}
-	v := &account.DeleteUserPlaylistPayload{}
+	v := &account.DeleteAccountPlaylistPayload{}
+	v.AccountID = &accountID
+	v.PlaylistID = &playlistID
+	v.Auth = auth
+
+	return v, nil
+}
+
+// BuildGetAccountPlaylistPayload builds the payload for the account
+// getAccountPlaylist endpoint from CLI flags.
+func BuildGetAccountPlaylistPayload(accountGetAccountPlaylistAccountID string, accountGetAccountPlaylistPlaylistID string, accountGetAccountPlaylistAuth string) (*account.GetAccountPlaylistPayload, error) {
+	var err error
+	var accountID uint
+	{
+		var v uint64
+		v, err = strconv.ParseUint(accountGetAccountPlaylistAccountID, 10, 64)
+		accountID = uint(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for accountID, must be UINT")
+		}
+	}
+	var playlistID uint
+	{
+		var v uint64
+		v, err = strconv.ParseUint(accountGetAccountPlaylistPlaylistID, 10, 64)
+		playlistID = uint(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for playlistID, must be UINT")
+		}
+	}
+	var auth *string
+	{
+		if accountGetAccountPlaylistAuth != "" {
+			auth = &accountGetAccountPlaylistAuth
+		}
+	}
+	v := &account.GetAccountPlaylistPayload{}
 	v.AccountID = &accountID
 	v.PlaylistID = &playlistID
 	v.Auth = auth

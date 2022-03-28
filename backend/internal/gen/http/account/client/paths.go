@@ -22,17 +22,22 @@ func LoginAccountPath() string {
 	return "/api/v1/account/login"
 }
 
-// GetUserPlaylistsAccountPath returns the URL path to the account service getUserPlaylists HTTP endpoint.
-func GetUserPlaylistsAccountPath(accountID uint) string {
+// GetAccountPlaylistCollectionAccountPath returns the URL path to the account service getAccountPlaylistCollection HTTP endpoint.
+func GetAccountPlaylistCollectionAccountPath(accountID uint) string {
 	return fmt.Sprintf("/api/v1/account/%v/playlists", accountID)
 }
 
-// CreateUserPlaylistAccountPath returns the URL path to the account service createUserPlaylist HTTP endpoint.
-func CreateUserPlaylistAccountPath(accountID uint) string {
+// CreateAccountPlaylistAccountPath returns the URL path to the account service createAccountPlaylist HTTP endpoint.
+func CreateAccountPlaylistAccountPath(accountID uint) string {
 	return fmt.Sprintf("/api/v1/account/%v/playlists", accountID)
 }
 
-// DeleteUserPlaylistAccountPath returns the URL path to the account service deleteUserPlaylist HTTP endpoint.
-func DeleteUserPlaylistAccountPath(accountID uint, playlistID uint) string {
+// DeleteAccountPlaylistAccountPath returns the URL path to the account service deleteAccountPlaylist HTTP endpoint.
+func DeleteAccountPlaylistAccountPath(accountID uint, playlistID uint) string {
+	return fmt.Sprintf("/api/v1/account/%v/playlists/%v", accountID, playlistID)
+}
+
+// GetAccountPlaylistAccountPath returns the URL path to the account service getAccountPlaylist HTTP endpoint.
+func GetAccountPlaylistAccountPath(accountID uint, playlistID uint) string {
 	return fmt.Sprintf("/api/v1/account/%v/playlists/%v", accountID, playlistID)
 }

@@ -16,21 +16,23 @@ import (
 
 // Endpoints wraps the "account" service endpoints.
 type Endpoints struct {
-	Register           goa.Endpoint
-	Login              goa.Endpoint
-	GetUserPlaylists   goa.Endpoint
-	CreateUserPlaylist goa.Endpoint
-	DeleteUserPlaylist goa.Endpoint
+	Register                     goa.Endpoint
+	Login                        goa.Endpoint
+	GetAccountPlaylistCollection goa.Endpoint
+	CreateAccountPlaylist        goa.Endpoint
+	DeleteAccountPlaylist        goa.Endpoint
+	GetAccountPlaylist           goa.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "account" service with endpoints.
 func NewEndpoints(s Service) *Endpoints {
 	return &Endpoints{
-		Register:           NewRegisterEndpoint(s),
-		Login:              NewLoginEndpoint(s),
-		GetUserPlaylists:   NewGetUserPlaylistsEndpoint(s),
-		CreateUserPlaylist: NewCreateUserPlaylistEndpoint(s),
-		DeleteUserPlaylist: NewDeleteUserPlaylistEndpoint(s),
+		Register:                     NewRegisterEndpoint(s),
+		Login:                        NewLoginEndpoint(s),
+		GetAccountPlaylistCollection: NewGetAccountPlaylistCollectionEndpoint(s),
+		CreateAccountPlaylist:        NewCreateAccountPlaylistEndpoint(s),
+		DeleteAccountPlaylist:        NewDeleteAccountPlaylistEndpoint(s),
+		GetAccountPlaylist:           NewGetAccountPlaylistEndpoint(s),
 	}
 }
 
@@ -38,9 +40,10 @@ func NewEndpoints(s Service) *Endpoints {
 func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.Register = m(e.Register)
 	e.Login = m(e.Login)
-	e.GetUserPlaylists = m(e.GetUserPlaylists)
-	e.CreateUserPlaylist = m(e.CreateUserPlaylist)
-	e.DeleteUserPlaylist = m(e.DeleteUserPlaylist)
+	e.GetAccountPlaylistCollection = m(e.GetAccountPlaylistCollection)
+	e.CreateAccountPlaylist = m(e.CreateAccountPlaylist)
+	e.DeleteAccountPlaylist = m(e.DeleteAccountPlaylist)
+	e.GetAccountPlaylist = m(e.GetAccountPlaylist)
 }
 
 // NewRegisterEndpoint returns an endpoint function that calls the method
@@ -61,29 +64,38 @@ func NewLoginEndpoint(s Service) goa.Endpoint {
 	}
 }
 
-// NewGetUserPlaylistsEndpoint returns an endpoint function that calls the
-// method "getUserPlaylists" of service "account".
-func NewGetUserPlaylistsEndpoint(s Service) goa.Endpoint {
+// NewGetAccountPlaylistCollectionEndpoint returns an endpoint function that
+// calls the method "getAccountPlaylistCollection" of service "account".
+func NewGetAccountPlaylistCollectionEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*GetUserPlaylistsPayload)
-		return s.GetUserPlaylists(ctx, p)
+		p := req.(*GetAccountPlaylistCollectionPayload)
+		return s.GetAccountPlaylistCollection(ctx, p)
 	}
 }
 
-// NewCreateUserPlaylistEndpoint returns an endpoint function that calls the
-// method "createUserPlaylist" of service "account".
-func NewCreateUserPlaylistEndpoint(s Service) goa.Endpoint {
+// NewCreateAccountPlaylistEndpoint returns an endpoint function that calls the
+// method "createAccountPlaylist" of service "account".
+func NewCreateAccountPlaylistEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*CreateUserPlaylistPayload)
-		return s.CreateUserPlaylist(ctx, p)
+		p := req.(*CreateAccountPlaylistPayload)
+		return s.CreateAccountPlaylist(ctx, p)
 	}
 }
 
-// NewDeleteUserPlaylistEndpoint returns an endpoint function that calls the
-// method "deleteUserPlaylist" of service "account".
-func NewDeleteUserPlaylistEndpoint(s Service) goa.Endpoint {
+// NewDeleteAccountPlaylistEndpoint returns an endpoint function that calls the
+// method "deleteAccountPlaylist" of service "account".
+func NewDeleteAccountPlaylistEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*DeleteUserPlaylistPayload)
-		return s.DeleteUserPlaylist(ctx, p)
+		p := req.(*DeleteAccountPlaylistPayload)
+		return s.DeleteAccountPlaylist(ctx, p)
+	}
+}
+
+// NewGetAccountPlaylistEndpoint returns an endpoint function that calls the
+// method "getAccountPlaylist" of service "account".
+func NewGetAccountPlaylistEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*GetAccountPlaylistPayload)
+		return s.GetAccountPlaylist(ctx, p)
 	}
 }

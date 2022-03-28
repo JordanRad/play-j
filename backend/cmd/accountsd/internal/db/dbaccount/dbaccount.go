@@ -17,7 +17,7 @@ var _ account.AccountStore = (*Store)(nil)
 
 func (s *Store) CreateUser(ctx context.Context, user *account.User) (bool, error) {
 
-	result, err := s.DB.Exec("INSERT INTO accounts (email,username,password, firstName,lastName) VALUES ($1,$2,$3,$4,$5);", user.Email, "username1", user.Password, "JJ", "Test")
+	result, err := s.DB.Exec("INSERT INTO accounts (email,username,password, firstName,lastName) VALUES ($1,$2,$3,$4,$5);", user.Email, "username1", user.Password, user.FirstName, user.LastName)
 
 	if err != nil {
 		return false, fmt.Errorf("error creating a user: %w", err)
@@ -28,6 +28,7 @@ func (s *Store) CreateUser(ctx context.Context, user *account.User) (bool, error
 	if rowsAffected == 1 {
 		return true, nil
 	}
+
 	return false, fmt.Errorf("error inserting the user")
 }
 
@@ -43,16 +44,5 @@ func (s *Store) GetUserByEmail(ctx context.Context, email string) (*dbmodels.Acc
 		return nil, fmt.Errorf("invalid credentials: %w", err)
 	}
 
-	// id := strconv.Itoa(int(result.ID))
-	// user := &account.UserEntry{
-	// 	ID:        id,
-	// 	Email:     result.Email,
-	// 	Password:  result.Password,
-	// 	Username:  result.Username,
-	// 	FirstName: result.FirstName,
-	// 	LastName:  result.LastName,
-	// }
-
 	return &result, nil
-
 }

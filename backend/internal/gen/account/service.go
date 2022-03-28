@@ -18,12 +18,14 @@ type Service interface {
 	Register(context.Context, *RegisterPayload) (res *RegisterResponse, err error)
 	// Login implements login.
 	Login(context.Context, *LoginPayload) (res *LoginResponse, err error)
-	// GetUserPlaylists implements getUserPlaylists.
-	GetUserPlaylists(context.Context, *GetUserPlaylistsPayload) (res *UserPlaylistsResponse, err error)
-	// CreateUserPlaylist implements createUserPlaylist.
-	CreateUserPlaylist(context.Context, *CreateUserPlaylistPayload) (res *CreatePlaylistResponse, err error)
-	// DeleteUserPlaylist implements deleteUserPlaylist.
-	DeleteUserPlaylist(context.Context, *DeleteUserPlaylistPayload) (res *DeletePlaylistResponse, err error)
+	// GetAccountPlaylistCollection implements getAccountPlaylistCollection.
+	GetAccountPlaylistCollection(context.Context, *GetAccountPlaylistCollectionPayload) (res *AccountPlaylistCollectionResponse, err error)
+	// CreateAccountPlaylist implements createAccountPlaylist.
+	CreateAccountPlaylist(context.Context, *CreateAccountPlaylistPayload) (res *CreatePlaylistResponse, err error)
+	// DeleteAccountPlaylist implements deleteAccountPlaylist.
+	DeleteAccountPlaylist(context.Context, *DeleteAccountPlaylistPayload) (res *DeletePlaylistResponse, err error)
+	// GetAccountPlaylist implements getAccountPlaylist.
+	GetAccountPlaylist(context.Context, *GetAccountPlaylistPayload) (res *AccountPlaylistResponse, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -34,10 +36,14 @@ const ServiceName = "account"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [5]string{"register", "login", "getUserPlaylists", "createUserPlaylist", "deleteUserPlaylist"}
+var MethodNames = [6]string{"register", "login", "getAccountPlaylistCollection", "createAccountPlaylist", "deleteAccountPlaylist", "getAccountPlaylist"}
 
 // RegisterPayload is the payload type of the account service register method.
 type RegisterPayload struct {
+	// First name of the user
+	FirstName string
+	// Last name of the user
+	LastName string
 	// Email of the user
 	Email string
 	// Password of the user
@@ -74,25 +80,25 @@ type LoginResponse struct {
 	AccountID *string
 }
 
-// GetUserPlaylistsPayload is the payload type of the account service
-// getUserPlaylists method.
-type GetUserPlaylistsPayload struct {
+// GetAccountPlaylistCollectionPayload is the payload type of the account
+// service getAccountPlaylistCollection method.
+type GetAccountPlaylistCollectionPayload struct {
 	AccountID *uint
 	Auth      *string
 }
 
-// UserPlaylistsResponse is the result type of the account service
-// getUserPlaylists method.
-type UserPlaylistsResponse struct {
+// AccountPlaylistCollectionResponse is the result type of the account service
+// getAccountPlaylistCollection method.
+type AccountPlaylistCollectionResponse struct {
 	// Number of resources
 	Total int32
 	// Operation completion status
-	Resources []*UserSinglePlaylistResponse
+	Resources []*AccountPlaylistResponse
 }
 
-// CreateUserPlaylistPayload is the payload type of the account service
-// createUserPlaylist method.
-type CreateUserPlaylistPayload struct {
+// CreateAccountPlaylistPayload is the payload type of the account service
+// createAccountPlaylist method.
+type CreateAccountPlaylistPayload struct {
 	// Account ID
 	AccountID *uint
 	// Authorization Header
@@ -102,32 +108,45 @@ type CreateUserPlaylistPayload struct {
 }
 
 // CreatePlaylistResponse is the result type of the account service
-// createUserPlaylist method.
+// createAccountPlaylist method.
 type CreatePlaylistResponse struct {
 	// Operation completion status
 	Message string
 }
 
-// DeleteUserPlaylistPayload is the payload type of the account service
-// deleteUserPlaylist method.
-type DeleteUserPlaylistPayload struct {
+// DeleteAccountPlaylistPayload is the payload type of the account service
+// deleteAccountPlaylist method.
+type DeleteAccountPlaylistPayload struct {
 	AccountID  *uint
 	Auth       *string
 	PlaylistID *uint
 }
 
 // DeletePlaylistResponse is the result type of the account service
-// deleteUserPlaylist method.
+// deleteAccountPlaylist method.
 type DeletePlaylistResponse struct {
 	// Operation completion status
 	Message string
 }
 
-type UserSinglePlaylistResponse struct {
+// GetAccountPlaylistPayload is the payload type of the account service
+// getAccountPlaylist method.
+type GetAccountPlaylistPayload struct {
+	// Account ID
+	AccountID *uint
+	// Playlist ID
+	PlaylistID *uint
+	// Authorization Header
+	Auth *string
+}
+
+// AccountPlaylistResponse is the result type of the account service
+// getAccountPlaylist method.
+type AccountPlaylistResponse struct {
 	// Playlist id
 	ID int32
 	// Playlist name
 	Name string
-	// Operation completion status
-	Tracks []string
+	// Array of TrackIDs
+	TrackIDs []int32
 }

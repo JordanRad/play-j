@@ -161,25 +161,26 @@ func DecodeLoginResponse(decoder func(*http.Response) goahttp.Decoder, restoreBo
 	}
 }
 
-// BuildGetUserPlaylistsRequest instantiates a HTTP request object with method
-// and path set to call the "account" service "getUserPlaylists" endpoint
-func (c *Client) BuildGetUserPlaylistsRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+// BuildGetAccountPlaylistCollectionRequest instantiates a HTTP request object
+// with method and path set to call the "account" service
+// "getAccountPlaylistCollection" endpoint
+func (c *Client) BuildGetAccountPlaylistCollectionRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
 		accountID uint
 	)
 	{
-		p, ok := v.(*account.GetUserPlaylistsPayload)
+		p, ok := v.(*account.GetAccountPlaylistCollectionPayload)
 		if !ok {
-			return nil, goahttp.ErrInvalidType("account", "getUserPlaylists", "*account.GetUserPlaylistsPayload", v)
+			return nil, goahttp.ErrInvalidType("account", "getAccountPlaylistCollection", "*account.GetAccountPlaylistCollectionPayload", v)
 		}
 		if p.AccountID != nil {
 			accountID = *p.AccountID
 		}
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: GetUserPlaylistsAccountPath(accountID)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: GetAccountPlaylistCollectionAccountPath(accountID)}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
-		return nil, goahttp.ErrInvalidURL("account", "getUserPlaylists", u.String(), err)
+		return nil, goahttp.ErrInvalidURL("account", "getAccountPlaylistCollection", u.String(), err)
 	}
 	if ctx != nil {
 		req = req.WithContext(ctx)
@@ -188,13 +189,13 @@ func (c *Client) BuildGetUserPlaylistsRequest(ctx context.Context, v interface{}
 	return req, nil
 }
 
-// EncodeGetUserPlaylistsRequest returns an encoder for requests sent to the
-// account getUserPlaylists server.
-func EncodeGetUserPlaylistsRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+// EncodeGetAccountPlaylistCollectionRequest returns an encoder for requests
+// sent to the account getAccountPlaylistCollection server.
+func EncodeGetAccountPlaylistCollectionRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
 	return func(req *http.Request, v interface{}) error {
-		p, ok := v.(*account.GetUserPlaylistsPayload)
+		p, ok := v.(*account.GetAccountPlaylistCollectionPayload)
 		if !ok {
-			return goahttp.ErrInvalidType("account", "getUserPlaylists", "*account.GetUserPlaylistsPayload", v)
+			return goahttp.ErrInvalidType("account", "getAccountPlaylistCollection", "*account.GetAccountPlaylistCollectionPayload", v)
 		}
 		if p.Auth != nil {
 			head := *p.Auth
@@ -204,10 +205,10 @@ func EncodeGetUserPlaylistsRequest(encoder func(*http.Request) goahttp.Encoder) 
 	}
 }
 
-// DecodeGetUserPlaylistsResponse returns a decoder for responses returned by
-// the account getUserPlaylists endpoint. restoreBody controls whether the
-// response body should be restored after having been read.
-func DecodeGetUserPlaylistsResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+// DecodeGetAccountPlaylistCollectionResponse returns a decoder for responses
+// returned by the account getAccountPlaylistCollection endpoint. restoreBody
+// controls whether the response body should be restored after having been read.
+func DecodeGetAccountPlaylistCollectionResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
 		if restoreBody {
 			b, err := ioutil.ReadAll(resp.Body)
@@ -224,46 +225,46 @@ func DecodeGetUserPlaylistsResponse(decoder func(*http.Response) goahttp.Decoder
 		switch resp.StatusCode {
 		case http.StatusOK:
 			var (
-				body GetUserPlaylistsResponseBody
+				body GetAccountPlaylistCollectionResponseBody
 				err  error
 			)
 			err = decoder(resp).Decode(&body)
 			if err != nil {
-				return nil, goahttp.ErrDecodingError("account", "getUserPlaylists", err)
+				return nil, goahttp.ErrDecodingError("account", "getAccountPlaylistCollection", err)
 			}
-			err = ValidateGetUserPlaylistsResponseBody(&body)
+			err = ValidateGetAccountPlaylistCollectionResponseBody(&body)
 			if err != nil {
-				return nil, goahttp.ErrValidationError("account", "getUserPlaylists", err)
+				return nil, goahttp.ErrValidationError("account", "getAccountPlaylistCollection", err)
 			}
-			res := NewGetUserPlaylistsUserPlaylistsResponseOK(&body)
+			res := NewGetAccountPlaylistCollectionAccountPlaylistCollectionResponseOK(&body)
 			return res, nil
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
-			return nil, goahttp.ErrInvalidResponse("account", "getUserPlaylists", resp.StatusCode, string(body))
+			return nil, goahttp.ErrInvalidResponse("account", "getAccountPlaylistCollection", resp.StatusCode, string(body))
 		}
 	}
 }
 
-// BuildCreateUserPlaylistRequest instantiates a HTTP request object with
-// method and path set to call the "account" service "createUserPlaylist"
+// BuildCreateAccountPlaylistRequest instantiates a HTTP request object with
+// method and path set to call the "account" service "createAccountPlaylist"
 // endpoint
-func (c *Client) BuildCreateUserPlaylistRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+func (c *Client) BuildCreateAccountPlaylistRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
 		accountID uint
 	)
 	{
-		p, ok := v.(*account.CreateUserPlaylistPayload)
+		p, ok := v.(*account.CreateAccountPlaylistPayload)
 		if !ok {
-			return nil, goahttp.ErrInvalidType("account", "createUserPlaylist", "*account.CreateUserPlaylistPayload", v)
+			return nil, goahttp.ErrInvalidType("account", "createAccountPlaylist", "*account.CreateAccountPlaylistPayload", v)
 		}
 		if p.AccountID != nil {
 			accountID = *p.AccountID
 		}
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: CreateUserPlaylistAccountPath(accountID)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: CreateAccountPlaylistAccountPath(accountID)}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
-		return nil, goahttp.ErrInvalidURL("account", "createUserPlaylist", u.String(), err)
+		return nil, goahttp.ErrInvalidURL("account", "createAccountPlaylist", u.String(), err)
 	}
 	if ctx != nil {
 		req = req.WithContext(ctx)
@@ -272,30 +273,30 @@ func (c *Client) BuildCreateUserPlaylistRequest(ctx context.Context, v interface
 	return req, nil
 }
 
-// EncodeCreateUserPlaylistRequest returns an encoder for requests sent to the
-// account createUserPlaylist server.
-func EncodeCreateUserPlaylistRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+// EncodeCreateAccountPlaylistRequest returns an encoder for requests sent to
+// the account createAccountPlaylist server.
+func EncodeCreateAccountPlaylistRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
 	return func(req *http.Request, v interface{}) error {
-		p, ok := v.(*account.CreateUserPlaylistPayload)
+		p, ok := v.(*account.CreateAccountPlaylistPayload)
 		if !ok {
-			return goahttp.ErrInvalidType("account", "createUserPlaylist", "*account.CreateUserPlaylistPayload", v)
+			return goahttp.ErrInvalidType("account", "createAccountPlaylist", "*account.CreateAccountPlaylistPayload", v)
 		}
 		if p.Auth != nil {
 			head := *p.Auth
 			req.Header.Set("Authorization", head)
 		}
-		body := NewCreateUserPlaylistRequestBody(p)
+		body := NewCreateAccountPlaylistRequestBody(p)
 		if err := encoder(req).Encode(&body); err != nil {
-			return goahttp.ErrEncodingError("account", "createUserPlaylist", err)
+			return goahttp.ErrEncodingError("account", "createAccountPlaylist", err)
 		}
 		return nil
 	}
 }
 
-// DecodeCreateUserPlaylistResponse returns a decoder for responses returned by
-// the account createUserPlaylist endpoint. restoreBody controls whether the
-// response body should be restored after having been read.
-func DecodeCreateUserPlaylistResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+// DecodeCreateAccountPlaylistResponse returns a decoder for responses returned
+// by the account createAccountPlaylist endpoint. restoreBody controls whether
+// the response body should be restored after having been read.
+func DecodeCreateAccountPlaylistResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
 		if restoreBody {
 			b, err := ioutil.ReadAll(resp.Body)
@@ -312,38 +313,38 @@ func DecodeCreateUserPlaylistResponse(decoder func(*http.Response) goahttp.Decod
 		switch resp.StatusCode {
 		case http.StatusOK:
 			var (
-				body CreateUserPlaylistResponseBody
+				body CreateAccountPlaylistResponseBody
 				err  error
 			)
 			err = decoder(resp).Decode(&body)
 			if err != nil {
-				return nil, goahttp.ErrDecodingError("account", "createUserPlaylist", err)
+				return nil, goahttp.ErrDecodingError("account", "createAccountPlaylist", err)
 			}
-			err = ValidateCreateUserPlaylistResponseBody(&body)
+			err = ValidateCreateAccountPlaylistResponseBody(&body)
 			if err != nil {
-				return nil, goahttp.ErrValidationError("account", "createUserPlaylist", err)
+				return nil, goahttp.ErrValidationError("account", "createAccountPlaylist", err)
 			}
-			res := NewCreateUserPlaylistCreatePlaylistResponseOK(&body)
+			res := NewCreateAccountPlaylistCreatePlaylistResponseOK(&body)
 			return res, nil
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
-			return nil, goahttp.ErrInvalidResponse("account", "createUserPlaylist", resp.StatusCode, string(body))
+			return nil, goahttp.ErrInvalidResponse("account", "createAccountPlaylist", resp.StatusCode, string(body))
 		}
 	}
 }
 
-// BuildDeleteUserPlaylistRequest instantiates a HTTP request object with
-// method and path set to call the "account" service "deleteUserPlaylist"
+// BuildDeleteAccountPlaylistRequest instantiates a HTTP request object with
+// method and path set to call the "account" service "deleteAccountPlaylist"
 // endpoint
-func (c *Client) BuildDeleteUserPlaylistRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+func (c *Client) BuildDeleteAccountPlaylistRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
 		accountID  uint
 		playlistID uint
 	)
 	{
-		p, ok := v.(*account.DeleteUserPlaylistPayload)
+		p, ok := v.(*account.DeleteAccountPlaylistPayload)
 		if !ok {
-			return nil, goahttp.ErrInvalidType("account", "deleteUserPlaylist", "*account.DeleteUserPlaylistPayload", v)
+			return nil, goahttp.ErrInvalidType("account", "deleteAccountPlaylist", "*account.DeleteAccountPlaylistPayload", v)
 		}
 		if p.AccountID != nil {
 			accountID = *p.AccountID
@@ -352,10 +353,10 @@ func (c *Client) BuildDeleteUserPlaylistRequest(ctx context.Context, v interface
 			playlistID = *p.PlaylistID
 		}
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: DeleteUserPlaylistAccountPath(accountID, playlistID)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: DeleteAccountPlaylistAccountPath(accountID, playlistID)}
 	req, err := http.NewRequest("DELETE", u.String(), nil)
 	if err != nil {
-		return nil, goahttp.ErrInvalidURL("account", "deleteUserPlaylist", u.String(), err)
+		return nil, goahttp.ErrInvalidURL("account", "deleteAccountPlaylist", u.String(), err)
 	}
 	if ctx != nil {
 		req = req.WithContext(ctx)
@@ -364,13 +365,13 @@ func (c *Client) BuildDeleteUserPlaylistRequest(ctx context.Context, v interface
 	return req, nil
 }
 
-// EncodeDeleteUserPlaylistRequest returns an encoder for requests sent to the
-// account deleteUserPlaylist server.
-func EncodeDeleteUserPlaylistRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+// EncodeDeleteAccountPlaylistRequest returns an encoder for requests sent to
+// the account deleteAccountPlaylist server.
+func EncodeDeleteAccountPlaylistRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
 	return func(req *http.Request, v interface{}) error {
-		p, ok := v.(*account.DeleteUserPlaylistPayload)
+		p, ok := v.(*account.DeleteAccountPlaylistPayload)
 		if !ok {
-			return goahttp.ErrInvalidType("account", "deleteUserPlaylist", "*account.DeleteUserPlaylistPayload", v)
+			return goahttp.ErrInvalidType("account", "deleteAccountPlaylist", "*account.DeleteAccountPlaylistPayload", v)
 		}
 		if p.Auth != nil {
 			head := *p.Auth
@@ -380,10 +381,10 @@ func EncodeDeleteUserPlaylistRequest(encoder func(*http.Request) goahttp.Encoder
 	}
 }
 
-// DecodeDeleteUserPlaylistResponse returns a decoder for responses returned by
-// the account deleteUserPlaylist endpoint. restoreBody controls whether the
-// response body should be restored after having been read.
-func DecodeDeleteUserPlaylistResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+// DecodeDeleteAccountPlaylistResponse returns a decoder for responses returned
+// by the account deleteAccountPlaylist endpoint. restoreBody controls whether
+// the response body should be restored after having been read.
+func DecodeDeleteAccountPlaylistResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
 		if restoreBody {
 			b, err := ioutil.ReadAll(resp.Body)
@@ -400,37 +401,125 @@ func DecodeDeleteUserPlaylistResponse(decoder func(*http.Response) goahttp.Decod
 		switch resp.StatusCode {
 		case http.StatusOK:
 			var (
-				body DeleteUserPlaylistResponseBody
+				body DeleteAccountPlaylistResponseBody
 				err  error
 			)
 			err = decoder(resp).Decode(&body)
 			if err != nil {
-				return nil, goahttp.ErrDecodingError("account", "deleteUserPlaylist", err)
+				return nil, goahttp.ErrDecodingError("account", "deleteAccountPlaylist", err)
 			}
-			err = ValidateDeleteUserPlaylistResponseBody(&body)
+			err = ValidateDeleteAccountPlaylistResponseBody(&body)
 			if err != nil {
-				return nil, goahttp.ErrValidationError("account", "deleteUserPlaylist", err)
+				return nil, goahttp.ErrValidationError("account", "deleteAccountPlaylist", err)
 			}
-			res := NewDeleteUserPlaylistDeletePlaylistResponseOK(&body)
+			res := NewDeleteAccountPlaylistDeletePlaylistResponseOK(&body)
 			return res, nil
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
-			return nil, goahttp.ErrInvalidResponse("account", "deleteUserPlaylist", resp.StatusCode, string(body))
+			return nil, goahttp.ErrInvalidResponse("account", "deleteAccountPlaylist", resp.StatusCode, string(body))
 		}
 	}
 }
 
-// unmarshalUserSinglePlaylistResponseResponseBodyToAccountUserSinglePlaylistResponse
-// builds a value of type *account.UserSinglePlaylistResponse from a value of
-// type *UserSinglePlaylistResponseResponseBody.
-func unmarshalUserSinglePlaylistResponseResponseBodyToAccountUserSinglePlaylistResponse(v *UserSinglePlaylistResponseResponseBody) *account.UserSinglePlaylistResponse {
-	res := &account.UserSinglePlaylistResponse{
+// BuildGetAccountPlaylistRequest instantiates a HTTP request object with
+// method and path set to call the "account" service "getAccountPlaylist"
+// endpoint
+func (c *Client) BuildGetAccountPlaylistRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	var (
+		accountID  uint
+		playlistID uint
+	)
+	{
+		p, ok := v.(*account.GetAccountPlaylistPayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("account", "getAccountPlaylist", "*account.GetAccountPlaylistPayload", v)
+		}
+		if p.AccountID != nil {
+			accountID = *p.AccountID
+		}
+		if p.PlaylistID != nil {
+			playlistID = *p.PlaylistID
+		}
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: GetAccountPlaylistAccountPath(accountID, playlistID)}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("account", "getAccountPlaylist", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeGetAccountPlaylistRequest returns an encoder for requests sent to the
+// account getAccountPlaylist server.
+func EncodeGetAccountPlaylistRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*account.GetAccountPlaylistPayload)
+		if !ok {
+			return goahttp.ErrInvalidType("account", "getAccountPlaylist", "*account.GetAccountPlaylistPayload", v)
+		}
+		if p.Auth != nil {
+			head := *p.Auth
+			req.Header.Set("Authorization", head)
+		}
+		return nil
+	}
+}
+
+// DecodeGetAccountPlaylistResponse returns a decoder for responses returned by
+// the account getAccountPlaylist endpoint. restoreBody controls whether the
+// response body should be restored after having been read.
+func DecodeGetAccountPlaylistResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body GetAccountPlaylistResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("account", "getAccountPlaylist", err)
+			}
+			err = ValidateGetAccountPlaylistResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("account", "getAccountPlaylist", err)
+			}
+			res := NewGetAccountPlaylistAccountPlaylistResponseOK(&body)
+			return res, nil
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("account", "getAccountPlaylist", resp.StatusCode, string(body))
+		}
+	}
+}
+
+// unmarshalAccountPlaylistResponseResponseBodyToAccountAccountPlaylistResponse
+// builds a value of type *account.AccountPlaylistResponse from a value of type
+// *AccountPlaylistResponseResponseBody.
+func unmarshalAccountPlaylistResponseResponseBodyToAccountAccountPlaylistResponse(v *AccountPlaylistResponseResponseBody) *account.AccountPlaylistResponse {
+	res := &account.AccountPlaylistResponse{
 		ID:   *v.ID,
 		Name: *v.Name,
 	}
-	res.Tracks = make([]string, len(v.Tracks))
-	for i, val := range v.Tracks {
-		res.Tracks[i] = val
+	res.TrackIDs = make([]int32, len(v.TrackIDs))
+	for i, val := range v.TrackIDs {
+		res.TrackIDs[i] = val
 	}
 
 	return res

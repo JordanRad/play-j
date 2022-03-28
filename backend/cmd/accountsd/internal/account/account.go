@@ -30,22 +30,10 @@ type Service struct {
 type User struct {
 	ID              string
 	Email           string
+	FirstName       string
+	LastName        string
 	Password        string
 	ConfirmPassword string
-}
-
-type UserEntry struct {
-	ID        string
-	Email     string
-	Password  string
-	Username  string
-	FirstName string
-	LastName  string
-}
-
-type LoginCredentials struct {
-	Email    string
-	Password string
 }
 
 func NewService(accountStore AccountStore, playlistStore PlaylistStore) *Service {
@@ -71,8 +59,10 @@ func (s *Service) Register(ctx context.Context, p *account.RegisterPayload) (*ac
 	}
 
 	newUser := &User{
-		Email:    p.Email,
-		Password: encryptedPassword,
+		Email:     p.Email,
+		FirstName: p.FirstName,
+		LastName:  p.LastName,
+		Password:  encryptedPassword,
 	}
 
 	// Save in the database
@@ -119,27 +109,29 @@ func (s *Service) Login(ctx context.Context, p *account.LoginPayload) (*account.
 	return response, nil
 }
 
-func (s *Service) GetUserPlaylists(ctx context.Context, p *account.GetUserPlaylistsPayload) (*account.UserPlaylistsResponse, error) {
+func (s *Service) GetAccountPlaylistCollection(ctx context.Context, p *account.GetAccountPlaylistCollectionPayload) (*account.AccountPlaylistCollectionResponse, error) {
 
 	// Get playlists by user
 	playlists, err := s.playlistStore.GetAllUserPlaylists(ctx, *p.AccountID)
 
 	if err != nil {
-		return &account.UserPlaylistsResponse{}, fmt.Errorf("error displaying user's playlists: %w", err)
+		return &account.AccountPlaylistCollectionResponse{}, fmt.Errorf("error displaying user's playlists: %w", err)
 	}
 
-	resources := make([]*account.UserSinglePlaylistResponse, 0, len(playlists))
+	resources := make([]*account.AccountPlaylistResponse, 0, len(playlists))
 
 	for _, playlist := range playlists {
-		resource := &account.UserSinglePlaylistResponse{
-			ID:     int32(playlist.ID),
-			Name:   playlist.Name,
-			Tracks: playlist.Tracks,
+
+		resource := &account.AccountPlaylistResponse{
+			ID:       int32(playlist.ID),
+			Name:     playlist.Name,
+			TrackIDs: playlist.TrackIDs,
 		}
+
 		resources = append(resources, resource)
 	}
 
-	response := &account.UserPlaylistsResponse{
+	response := &account.AccountPlaylistCollectionResponse{
 		Total:     int32(len(playlists)),
 		Resources: resources,
 	}
@@ -147,7 +139,7 @@ func (s *Service) GetUserPlaylists(ctx context.Context, p *account.GetUserPlayli
 	return response, nil
 }
 
-func (s *Service) CreateUserPlaylist(ctx context.Context, p *account.CreateUserPlaylistPayload) (*account.CreatePlaylistResponse, error) {
+func (s *Service) CreateAccountPlaylist(ctx context.Context, p *account.CreateAccountPlaylistPayload) (*account.CreatePlaylistResponse, error) {
 
 	_, err := s.playlistStore.CreateAccountPlaylist(ctx, *p.AccountID, *p.Name)
 	if err != nil {
@@ -161,7 +153,7 @@ func (s *Service) CreateUserPlaylist(ctx context.Context, p *account.CreateUserP
 	return response, nil
 }
 
-func (s *Service) DeleteUserPlaylist(ctx context.Context, p *account.DeleteUserPlaylistPayload) (*account.DeletePlaylistResponse, error) {
+func (s *Service) DeleteAccountPlaylist(ctx context.Context, p *account.DeleteAccountPlaylistPayload) (*account.DeletePlaylistResponse, error) {
 
 	_, err := s.playlistStore.DeleteAccountPlaylist(ctx, *p.AccountID, *p.PlaylistID)
 	if err != nil {
@@ -173,4 +165,8 @@ func (s *Service) DeleteUserPlaylist(ctx context.Context, p *account.DeleteUserP
 	}
 
 	return response, nil
+}
+
+func (s *Service) GetAccountPlaylist(ctx context.Context, p *account.GetAccountPlaylistPayload) (*account.AccountPlaylistResponse, error) {
+	return nil, nil
 }

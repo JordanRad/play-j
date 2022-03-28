@@ -16,6 +16,10 @@ import (
 // RegisterRequestBody is the type of the "account" service "register" endpoint
 // HTTP request body.
 type RegisterRequestBody struct {
+	// First name of the user
+	FirstName *string `form:"firstName,omitempty" json:"firstName,omitempty" xml:"firstName,omitempty"`
+	// Last name of the user
+	LastName *string `form:"lastName,omitempty" json:"lastName,omitempty" xml:"lastName,omitempty"`
 	// Email of the user
 	Email *string `form:"email,omitempty" json:"email,omitempty" xml:"email,omitempty"`
 	// Password of the user
@@ -33,9 +37,9 @@ type LoginRequestBody struct {
 	Password *string `form:"password,omitempty" json:"password,omitempty" xml:"password,omitempty"`
 }
 
-// CreateUserPlaylistRequestBody is the type of the "account" service
-// "createUserPlaylist" endpoint HTTP request body.
-type CreateUserPlaylistRequestBody struct {
+// CreateAccountPlaylistRequestBody is the type of the "account" service
+// "createAccountPlaylist" endpoint HTTP request body.
+type CreateAccountPlaylistRequestBody struct {
 	// Playlist name
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 }
@@ -62,38 +66,49 @@ type LoginResponseBody struct {
 	AccountID *string `form:"accountID,omitempty" json:"accountID,omitempty" xml:"accountID,omitempty"`
 }
 
-// GetUserPlaylistsResponseBody is the type of the "account" service
-// "getUserPlaylists" endpoint HTTP response body.
-type GetUserPlaylistsResponseBody struct {
+// GetAccountPlaylistCollectionResponseBody is the type of the "account"
+// service "getAccountPlaylistCollection" endpoint HTTP response body.
+type GetAccountPlaylistCollectionResponseBody struct {
 	// Number of resources
 	Total int32 `form:"total" json:"total" xml:"total"`
 	// Operation completion status
-	Resources []*UserSinglePlaylistResponseResponseBody `form:"resources" json:"resources" xml:"resources"`
+	Resources []*AccountPlaylistResponseResponseBody `form:"resources" json:"resources" xml:"resources"`
 }
 
-// CreateUserPlaylistResponseBody is the type of the "account" service
-// "createUserPlaylist" endpoint HTTP response body.
-type CreateUserPlaylistResponseBody struct {
+// CreateAccountPlaylistResponseBody is the type of the "account" service
+// "createAccountPlaylist" endpoint HTTP response body.
+type CreateAccountPlaylistResponseBody struct {
 	// Operation completion status
 	Message string `form:"message" json:"message" xml:"message"`
 }
 
-// DeleteUserPlaylistResponseBody is the type of the "account" service
-// "deleteUserPlaylist" endpoint HTTP response body.
-type DeleteUserPlaylistResponseBody struct {
+// DeleteAccountPlaylistResponseBody is the type of the "account" service
+// "deleteAccountPlaylist" endpoint HTTP response body.
+type DeleteAccountPlaylistResponseBody struct {
 	// Operation completion status
 	Message string `form:"message" json:"message" xml:"message"`
 }
 
-// UserSinglePlaylistResponseResponseBody is used to define fields on response
-// body types.
-type UserSinglePlaylistResponseResponseBody struct {
+// GetAccountPlaylistResponseBody is the type of the "account" service
+// "getAccountPlaylist" endpoint HTTP response body.
+type GetAccountPlaylistResponseBody struct {
 	// Playlist id
 	ID int32 `form:"id" json:"id" xml:"id"`
 	// Playlist name
 	Name string `form:"name" json:"name" xml:"name"`
-	// Operation completion status
-	Tracks []string `form:"tracks" json:"tracks" xml:"tracks"`
+	// Array of TrackIDs
+	TrackIDs []int32 `form:"trackIDs" json:"trackIDs" xml:"trackIDs"`
+}
+
+// AccountPlaylistResponseResponseBody is used to define fields on response
+// body types.
+type AccountPlaylistResponseResponseBody struct {
+	// Playlist id
+	ID int32 `form:"id" json:"id" xml:"id"`
+	// Playlist name
+	Name string `form:"name" json:"name" xml:"name"`
+	// Array of TrackIDs
+	TrackIDs []int32 `form:"trackIDs" json:"trackIDs" xml:"trackIDs"`
 }
 
 // NewRegisterResponseBody builds the HTTP response body from the result of the
@@ -118,35 +133,52 @@ func NewLoginResponseBody(res *account.LoginResponse) *LoginResponseBody {
 	return body
 }
 
-// NewGetUserPlaylistsResponseBody builds the HTTP response body from the
-// result of the "getUserPlaylists" endpoint of the "account" service.
-func NewGetUserPlaylistsResponseBody(res *account.UserPlaylistsResponse) *GetUserPlaylistsResponseBody {
-	body := &GetUserPlaylistsResponseBody{
+// NewGetAccountPlaylistCollectionResponseBody builds the HTTP response body
+// from the result of the "getAccountPlaylistCollection" endpoint of the
+// "account" service.
+func NewGetAccountPlaylistCollectionResponseBody(res *account.AccountPlaylistCollectionResponse) *GetAccountPlaylistCollectionResponseBody {
+	body := &GetAccountPlaylistCollectionResponseBody{
 		Total: res.Total,
 	}
 	if res.Resources != nil {
-		body.Resources = make([]*UserSinglePlaylistResponseResponseBody, len(res.Resources))
+		body.Resources = make([]*AccountPlaylistResponseResponseBody, len(res.Resources))
 		for i, val := range res.Resources {
-			body.Resources[i] = marshalAccountUserSinglePlaylistResponseToUserSinglePlaylistResponseResponseBody(val)
+			body.Resources[i] = marshalAccountAccountPlaylistResponseToAccountPlaylistResponseResponseBody(val)
 		}
 	}
 	return body
 }
 
-// NewCreateUserPlaylistResponseBody builds the HTTP response body from the
-// result of the "createUserPlaylist" endpoint of the "account" service.
-func NewCreateUserPlaylistResponseBody(res *account.CreatePlaylistResponse) *CreateUserPlaylistResponseBody {
-	body := &CreateUserPlaylistResponseBody{
+// NewCreateAccountPlaylistResponseBody builds the HTTP response body from the
+// result of the "createAccountPlaylist" endpoint of the "account" service.
+func NewCreateAccountPlaylistResponseBody(res *account.CreatePlaylistResponse) *CreateAccountPlaylistResponseBody {
+	body := &CreateAccountPlaylistResponseBody{
 		Message: res.Message,
 	}
 	return body
 }
 
-// NewDeleteUserPlaylistResponseBody builds the HTTP response body from the
-// result of the "deleteUserPlaylist" endpoint of the "account" service.
-func NewDeleteUserPlaylistResponseBody(res *account.DeletePlaylistResponse) *DeleteUserPlaylistResponseBody {
-	body := &DeleteUserPlaylistResponseBody{
+// NewDeleteAccountPlaylistResponseBody builds the HTTP response body from the
+// result of the "deleteAccountPlaylist" endpoint of the "account" service.
+func NewDeleteAccountPlaylistResponseBody(res *account.DeletePlaylistResponse) *DeleteAccountPlaylistResponseBody {
+	body := &DeleteAccountPlaylistResponseBody{
 		Message: res.Message,
+	}
+	return body
+}
+
+// NewGetAccountPlaylistResponseBody builds the HTTP response body from the
+// result of the "getAccountPlaylist" endpoint of the "account" service.
+func NewGetAccountPlaylistResponseBody(res *account.AccountPlaylistResponse) *GetAccountPlaylistResponseBody {
+	body := &GetAccountPlaylistResponseBody{
+		ID:   res.ID,
+		Name: res.Name,
+	}
+	if res.TrackIDs != nil {
+		body.TrackIDs = make([]int32, len(res.TrackIDs))
+		for i, val := range res.TrackIDs {
+			body.TrackIDs[i] = val
+		}
 	}
 	return body
 }
@@ -154,6 +186,8 @@ func NewDeleteUserPlaylistResponseBody(res *account.DeletePlaylistResponse) *Del
 // NewRegisterPayload builds a account service register endpoint payload.
 func NewRegisterPayload(body *RegisterRequestBody) *account.RegisterPayload {
 	v := &account.RegisterPayload{
+		FirstName:         *body.FirstName,
+		LastName:          *body.LastName,
 		Email:             *body.Email,
 		Password:          *body.Password,
 		ConfirmedPassword: *body.ConfirmedPassword,
@@ -172,20 +206,20 @@ func NewLoginPayload(body *LoginRequestBody) *account.LoginPayload {
 	return v
 }
 
-// NewGetUserPlaylistsPayload builds a account service getUserPlaylists
-// endpoint payload.
-func NewGetUserPlaylistsPayload(accountID uint, auth *string) *account.GetUserPlaylistsPayload {
-	v := &account.GetUserPlaylistsPayload{}
+// NewGetAccountPlaylistCollectionPayload builds a account service
+// getAccountPlaylistCollection endpoint payload.
+func NewGetAccountPlaylistCollectionPayload(accountID uint, auth *string) *account.GetAccountPlaylistCollectionPayload {
+	v := &account.GetAccountPlaylistCollectionPayload{}
 	v.AccountID = &accountID
 	v.Auth = auth
 
 	return v
 }
 
-// NewCreateUserPlaylistPayload builds a account service createUserPlaylist
-// endpoint payload.
-func NewCreateUserPlaylistPayload(body *CreateUserPlaylistRequestBody, accountID uint, auth *string) *account.CreateUserPlaylistPayload {
-	v := &account.CreateUserPlaylistPayload{
+// NewCreateAccountPlaylistPayload builds a account service
+// createAccountPlaylist endpoint payload.
+func NewCreateAccountPlaylistPayload(body *CreateAccountPlaylistRequestBody, accountID uint, auth *string) *account.CreateAccountPlaylistPayload {
+	v := &account.CreateAccountPlaylistPayload{
 		Name: body.Name,
 	}
 	v.AccountID = &accountID
@@ -194,10 +228,21 @@ func NewCreateUserPlaylistPayload(body *CreateUserPlaylistRequestBody, accountID
 	return v
 }
 
-// NewDeleteUserPlaylistPayload builds a account service deleteUserPlaylist
+// NewDeleteAccountPlaylistPayload builds a account service
+// deleteAccountPlaylist endpoint payload.
+func NewDeleteAccountPlaylistPayload(accountID uint, playlistID uint, auth *string) *account.DeleteAccountPlaylistPayload {
+	v := &account.DeleteAccountPlaylistPayload{}
+	v.AccountID = &accountID
+	v.PlaylistID = &playlistID
+	v.Auth = auth
+
+	return v
+}
+
+// NewGetAccountPlaylistPayload builds a account service getAccountPlaylist
 // endpoint payload.
-func NewDeleteUserPlaylistPayload(accountID uint, playlistID uint, auth *string) *account.DeleteUserPlaylistPayload {
-	v := &account.DeleteUserPlaylistPayload{}
+func NewGetAccountPlaylistPayload(accountID uint, playlistID uint, auth *string) *account.GetAccountPlaylistPayload {
+	v := &account.GetAccountPlaylistPayload{}
 	v.AccountID = &accountID
 	v.PlaylistID = &playlistID
 	v.Auth = auth
@@ -216,6 +261,12 @@ func ValidateRegisterRequestBody(body *RegisterRequestBody) (err error) {
 	}
 	if body.ConfirmedPassword == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("confirmedPassword", "body"))
+	}
+	if body.FirstName == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("firstName", "body"))
+	}
+	if body.LastName == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("lastName", "body"))
 	}
 	return
 }

@@ -16,21 +16,23 @@ import (
 
 // Client is the "account" service client.
 type Client struct {
-	RegisterEndpoint           goa.Endpoint
-	LoginEndpoint              goa.Endpoint
-	GetUserPlaylistsEndpoint   goa.Endpoint
-	CreateUserPlaylistEndpoint goa.Endpoint
-	DeleteUserPlaylistEndpoint goa.Endpoint
+	RegisterEndpoint                     goa.Endpoint
+	LoginEndpoint                        goa.Endpoint
+	GetAccountPlaylistCollectionEndpoint goa.Endpoint
+	CreateAccountPlaylistEndpoint        goa.Endpoint
+	DeleteAccountPlaylistEndpoint        goa.Endpoint
+	GetAccountPlaylistEndpoint           goa.Endpoint
 }
 
 // NewClient initializes a "account" service client given the endpoints.
-func NewClient(register, login, getUserPlaylists, createUserPlaylist, deleteUserPlaylist goa.Endpoint) *Client {
+func NewClient(register, login, getAccountPlaylistCollection, createAccountPlaylist, deleteAccountPlaylist, getAccountPlaylist goa.Endpoint) *Client {
 	return &Client{
-		RegisterEndpoint:           register,
-		LoginEndpoint:              login,
-		GetUserPlaylistsEndpoint:   getUserPlaylists,
-		CreateUserPlaylistEndpoint: createUserPlaylist,
-		DeleteUserPlaylistEndpoint: deleteUserPlaylist,
+		RegisterEndpoint:                     register,
+		LoginEndpoint:                        login,
+		GetAccountPlaylistCollectionEndpoint: getAccountPlaylistCollection,
+		CreateAccountPlaylistEndpoint:        createAccountPlaylist,
+		DeleteAccountPlaylistEndpoint:        deleteAccountPlaylist,
+		GetAccountPlaylistEndpoint:           getAccountPlaylist,
 	}
 }
 
@@ -54,35 +56,46 @@ func (c *Client) Login(ctx context.Context, p *LoginPayload) (res *LoginResponse
 	return ires.(*LoginResponse), nil
 }
 
-// GetUserPlaylists calls the "getUserPlaylists" endpoint of the "account"
-// service.
-func (c *Client) GetUserPlaylists(ctx context.Context, p *GetUserPlaylistsPayload) (res *UserPlaylistsResponse, err error) {
+// GetAccountPlaylistCollection calls the "getAccountPlaylistCollection"
+// endpoint of the "account" service.
+func (c *Client) GetAccountPlaylistCollection(ctx context.Context, p *GetAccountPlaylistCollectionPayload) (res *AccountPlaylistCollectionResponse, err error) {
 	var ires interface{}
-	ires, err = c.GetUserPlaylistsEndpoint(ctx, p)
+	ires, err = c.GetAccountPlaylistCollectionEndpoint(ctx, p)
 	if err != nil {
 		return
 	}
-	return ires.(*UserPlaylistsResponse), nil
+	return ires.(*AccountPlaylistCollectionResponse), nil
 }
 
-// CreateUserPlaylist calls the "createUserPlaylist" endpoint of the "account"
-// service.
-func (c *Client) CreateUserPlaylist(ctx context.Context, p *CreateUserPlaylistPayload) (res *CreatePlaylistResponse, err error) {
+// CreateAccountPlaylist calls the "createAccountPlaylist" endpoint of the
+// "account" service.
+func (c *Client) CreateAccountPlaylist(ctx context.Context, p *CreateAccountPlaylistPayload) (res *CreatePlaylistResponse, err error) {
 	var ires interface{}
-	ires, err = c.CreateUserPlaylistEndpoint(ctx, p)
+	ires, err = c.CreateAccountPlaylistEndpoint(ctx, p)
 	if err != nil {
 		return
 	}
 	return ires.(*CreatePlaylistResponse), nil
 }
 
-// DeleteUserPlaylist calls the "deleteUserPlaylist" endpoint of the "account"
-// service.
-func (c *Client) DeleteUserPlaylist(ctx context.Context, p *DeleteUserPlaylistPayload) (res *DeletePlaylistResponse, err error) {
+// DeleteAccountPlaylist calls the "deleteAccountPlaylist" endpoint of the
+// "account" service.
+func (c *Client) DeleteAccountPlaylist(ctx context.Context, p *DeleteAccountPlaylistPayload) (res *DeletePlaylistResponse, err error) {
 	var ires interface{}
-	ires, err = c.DeleteUserPlaylistEndpoint(ctx, p)
+	ires, err = c.DeleteAccountPlaylistEndpoint(ctx, p)
 	if err != nil {
 		return
 	}
 	return ires.(*DeletePlaylistResponse), nil
+}
+
+// GetAccountPlaylist calls the "getAccountPlaylist" endpoint of the "account"
+// service.
+func (c *Client) GetAccountPlaylist(ctx context.Context, p *GetAccountPlaylistPayload) (res *AccountPlaylistResponse, err error) {
+	var ires interface{}
+	ires, err = c.GetAccountPlaylistEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*AccountPlaylistResponse), nil
 }

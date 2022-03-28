@@ -89,21 +89,21 @@ func DecodeLoginRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.D
 	}
 }
 
-// EncodeGetUserPlaylistsResponse returns an encoder for responses returned by
-// the account getUserPlaylists endpoint.
-func EncodeGetUserPlaylistsResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+// EncodeGetAccountPlaylistCollectionResponse returns an encoder for responses
+// returned by the account getAccountPlaylistCollection endpoint.
+func EncodeGetAccountPlaylistCollectionResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
-		res, _ := v.(*account.UserPlaylistsResponse)
+		res, _ := v.(*account.AccountPlaylistCollectionResponse)
 		enc := encoder(ctx, w)
-		body := NewGetUserPlaylistsResponseBody(res)
+		body := NewGetAccountPlaylistCollectionResponseBody(res)
 		w.WriteHeader(http.StatusOK)
 		return enc.Encode(body)
 	}
 }
 
-// DecodeGetUserPlaylistsRequest returns a decoder for requests sent to the
-// account getUserPlaylists endpoint.
-func DecodeGetUserPlaylistsRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+// DecodeGetAccountPlaylistCollectionRequest returns a decoder for requests
+// sent to the account getAccountPlaylistCollection endpoint.
+func DecodeGetAccountPlaylistCollectionRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
 			accountID uint
@@ -127,30 +127,30 @@ func DecodeGetUserPlaylistsRequest(mux goahttp.Muxer, decoder func(*http.Request
 		if err != nil {
 			return nil, err
 		}
-		payload := NewGetUserPlaylistsPayload(accountID, auth)
+		payload := NewGetAccountPlaylistCollectionPayload(accountID, auth)
 
 		return payload, nil
 	}
 }
 
-// EncodeCreateUserPlaylistResponse returns an encoder for responses returned
-// by the account createUserPlaylist endpoint.
-func EncodeCreateUserPlaylistResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+// EncodeCreateAccountPlaylistResponse returns an encoder for responses
+// returned by the account createAccountPlaylist endpoint.
+func EncodeCreateAccountPlaylistResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		res, _ := v.(*account.CreatePlaylistResponse)
 		enc := encoder(ctx, w)
-		body := NewCreateUserPlaylistResponseBody(res)
+		body := NewCreateAccountPlaylistResponseBody(res)
 		w.WriteHeader(http.StatusOK)
 		return enc.Encode(body)
 	}
 }
 
-// DecodeCreateUserPlaylistRequest returns a decoder for requests sent to the
-// account createUserPlaylist endpoint.
-func DecodeCreateUserPlaylistRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+// DecodeCreateAccountPlaylistRequest returns a decoder for requests sent to
+// the account createAccountPlaylist endpoint.
+func DecodeCreateAccountPlaylistRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			body CreateUserPlaylistRequestBody
+			body CreateAccountPlaylistRequestBody
 			err  error
 		)
 		err = decoder(r).Decode(&body)
@@ -182,27 +182,27 @@ func DecodeCreateUserPlaylistRequest(mux goahttp.Muxer, decoder func(*http.Reque
 		if err != nil {
 			return nil, err
 		}
-		payload := NewCreateUserPlaylistPayload(&body, accountID, auth)
+		payload := NewCreateAccountPlaylistPayload(&body, accountID, auth)
 
 		return payload, nil
 	}
 }
 
-// EncodeDeleteUserPlaylistResponse returns an encoder for responses returned
-// by the account deleteUserPlaylist endpoint.
-func EncodeDeleteUserPlaylistResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+// EncodeDeleteAccountPlaylistResponse returns an encoder for responses
+// returned by the account deleteAccountPlaylist endpoint.
+func EncodeDeleteAccountPlaylistResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		res, _ := v.(*account.DeletePlaylistResponse)
 		enc := encoder(ctx, w)
-		body := NewDeleteUserPlaylistResponseBody(res)
+		body := NewDeleteAccountPlaylistResponseBody(res)
 		w.WriteHeader(http.StatusOK)
 		return enc.Encode(body)
 	}
 }
 
-// DecodeDeleteUserPlaylistRequest returns a decoder for requests sent to the
-// account deleteUserPlaylist endpoint.
-func DecodeDeleteUserPlaylistRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+// DecodeDeleteAccountPlaylistRequest returns a decoder for requests sent to
+// the account deleteAccountPlaylist endpoint.
+func DecodeDeleteAccountPlaylistRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
 			accountID  uint
@@ -235,24 +235,77 @@ func DecodeDeleteUserPlaylistRequest(mux goahttp.Muxer, decoder func(*http.Reque
 		if err != nil {
 			return nil, err
 		}
-		payload := NewDeleteUserPlaylistPayload(accountID, playlistID, auth)
+		payload := NewDeleteAccountPlaylistPayload(accountID, playlistID, auth)
 
 		return payload, nil
 	}
 }
 
-// marshalAccountUserSinglePlaylistResponseToUserSinglePlaylistResponseResponseBody
-// builds a value of type *UserSinglePlaylistResponseResponseBody from a value
-// of type *account.UserSinglePlaylistResponse.
-func marshalAccountUserSinglePlaylistResponseToUserSinglePlaylistResponseResponseBody(v *account.UserSinglePlaylistResponse) *UserSinglePlaylistResponseResponseBody {
-	res := &UserSinglePlaylistResponseResponseBody{
+// EncodeGetAccountPlaylistResponse returns an encoder for responses returned
+// by the account getAccountPlaylist endpoint.
+func EncodeGetAccountPlaylistResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res, _ := v.(*account.AccountPlaylistResponse)
+		enc := encoder(ctx, w)
+		body := NewGetAccountPlaylistResponseBody(res)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeGetAccountPlaylistRequest returns a decoder for requests sent to the
+// account getAccountPlaylist endpoint.
+func DecodeGetAccountPlaylistRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			accountID  uint
+			playlistID uint
+			auth       *string
+			err        error
+
+			params = mux.Vars(r)
+		)
+		{
+			accountIDRaw := params["accountID"]
+			v, err2 := strconv.ParseUint(accountIDRaw, 10, strconv.IntSize)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("accountID", accountIDRaw, "unsigned integer"))
+			}
+			accountID = uint(v)
+		}
+		{
+			playlistIDRaw := params["playlistID"]
+			v, err2 := strconv.ParseUint(playlistIDRaw, 10, strconv.IntSize)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("playlistID", playlistIDRaw, "unsigned integer"))
+			}
+			playlistID = uint(v)
+		}
+		authRaw := r.Header.Get("Authorization")
+		if authRaw != "" {
+			auth = &authRaw
+		}
+		if err != nil {
+			return nil, err
+		}
+		payload := NewGetAccountPlaylistPayload(accountID, playlistID, auth)
+
+		return payload, nil
+	}
+}
+
+// marshalAccountAccountPlaylistResponseToAccountPlaylistResponseResponseBody
+// builds a value of type *AccountPlaylistResponseResponseBody from a value of
+// type *account.AccountPlaylistResponse.
+func marshalAccountAccountPlaylistResponseToAccountPlaylistResponseResponseBody(v *account.AccountPlaylistResponse) *AccountPlaylistResponseResponseBody {
+	res := &AccountPlaylistResponseResponseBody{
 		ID:   v.ID,
 		Name: v.Name,
 	}
-	if v.Tracks != nil {
-		res.Tracks = make([]string, len(v.Tracks))
-		for i, val := range v.Tracks {
-			res.Tracks[i] = val
+	if v.TrackIDs != nil {
+		res.TrackIDs = make([]int32, len(v.TrackIDs))
+		for i, val := range v.TrackIDs {
+			res.TrackIDs[i] = val
 		}
 	}
 

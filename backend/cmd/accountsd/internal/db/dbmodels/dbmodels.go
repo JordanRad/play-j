@@ -1,5 +1,7 @@
 package dbmodels
 
+import "time"
+
 type Account struct {
 	ID        uint
 	FirstName string
@@ -14,5 +16,6 @@ type Playlist struct {
 	ID        uint
 	Name      string
 	AccountID uint
-	Tracks    []string
+	CreatedAt time.Time
+	TrackIDs  []int32
 }

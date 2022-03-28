@@ -18,10 +18,12 @@ var _ = Service("account", func() {
 
 	Method("register", func() {
 		Payload(func() {
+			Attribute("firstName", String, "First name of the user")
+			Attribute("lastName", String, "Last name of the user")
 			Attribute("email", String, "Email of the user")
 			Attribute("password", String, "Password of the user")
 			Attribute("confirmedPassword", String, "Confirmed password of the user")
-			Required("email", "password", "confirmedPassword")
+			Required("email", "password", "confirmedPassword", "firstName", "lastName")
 		})
 		Result(RegisterResponse)
 		HTTP(func() {
@@ -40,8 +42,8 @@ var _ = Service("account", func() {
 		})
 	})
 
-	Method("getUserPlaylists", func() {
-		Result(UserPlaylistsResponse)
+	Method("getAccountPlaylistCollection", func() {
+		Result(AccountPlaylistCollectionResponse)
 		Payload(func() {
 			Attribute("accountID", UInt)
 			Attribute("auth", String)
@@ -54,7 +56,7 @@ var _ = Service("account", func() {
 		})
 	})
 
-	Method("createUserPlaylist", func() {
+	Method("createAccountPlaylist", func() {
 		Result(CreatePlaylistResponse)
 		Payload(func() {
 			Attribute("accountID", UInt, "Account ID")
@@ -69,7 +71,7 @@ var _ = Service("account", func() {
 		})
 	})
 
-	Method("deleteUserPlaylist", func() {
+	Method("deleteAccountPlaylist", func() {
 		Result(DeletePlaylistResponse)
 		Payload(func() {
 			Attribute("accountID", UInt)
@@ -81,6 +83,21 @@ var _ = Service("account", func() {
 				Pattern("^Bearer [^ ]+$")
 			})
 			DELETE("/{accountID}/playlists/{playlistID}")
+		})
+	})
+
+	Method("getAccountPlaylist", func() {
+		Result(AccountPlaylistResponse)
+		Payload(func() {
+			Attribute("accountID", UInt, "Account ID")
+			Attribute("playlistID", UInt, "Playlist ID")
+			Attribute("auth", String, "Authorization Header")
+		})
+		HTTP(func() {
+			Header("auth:Authorization", String, "JSON Web Token", func() {
+				Pattern("^Bearer [^ ]+$")
+			})
+			GET("/{accountID}/playlists/{playlistID}")
 		})
 	})
 })
@@ -99,27 +116,33 @@ var LoginResponse = Type("LoginResponse", func() {
 	Required("email", "token", "refresh_token", "role")
 })
 
-var UserPlaylistsResponse = Type("UserPlaylistsResponse", func() {
+var AccountPlaylistCollectionResponse = Type("AccountPlaylistCollectionResponse", func() {
 	Attribute("total", Int32, "Number of resources")
-	Attribute("resources", ArrayOf(UserSinglePlaylistResponse), "Operation completion status")
+	Attribute("resources", ArrayOf(AccountPlaylistResponse), "Operation completion status")
 
 	Required("total", "resources")
 })
 
-var UserSinglePlaylistResponse = Type("UserSinglePlaylistResponse", func() {
+var AccountPlaylistResponse = Type("AccountPlaylistResponse", func() {
 	Attribute("id", Int32, "Playlist id")
 	Attribute("name", String, "Playlist name")
-	Attribute("tracks", ArrayOf(String), "Operation completion status")
+	Attribute("trackIDs", ArrayOf(Int32), "Array of TrackIDs")
 
-	Required("id", "name", "tracks")
+	Required("id", "name", "trackIDs")
 })
 
-var TrackResponse = Type("TrackResponse", func() {
-	Attribute("id", Int32, "Track id")
-	Attribute("name", String, "Track name")
-
-	Required("id", "name")
-})
+// var TrackResponse = Type("TrackResponse", func() {
+// 	Attribute("trackID", Int32, "Track ID")
+// 	Attribute("name", String, "Track name")
+// 	Attribute("artistID", Int32, "Artist ID")
+// 	Attribute("albumID", Int32, "Album ID")
+// 	Attribute("fullName", String, "Full name")
+// 	Attribute("genre", String, "Track genre")
+// 	Attribute("genre", String, "Track genre")
+// 	Attribute("duration", UInt, "Track duration")
+// 	Attribute("songURL", String, "Track URL")
+// 	Required("id", "name")
+// })
 
 var CreatePlaylistResponse = Type("CreatePlaylistResponse", func() {
 	Attribute("message", String, "Operation completion status")

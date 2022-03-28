@@ -17,8 +17,8 @@ paths:
     get:
       tags:
       - account
-      summary: getUserPlaylists account
-      operationId: account#getUserPlaylists
+      summary: getAccountPlaylistCollection account
+      operationId: account#getAccountPlaylistCollection
       parameters:
       - name: accountID
         in: path
@@ -34,7 +34,7 @@ paths:
         "200":
           description: OK response.
           schema:
-            $ref: '#/definitions/AccountGetUserPlaylistsResponseBody'
+            $ref: '#/definitions/AccountGetAccountPlaylistCollectionResponseBody'
             required:
             - total
             - resources
@@ -43,8 +43,8 @@ paths:
     post:
       tags:
       - account
-      summary: createUserPlaylist account
-      operationId: account#createUserPlaylist
+      summary: createAccountPlaylist account
+      operationId: account#createAccountPlaylist
       parameters:
       - name: accountID
         in: path
@@ -57,26 +57,59 @@ paths:
         required: false
         type: string
         pattern: ^Bearer [^ ]+$
-      - name: CreateUserPlaylistRequestBody
+      - name: CreateAccountPlaylistRequestBody
         in: body
         required: true
         schema:
-          $ref: '#/definitions/AccountCreateUserPlaylistRequestBody'
+          $ref: '#/definitions/AccountCreateAccountPlaylistRequestBody'
       responses:
         "200":
           description: OK response.
           schema:
-            $ref: '#/definitions/AccountCreateUserPlaylistResponseBody'
+            $ref: '#/definitions/AccountCreateAccountPlaylistResponseBody'
             required:
             - message
       schemes:
       - http
   /api/v1/account/{accountID}/playlists/{playlistID}:
+    get:
+      tags:
+      - account
+      summary: getAccountPlaylist account
+      operationId: account#getAccountPlaylist
+      parameters:
+      - name: accountID
+        in: path
+        description: Account ID
+        required: true
+        type: integer
+      - name: playlistID
+        in: path
+        description: Playlist ID
+        required: true
+        type: integer
+      - name: Authorization
+        in: header
+        description: JSON Web Token
+        required: false
+        type: string
+        pattern: ^Bearer [^ ]+$
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/AccountGetAccountPlaylistResponseBody'
+            required:
+            - id
+            - name
+            - trackIDs
+      schemes:
+      - http
     delete:
       tags:
       - account
-      summary: deleteUserPlaylist account
-      operationId: account#deleteUserPlaylist
+      summary: deleteAccountPlaylist account
+      operationId: account#deleteAccountPlaylist
       parameters:
       - name: accountID
         in: path
@@ -96,7 +129,7 @@ paths:
         "200":
           description: OK response.
           schema:
-            $ref: '#/definitions/AccountDeleteUserPlaylistResponseBody'
+            $ref: '#/definitions/AccountDeleteAccountPlaylistResponseBody'
             required:
             - message
       schemes:
@@ -141,6 +174,8 @@ paths:
           - email
           - password
           - confirmedPassword
+          - firstName
+          - lastName
       responses:
         "200":
           description: OK response.
@@ -151,101 +186,150 @@ paths:
       schemes:
       - http
 definitions:
-  AccountCreateUserPlaylistRequestBody:
-    title: AccountCreateUserPlaylistRequestBody
+  AccountCreateAccountPlaylistRequestBody:
+    title: AccountCreateAccountPlaylistRequestBody
     type: object
     properties:
       name:
         type: string
         description: Playlist name
-        example: Omnis est debitis ut aliquid iste.
+        example: Nulla velit totam excepturi.
     example:
-      name: Deserunt similique aliquam consequatur ex ratione.
-  AccountCreateUserPlaylistResponseBody:
-    title: AccountCreateUserPlaylistResponseBody
+      name: Eos non rem reprehenderit mollitia et asperiores.
+  AccountCreateAccountPlaylistResponseBody:
+    title: AccountCreateAccountPlaylistResponseBody
     type: object
     properties:
       message:
         type: string
         description: Operation completion status
-        example: Voluptas modi quo.
+        example: Omnis voluptatem repudiandae est voluptate cumque et.
     example:
-      message: Qui ullam voluptas libero id est.
+      message: Earum reprehenderit voluptatem rem sit voluptatum.
     required:
     - message
-  AccountDeleteUserPlaylistResponseBody:
-    title: AccountDeleteUserPlaylistResponseBody
+  AccountDeleteAccountPlaylistResponseBody:
+    title: AccountDeleteAccountPlaylistResponseBody
     type: object
     properties:
       message:
         type: string
         description: Operation completion status
-        example: Ipsum suscipit.
+        example: Vitae soluta sequi.
     example:
-      message: Nobis asperiores voluptate saepe ut omnis voluptatem.
+      message: Architecto dolor ipsum repellat.
     required:
     - message
-  AccountGetUserPlaylistsResponseBody:
-    title: AccountGetUserPlaylistsResponseBody
+  AccountGetAccountPlaylistCollectionResponseBody:
+    title: AccountGetAccountPlaylistCollectionResponseBody
     type: object
     properties:
       resources:
         type: array
         items:
-          $ref: '#/definitions/UserSinglePlaylistResponseResponseBody'
+          $ref: '#/definitions/AccountPlaylistResponseResponseBody'
         description: Operation completion status
         example:
-        - id: 181822346
-          name: Nobis ut reiciendis.
-          tracks:
-          - Sit molestias exercitationem.
-          - Nobis in minus sint rerum.
-        - id: 181822346
-          name: Nobis ut reiciendis.
-          tracks:
-          - Sit molestias exercitationem.
-          - Nobis in minus sint rerum.
-        - id: 181822346
-          name: Nobis ut reiciendis.
-          tracks:
-          - Sit molestias exercitationem.
-          - Nobis in minus sint rerum.
-        - id: 181822346
-          name: Nobis ut reiciendis.
-          tracks:
-          - Sit molestias exercitationem.
-          - Nobis in minus sint rerum.
+        - id: 504519142
+          name: Quo et quasi sint.
+          trackIDs:
+          - 175494993
+          - 1530977948
+          - 844822519
+          - 1773553620
+        - id: 504519142
+          name: Quo et quasi sint.
+          trackIDs:
+          - 175494993
+          - 1530977948
+          - 844822519
+          - 1773553620
+        - id: 504519142
+          name: Quo et quasi sint.
+          trackIDs:
+          - 175494993
+          - 1530977948
+          - 844822519
+          - 1773553620
+        - id: 504519142
+          name: Quo et quasi sint.
+          trackIDs:
+          - 175494993
+          - 1530977948
+          - 844822519
+          - 1773553620
       total:
         type: integer
         description: Number of resources
-        example: 1605565041
+        example: 1948534894
         format: int32
     example:
       resources:
-      - id: 181822346
-        name: Nobis ut reiciendis.
-        tracks:
-        - Sit molestias exercitationem.
-        - Nobis in minus sint rerum.
-      - id: 181822346
-        name: Nobis ut reiciendis.
-        tracks:
-        - Sit molestias exercitationem.
-        - Nobis in minus sint rerum.
-      - id: 181822346
-        name: Nobis ut reiciendis.
-        tracks:
-        - Sit molestias exercitationem.
-        - Nobis in minus sint rerum.
-      - id: 181822346
-        name: Nobis ut reiciendis.
-        tracks:
-        - Sit molestias exercitationem.
-        - Nobis in minus sint rerum.
-      total: 1995910554
+      - id: 504519142
+        name: Quo et quasi sint.
+        trackIDs:
+        - 175494993
+        - 1530977948
+        - 844822519
+        - 1773553620
+      - id: 504519142
+        name: Quo et quasi sint.
+        trackIDs:
+        - 175494993
+        - 1530977948
+        - 844822519
+        - 1773553620
+      - id: 504519142
+        name: Quo et quasi sint.
+        trackIDs:
+        - 175494993
+        - 1530977948
+        - 844822519
+        - 1773553620
+      - id: 504519142
+        name: Quo et quasi sint.
+        trackIDs:
+        - 175494993
+        - 1530977948
+        - 844822519
+        - 1773553620
+      total: 1223298755
     required:
     - total
     - resources
+  AccountGetAccountPlaylistResponseBody:
+    title: AccountGetAccountPlaylistResponseBody
+    type: object
+    properties:
+      id:
+        type: integer
+        description: Playlist id
+        example: 1770947268
+        format: int32
+      name:
+        type: string
+        description: Playlist name
+        example: Magnam aliquam fugiat quod tenetur facere reiciendis.
+      trackIDs:
+        type: array
+        items:
+          type: integer
+          example: 731017624
+          format: int32
+        description: Array of TrackIDs
+        example:
+        - 504620448
+        - 737124494
+    example:
+      id: 430175034
+      name: Architecto veniam neque dolorum quasi repellendus et.
+      trackIDs:
+      - 905603689
+      - 1774012890
+    required:
+    - id
+    - name
+    - trackIDs
   AccountLoginRequestBody:
     title: AccountLoginRequestBody
     type: object
@@ -253,14 +337,14 @@ definitions:
       email:
         type: string
         description: Email of the user
-        example: Nisi aut sapiente ut a libero.
+        example: Et culpa doloremque sint ex unde sequi.
       password:
         type: string
         description: Password of the user
-        example: Aliquid voluptas ut tempore a praesentium.
+        example: Asperiores et eius ducimus.
     example:
-      email: Accusamus occaecati velit.
-      password: Asperiores est voluptatibus voluptas ut rem.
+      email: Eaque voluptas.
+      password: Voluptas modi quo.
   AccountLoginResponseBody:
     title: AccountLoginResponseBody
     type: object
@@ -268,34 +352,71 @@ definitions:
       accountID:
         type: string
         description: User's role
-        example: Modi eos voluptas soluta velit debitis doloremque.
+        example: Et vitae dolore temporibus dolore.
       email:
         type: string
         description: User's email
-        example: Sed libero aut.
+        example: Aliquid voluptas ut tempore a praesentium.
       refresh_token:
         type: string
         description: Refresh token
-        example: Ullam eius.
+        example: Asperiores est voluptatibus voluptas ut rem.
       role:
         type: string
         description: User's role
-        example: Quasi repudiandae.
+        example: Voluptatem nisi assumenda consequatur nam.
       token:
         type: string
         description: JWT Token
-        example: Sequi quae accusantium praesentium sequi.
+        example: Accusamus occaecati velit.
     example:
-      accountID: Nemo itaque.
-      email: Non praesentium quo molestiae.
-      refresh_token: Omnis deserunt consectetur ipsa.
-      role: Quibusdam enim ratione ut ea.
-      token: Voluptatem voluptate.
+      accountID: Atque est error voluptas dolorem.
+      email: Delectus rerum veniam ipsam iste et.
+      refresh_token: Aspernatur omnis.
+      role: Quia tempora a minima.
+      token: Maxime recusandae.
     required:
     - email
     - token
     - refresh_token
     - role
+  AccountPlaylistResponseResponseBody:
+    title: AccountPlaylistResponseResponseBody
+    type: object
+    properties:
+      id:
+        type: integer
+        description: Playlist id
+        example: 934490458
+        format: int32
+      name:
+        type: string
+        description: Playlist name
+        example: Voluptas libero id est.
+      trackIDs:
+        type: array
+        items:
+          type: integer
+          example: 326008516
+          format: int32
+        description: Array of TrackIDs
+        example:
+        - 622950384
+        - 839541566
+        - 435026472
+        - 1694536221
+    example:
+      id: 1853238414
+      name: Deserunt similique aliquam consequatur ex ratione.
+      trackIDs:
+      - 370696800
+      - 1687120001
+      - 832930271
+      - 1388887310
+    required:
+    - id
+    - name
+    - trackIDs
   AccountRegisterRequestBody:
     title: AccountRegisterRequestBody
     type: object
@@ -303,23 +424,35 @@ definitions:
       confirmedPassword:
         type: string
         description: Confirmed password of the user
-        example: Aut voluptatem.
+        example: Non praesentium quo molestiae.
       email:
         type: string
         description: Email of the user
-        example: Non veniam est.
+        example: Quasi repudiandae.
+      firstName:
+        type: string
+        description: First name of the user
+        example: Sequi quae accusantium praesentium sequi.
+      lastName:
+        type: string
+        description: Last name of the user
+        example: Ullam eius.
       password:
         type: string
         description: Password of the user
-        example: Vel et est quasi unde odit sed.
+        example: Modi eos voluptas soluta velit debitis doloremque.
     example:
-      confirmedPassword: Quo officia quasi modi qui.
-      email: Adipisci iure dolorem nesciunt itaque ut quo.
-      password: Commodi ratione dolor et eius.
+      confirmedPassword: Nisi aut sapiente ut a libero.
+      email: Quibusdam enim ratione ut ea.
+      firstName: Voluptatem voluptate.
+      lastName: Omnis deserunt consectetur ipsa.
+      password: Nemo itaque.
     required:
     - email
     - password
     - confirmedPassword
+    - firstName
+    - lastName
   AccountRegisterResponseBody:
     title: AccountRegisterResponseBody
     type: object
@@ -327,41 +460,8 @@ definitions:
       message:
         type: string
         description: Operation completion status
-        example: Ex voluptatem eum dolorem.
+        example: Quo officia quasi modi qui.
     example:
-      message: Repudiandae cum corporis autem repellendus.
+      message: Sed libero aut.
     required:
     - message
-  UserSinglePlaylistResponseResponseBody:
-    title: UserSinglePlaylistResponseResponseBody
-    type: object
-    properties:
-      id:
-        type: integer
-        description: Playlist id
-        example: 264291667
-        format: int32
-      name:
-        type: string
-        description: Playlist name
-        example: Assumenda consequatur nam nam et vitae.
-      tracks:
-        type: array
-        items:
-          type: string
-          example: Temporibus dolore porro.
-        description: Operation completion status
-        example:
-        - Veniam ipsam.
-        - Et aut maxime recusandae iste.
-        - Omnis suscipit.
-    example:
-      id: 2073718892
-      name: A minima ut atque est error voluptas.
-      tracks:
-      - Et culpa doloremque sint ex unde sequi.
-      - Asperiores et eius ducimus.
-    required:
-    - id
-    - name
-    - tracks

@@ -7,6 +7,7 @@ import (
 
 	account "git.fhict.nl/I425652/jordan-portfolio-s6/backend/cmd/accountsd/internal/account"
 	"git.fhict.nl/I425652/jordan-portfolio-s6/backend/cmd/accountsd/internal/db/dbmodels"
+	"github.com/lib/pq"
 )
 
 type Store struct {
@@ -56,23 +57,34 @@ func (s *Store) GetAllUserPlaylists(ctx context.Context, accountID uint) ([]*dbm
 	rows, err := s.DB.Query("SELECT * FROM playlists WHERE accountId = $1;", accountID)
 
 	if err != nil {
-		return make([]*dbmodels.Playlist, 0), fmt.Errorf("error extracting user's playlists: %w", err)
+		return nil, fmt.Errorf("error extracting user's playlists: %w", err)
 	}
 	defer rows.Close()
 
 	playlists := make([]*dbmodels.Playlist, 0)
 	for rows.Next() {
 		playlist := &dbmodels.Playlist{}
-		tracks := []string{"song1", "song2"}
-		err := rows.Scan(&playlist.ID, &playlist.Name, &playlist.AccountID)
+		var trackIDs []int32
+
+		err := rows.Scan(
+			&playlist.ID,
+			&playlist.Name,
+			&playlist.CreatedAt,
+			(*pq.Int32Array)(&trackIDs),
+			&playlist.AccountID)
+
+		playlist.TrackIDs = trackIDs
+
 		if err != nil {
-			return make([]*dbmodels.Playlist, 0), fmt.Errorf("error mapping a playlist row: %w", err)
+			return nil, fmt.Errorf("error mapping a playlist row: %w", err)
 		}
-		playlist.Tracks = tracks
+
 		playlists = append(playlists, playlist)
 	}
+
 	if err := rows.Err(); err != nil {
 		return make([]*dbmodels.Playlist, 0), fmt.Errorf("rows err: %w", err)
 	}
+
 	return playlists, nil
 }
