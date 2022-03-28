@@ -10,13 +10,20 @@ import (
 	"git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/gen/account"
 )
 
-type Store interface {
+type AccountStore interface {
 	CreateUser(context.Context, *User) (bool, error)
 	GetUserByEmail(context.Context, string) (*dbmodels.Account, error)
 }
 
+type PlaylistStore interface {
+	CreateAccountPlaylist(context.Context, uint, string) (bool, error)
+	GetUserPlaylist(context.Context, uint, uint) (string, error)
+	GetAllUserPlaylists(context.Context, uint) ([]string, error)
+}
+
 type Service struct {
-	store Store
+	accountStore  AccountStore
+	playlistStore PlaylistStore
 }
 
 type User struct {
@@ -38,8 +45,11 @@ type LoginCredentials struct {
 	Password string
 }
 
-func NewService(store Store) *Service {
-	return &Service{store: store}
+func NewService(accountStore AccountStore, playlistStore PlaylistStore) *Service {
+	return &Service{
+		accountStore:  accountStore,
+		playlistStore: playlistStore,
+	}
 }
 
 // Compile-time assertion that *Service implements the user.Service interface.
@@ -63,7 +73,7 @@ func (s *Service) Register(ctx context.Context, p *account.RegisterPayload) (*ac
 	}
 
 	// Save in the database
-	_, err := s.store.CreateUser(ctx, newUser)
+	_, err := s.accountStore.CreateUser(ctx, newUser)
 
 	if err != nil {
 		return nil, fmt.Errorf("error creating new user: %w", err)
@@ -78,13 +88,11 @@ func (s *Service) Register(ctx context.Context, p *account.RegisterPayload) (*ac
 
 func (s *Service) Login(ctx context.Context, p *account.LoginPayload) (*account.LoginResponse, error) {
 	// Get the user by email
-	foundAccount, err := s.store.GetUserByEmail(ctx, *p.Email)
+	foundAccount, err := s.accountStore.GetUserByEmail(ctx, *p.Email)
 
 	if err != nil {
 		return nil, errors.New("invalid credentials")
 	}
-
-	fmt.Printf("Token is: ")
 
 	// Verify the password hash
 	isPasswordCorrect := auth.CheckPassword(foundAccount.Password, *p.Password)
@@ -94,7 +102,8 @@ func (s *Service) Login(ctx context.Context, p *account.LoginPayload) (*account.
 	}
 
 	// Generate JWT
-	token, err := auth.GenerateJWT(foundAccount.ID)
+	token, err := auth.GenerateJWT(foundAccount.ID, foundAccount.Email)
+
 	if err != nil {
 		return nil, fmt.Errorf("error extracting jwt: %w", err)
 	}

@@ -1,10 +1,5 @@
 package dbmodels
 
-type Playlist struct {
-	ID     uint
-	Name   string
-	Tracks []string
-}
 type Account struct {
 	ID        uint
 	FirstName string
@@ -13,4 +8,10 @@ type Account struct {
 	Email     string
 	Password  string
 	Playlists []Playlist
+}
+
+type Playlist struct {
+	ID     uint
+	Name   string
+	Tracks []string
 }

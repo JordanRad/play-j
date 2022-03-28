@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	user "git.fhict.nl/I425652/jordan-portfolio-s6/backend/cmd/accountsd/internal/account"
-	dbuser "git.fhict.nl/I425652/jordan-portfolio-s6/backend/cmd/accountsd/internal/db/dbaccount"
+	account "git.fhict.nl/I425652/jordan-portfolio-s6/backend/cmd/accountsd/internal/account"
+	dbaccount "git.fhict.nl/I425652/jordan-portfolio-s6/backend/cmd/accountsd/internal/db/dbaccount"
+	dbplaylist "git.fhict.nl/I425652/jordan-portfolio-s6/backend/cmd/accountsd/internal/db/dbplaylist"
 	accountsvc "git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/gen/account"
 	accountsrv "git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/gen/http/account/server"
 	goahttp "goa.design/goa/v3/http"
@@ -39,13 +40,17 @@ func main() {
 
 	fmt.Print("Connected to database \n")
 
-	dbStore := &dbuser.Store{
+	dbAccountStore := &dbaccount.Store{
 		DB: db,
 	}
 
-	userService := user.NewService(dbStore)
+	dbPlaylistStore := &dbplaylist.Store{
+		DB: db,
+	}
 
-	var userEndpoints *accountsvc.Endpoints = accountsvc.NewEndpoints(userService)
+	accountService := account.NewService(dbAccountStore, dbPlaylistStore)
+
+	var userEndpoints *accountsvc.Endpoints = accountsvc.NewEndpoints(accountService)
 
 	// Provide the transport specific request decoder and response encoder.
 	var (
@@ -60,9 +65,9 @@ func main() {
 		mux = goahttp.NewMuxer()
 	}
 
-	var userServer *accountsrv.Server = accountsrv.New(userEndpoints, mux, dec, enc, nil, nil)
+	var accountServer *accountsrv.Server = accountsrv.New(userEndpoints, mux, dec, enc, nil, nil)
 
-	accountsrv.Mount(mux, userServer)
+	accountsrv.Mount(mux, accountServer)
 
 	fmt.Println("Account service has just started...")
 	http.ListenAndServe("localhost:8091", mux)
