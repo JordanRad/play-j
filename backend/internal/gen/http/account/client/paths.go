@@ -3,8 +3,7 @@
 // HTTP request path constructors for the account service.
 //
 // Command:
-// $ goa gen git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/design
-// -o ./internal/
+// $ goa gen github.com/JordanRad/play-j/backend/internal/design -o ./internal/
 
 package client
 

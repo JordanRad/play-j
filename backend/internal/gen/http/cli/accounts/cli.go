@@ -3,8 +3,7 @@
 // accounts HTTP client CLI support package
 //
 // Command:
-// $ goa gen git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/design
-// -o ./internal/
+// $ goa gen github.com/JordanRad/play-j/backend/internal/design -o ./internal/
 
 package cli
 
@@ -14,7 +13,7 @@ import (
 	"net/http"
 	"os"
 
-	accountc "git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/gen/http/account/client"
+	accountc "github.com/JordanRad/play-j/backend/internal/gen/http/account/client"
 	goahttp "goa.design/goa/v3/http"
 	goa "goa.design/goa/v3/pkg"
 )

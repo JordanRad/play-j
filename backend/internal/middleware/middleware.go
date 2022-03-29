@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/auth"
+	"github.com/JordanRad/play-j/backend/internal/auth"
 )
 
 type ProtectedRoute struct {

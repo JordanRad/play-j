@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"net/http"
 
-	account "git.fhict.nl/I425652/jordan-portfolio-s6/backend/cmd/accountsd/internal/account"
-	dbaccount "git.fhict.nl/I425652/jordan-portfolio-s6/backend/cmd/accountsd/internal/db/dbaccount"
-	dbplaylist "git.fhict.nl/I425652/jordan-portfolio-s6/backend/cmd/accountsd/internal/db/dbplaylist"
-	accountsvc "git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/gen/account"
-	accountsrv "git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/gen/http/account/server"
+	account "github.com/JordanRad/play-j/backend/cmd/accountsd/internal/account"
+	dbaccount "github.com/JordanRad/play-j/backend/cmd/accountsd/internal/db/dbaccount"
+	dbplaylist "github.com/JordanRad/play-j/backend/cmd/accountsd/internal/db/dbplaylist"
+	accountsvc "github.com/JordanRad/play-j/backend/internal/gen/account"
+	accountsrv "github.com/JordanRad/play-j/backend/internal/gen/http/account/server"
 	goahttp "goa.design/goa/v3/http"
 
-	"git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/middleware"
+	"github.com/JordanRad/play-j/backend/internal/middleware"
 
 	"database/sql"
 	"time"

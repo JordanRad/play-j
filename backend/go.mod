@@ -1,4 +1,4 @@
-module git.fhict.nl/I425652/jordan-portfolio-s6/backend
+module github.com/JordanRad/play-j/backend
 
 go 1.17
 

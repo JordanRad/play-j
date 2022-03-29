@@ -1,13 +1,13 @@
-package user
+package account
 
 import (
 	"context"
 	"errors"
 	"fmt"
 
-	"git.fhict.nl/I425652/jordan-portfolio-s6/backend/cmd/accountsd/internal/db/dbmodels"
-	auth "git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/auth"
-	"git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/gen/account"
+	"github.com/JordanRad/play-j/backend/cmd/accountsd/internal/db/dbmodels"
+	auth "github.com/JordanRad/play-j/backend/internal/auth"
+	"github.com/JordanRad/play-j/backend/internal/gen/account"
 )
 
 type AccountStore interface {

@@ -3,8 +3,7 @@
 // account HTTP client CLI support package
 //
 // Command:
-// $ goa gen git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/design
-// -o ./internal/
+// $ goa gen github.com/JordanRad/play-j/backend/internal/design -o ./internal/
 
 package client
 
@@ -13,7 +12,7 @@ import (
 	"fmt"
 	"strconv"
 
-	account "git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/gen/account"
+	account "github.com/JordanRad/play-j/backend/internal/gen/account"
 )
 
 // BuildRegisterPayload builds the payload for the account register endpoint

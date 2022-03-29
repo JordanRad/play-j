@@ -3,8 +3,7 @@
 // account HTTP client encoders and decoders
 //
 // Command:
-// $ goa gen git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/design
-// -o ./internal/
+// $ goa gen github.com/JordanRad/play-j/backend/internal/design -o ./internal/
 
 package client
 
@@ -15,7 +14,7 @@ import (
 	"net/http"
 	"net/url"
 
-	account "git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/gen/account"
+	account "github.com/JordanRad/play-j/backend/internal/gen/account"
 	goahttp "goa.design/goa/v3/http"
 )
 

@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	account "git.fhict.nl/I425652/jordan-portfolio-s6/backend/cmd/accountsd/internal/account"
-	"git.fhict.nl/I425652/jordan-portfolio-s6/backend/cmd/accountsd/internal/db/dbmodels"
+	account "github.com/JordanRad/play-j/backend/cmd/accountsd/internal/account"
+	"github.com/JordanRad/play-j/backend/cmd/accountsd/internal/db/dbmodels"
 	"github.com/lib/pq"
 )
 

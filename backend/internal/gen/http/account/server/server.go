@@ -3,8 +3,7 @@
 // account HTTP server
 //
 // Command:
-// $ goa gen git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/design
-// -o ./internal/
+// $ goa gen github.com/JordanRad/play-j/backend/internal/design -o ./internal/
 
 package server
 
@@ -12,7 +11,7 @@ import (
 	"context"
 	"net/http"
 
-	account "git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/gen/account"
+	account "github.com/JordanRad/play-j/backend/internal/gen/account"
 	goahttp "goa.design/goa/v3/http"
 	goa "goa.design/goa/v3/pkg"
 )

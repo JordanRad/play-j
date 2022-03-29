@@ -1,1 +1,1 @@
-goa gen git.fhict.nl/I425652/jordan-portfolio-s6/backend/internal/design -o ./internal/
+goa gen github.com/JordanRad/play-j/backend/internal/design -o ./internal/
