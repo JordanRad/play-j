@@ -1,13 +1,11 @@
 # Portfolio Semester 6 - Enterprise Software
-## Jordan Radushev
-
 
 This is my portoflio repository for the Individual project 
 
-### About the project
+## About the project
 This project is a web-based music player *(such as Spotify)*. It is a Progressive Web application **(PWA)** which means it could be downloaded on your mobile device through the browser and the application supports offline mode and some native features such as accessing the file system to store the songs for offline mode.
 
-#### Tech stack
+### Tech stack
 There are three main parts of the project, regarding the tech stack of this project.
 
 1. Frontend Project - Play-J Client
@@ -34,10 +32,7 @@ There are three main parts of the project, regarding the tech stack of this proj
 
     3.3 **Google Cloud Platform** - cloud provider
 
-
-
-
-### About the repository
+## About the repository
 All subprojects, related to this project, are part of this repository. Here is a brief explanation about the strucutre:
 
     -play-j
