@@ -17,8 +17,8 @@ type AccountStore interface {
 
 type PlaylistStore interface {
 	CreateAccountPlaylist(context.Context, uint, string) (bool, error)
-	GetUserPlaylist(context.Context, uint, uint) (string, error)
-	GetAllUserPlaylists(context.Context, uint) ([]*dbmodels.Playlist, error)
+	GetAccountPlaylist(context.Context, uint, uint) (*dbmodels.Playlist, error)
+	GetAllAccountPlaylists(context.Context, uint) ([]*dbmodels.Playlist, error)
 	DeleteAccountPlaylist(context.Context, uint, uint) (bool, error)
 	UpdateAccountPlaylist(context.Context, uint, uint, string) (bool, error)
 }
@@ -113,7 +113,7 @@ func (s *Service) Login(ctx context.Context, p *account.LoginPayload) (*account.
 func (s *Service) GetAccountPlaylistCollection(ctx context.Context, p *account.GetAccountPlaylistCollectionPayload) (*account.AccountPlaylistCollectionResponse, error) {
 
 	// Get playlists by user
-	playlists, err := s.playlistStore.GetAllUserPlaylists(ctx, *p.AccountID)
+	playlists, err := s.playlistStore.GetAllAccountPlaylists(ctx, *p.AccountID)
 
 	if err != nil {
 		return &account.AccountPlaylistCollectionResponse{}, fmt.Errorf("error displaying user's playlists: %w", err)
@@ -169,7 +169,20 @@ func (s *Service) DeleteAccountPlaylist(ctx context.Context, p *account.DeleteAc
 }
 
 func (s *Service) GetAccountPlaylist(ctx context.Context, p *account.GetAccountPlaylistPayload) (*account.AccountPlaylistResponse, error) {
-	return nil, nil
+
+	playlist, err := s.playlistStore.GetAccountPlaylist(ctx, *p.AccountID, *p.PlaylistID)
+
+	if err != nil {
+		return nil, fmt.Errorf("[service] error getting a playlis: %w", err)
+	}
+
+	response := &account.AccountPlaylistResponse{
+		ID:       int32(playlist.ID),
+		Name:     playlist.Name,
+		TrackIDs: playlist.TrackIDs,
+	}
+
+	return response, nil
 }
 
 func (s *Service) AddTrackToAccountPlaylist(ctx context.Context, p *account.AddTrackToAccountPlaylistPayload) (*account.PlaylistModificationResponse, error) {

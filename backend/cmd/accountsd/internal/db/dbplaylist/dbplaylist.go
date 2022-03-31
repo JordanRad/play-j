@@ -48,12 +48,31 @@ func (s *Store) DeleteAccountPlaylist(ctx context.Context, accountID uint, playl
 	return false, fmt.Errorf("error removing a playlist")
 }
 
-func (s *Store) GetUserPlaylist(ctx context.Context, accountID uint, playlistID uint) (string, error) {
+func (s *Store) GetAccountPlaylist(ctx context.Context, accountID uint, playlistID uint) (*dbmodels.Playlist, error) {
+	var result dbmodels.Playlist
 
-	return "", nil
+	row := s.DB.QueryRow(`SELECT * FROM playlists WHERE id = $1 AND accountID = $2;`, playlistID, accountID)
+
+	// var trackIDs []int32
+
+	err := row.Scan(
+		&result.ID,
+		&result.Name,
+		&result.CreatedAt,
+		(*pq.Int32Array)(&result.TrackIDs),
+		&result.AccountID)
+
+	// result.TrackIDs = trackIDs
+
+	if err == sql.ErrNoRows {
+		fmt.Println(err)
+		return nil, fmt.Errorf("invalid credentials: %w", err)
+	}
+
+	return &result, nil
 }
 
-func (s *Store) GetAllUserPlaylists(ctx context.Context, accountID uint) ([]*dbmodels.Playlist, error) {
+func (s *Store) GetAllAccountPlaylists(ctx context.Context, accountID uint) ([]*dbmodels.Playlist, error) {
 	rows, err := s.DB.Query("SELECT * FROM playlists WHERE accountId = $1;", accountID)
 
 	if err != nil {
