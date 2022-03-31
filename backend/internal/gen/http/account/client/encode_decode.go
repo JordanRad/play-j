@@ -508,6 +508,190 @@ func DecodeGetAccountPlaylistResponse(decoder func(*http.Response) goahttp.Decod
 	}
 }
 
+// BuildAddTrackToAccountPlaylistRequest instantiates a HTTP request object
+// with method and path set to call the "account" service
+// "addTrackToAccountPlaylist" endpoint
+func (c *Client) BuildAddTrackToAccountPlaylistRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	var (
+		accountID  uint
+		playlistID uint
+		trackID    uint
+	)
+	{
+		p, ok := v.(*account.AddTrackToAccountPlaylistPayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("account", "addTrackToAccountPlaylist", "*account.AddTrackToAccountPlaylistPayload", v)
+		}
+		if p.AccountID != nil {
+			accountID = *p.AccountID
+		}
+		if p.PlaylistID != nil {
+			playlistID = *p.PlaylistID
+		}
+		if p.TrackID != nil {
+			trackID = *p.TrackID
+		}
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: AddTrackToAccountPlaylistAccountPath(accountID, playlistID, trackID)}
+	req, err := http.NewRequest("POST", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("account", "addTrackToAccountPlaylist", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeAddTrackToAccountPlaylistRequest returns an encoder for requests sent
+// to the account addTrackToAccountPlaylist server.
+func EncodeAddTrackToAccountPlaylistRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*account.AddTrackToAccountPlaylistPayload)
+		if !ok {
+			return goahttp.ErrInvalidType("account", "addTrackToAccountPlaylist", "*account.AddTrackToAccountPlaylistPayload", v)
+		}
+		if p.Auth != nil {
+			head := *p.Auth
+			req.Header.Set("Authorization", head)
+		}
+		return nil
+	}
+}
+
+// DecodeAddTrackToAccountPlaylistResponse returns a decoder for responses
+// returned by the account addTrackToAccountPlaylist endpoint. restoreBody
+// controls whether the response body should be restored after having been read.
+func DecodeAddTrackToAccountPlaylistResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body AddTrackToAccountPlaylistResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("account", "addTrackToAccountPlaylist", err)
+			}
+			err = ValidateAddTrackToAccountPlaylistResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("account", "addTrackToAccountPlaylist", err)
+			}
+			res := NewAddTrackToAccountPlaylistPlaylistModificationResponseOK(&body)
+			return res, nil
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("account", "addTrackToAccountPlaylist", resp.StatusCode, string(body))
+		}
+	}
+}
+
+// BuildRemoveTrackFromAccountPlaylistRequest instantiates a HTTP request
+// object with method and path set to call the "account" service
+// "removeTrackFromAccountPlaylist" endpoint
+func (c *Client) BuildRemoveTrackFromAccountPlaylistRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	var (
+		accountID  uint
+		playlistID uint
+		trackID    uint
+	)
+	{
+		p, ok := v.(*account.RemoveTrackFromAccountPlaylistPayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("account", "removeTrackFromAccountPlaylist", "*account.RemoveTrackFromAccountPlaylistPayload", v)
+		}
+		if p.AccountID != nil {
+			accountID = *p.AccountID
+		}
+		if p.PlaylistID != nil {
+			playlistID = *p.PlaylistID
+		}
+		if p.TrackID != nil {
+			trackID = *p.TrackID
+		}
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: RemoveTrackFromAccountPlaylistAccountPath(accountID, playlistID, trackID)}
+	req, err := http.NewRequest("DELETE", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("account", "removeTrackFromAccountPlaylist", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeRemoveTrackFromAccountPlaylistRequest returns an encoder for requests
+// sent to the account removeTrackFromAccountPlaylist server.
+func EncodeRemoveTrackFromAccountPlaylistRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*account.RemoveTrackFromAccountPlaylistPayload)
+		if !ok {
+			return goahttp.ErrInvalidType("account", "removeTrackFromAccountPlaylist", "*account.RemoveTrackFromAccountPlaylistPayload", v)
+		}
+		if p.Auth != nil {
+			head := *p.Auth
+			req.Header.Set("Authorization", head)
+		}
+		return nil
+	}
+}
+
+// DecodeRemoveTrackFromAccountPlaylistResponse returns a decoder for responses
+// returned by the account removeTrackFromAccountPlaylist endpoint. restoreBody
+// controls whether the response body should be restored after having been read.
+func DecodeRemoveTrackFromAccountPlaylistResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body RemoveTrackFromAccountPlaylistResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("account", "removeTrackFromAccountPlaylist", err)
+			}
+			err = ValidateRemoveTrackFromAccountPlaylistResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("account", "removeTrackFromAccountPlaylist", err)
+			}
+			res := NewRemoveTrackFromAccountPlaylistPlaylistModificationResponseOK(&body)
+			return res, nil
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("account", "removeTrackFromAccountPlaylist", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // unmarshalAccountPlaylistResponseResponseBodyToAccountAccountPlaylistResponse
 // builds a value of type *account.AccountPlaylistResponse from a value of type
 // *AccountPlaylistResponseResponseBody.

@@ -15,23 +15,27 @@ import (
 
 // Client is the "account" service client.
 type Client struct {
-	RegisterEndpoint                     goa.Endpoint
-	LoginEndpoint                        goa.Endpoint
-	GetAccountPlaylistCollectionEndpoint goa.Endpoint
-	CreateAccountPlaylistEndpoint        goa.Endpoint
-	DeleteAccountPlaylistEndpoint        goa.Endpoint
-	GetAccountPlaylistEndpoint           goa.Endpoint
+	RegisterEndpoint                       goa.Endpoint
+	LoginEndpoint                          goa.Endpoint
+	GetAccountPlaylistCollectionEndpoint   goa.Endpoint
+	CreateAccountPlaylistEndpoint          goa.Endpoint
+	DeleteAccountPlaylistEndpoint          goa.Endpoint
+	GetAccountPlaylistEndpoint             goa.Endpoint
+	AddTrackToAccountPlaylistEndpoint      goa.Endpoint
+	RemoveTrackFromAccountPlaylistEndpoint goa.Endpoint
 }
 
 // NewClient initializes a "account" service client given the endpoints.
-func NewClient(register, login, getAccountPlaylistCollection, createAccountPlaylist, deleteAccountPlaylist, getAccountPlaylist goa.Endpoint) *Client {
+func NewClient(register, login, getAccountPlaylistCollection, createAccountPlaylist, deleteAccountPlaylist, getAccountPlaylist, addTrackToAccountPlaylist, removeTrackFromAccountPlaylist goa.Endpoint) *Client {
 	return &Client{
-		RegisterEndpoint:                     register,
-		LoginEndpoint:                        login,
-		GetAccountPlaylistCollectionEndpoint: getAccountPlaylistCollection,
-		CreateAccountPlaylistEndpoint:        createAccountPlaylist,
-		DeleteAccountPlaylistEndpoint:        deleteAccountPlaylist,
-		GetAccountPlaylistEndpoint:           getAccountPlaylist,
+		RegisterEndpoint:                       register,
+		LoginEndpoint:                          login,
+		GetAccountPlaylistCollectionEndpoint:   getAccountPlaylistCollection,
+		CreateAccountPlaylistEndpoint:          createAccountPlaylist,
+		DeleteAccountPlaylistEndpoint:          deleteAccountPlaylist,
+		GetAccountPlaylistEndpoint:             getAccountPlaylist,
+		AddTrackToAccountPlaylistEndpoint:      addTrackToAccountPlaylist,
+		RemoveTrackFromAccountPlaylistEndpoint: removeTrackFromAccountPlaylist,
 	}
 }
 
@@ -97,4 +101,26 @@ func (c *Client) GetAccountPlaylist(ctx context.Context, p *GetAccountPlaylistPa
 		return
 	}
 	return ires.(*AccountPlaylistResponse), nil
+}
+
+// AddTrackToAccountPlaylist calls the "addTrackToAccountPlaylist" endpoint of
+// the "account" service.
+func (c *Client) AddTrackToAccountPlaylist(ctx context.Context, p *AddTrackToAccountPlaylistPayload) (res *PlaylistModificationResponse, err error) {
+	var ires interface{}
+	ires, err = c.AddTrackToAccountPlaylistEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*PlaylistModificationResponse), nil
+}
+
+// RemoveTrackFromAccountPlaylist calls the "removeTrackFromAccountPlaylist"
+// endpoint of the "account" service.
+func (c *Client) RemoveTrackFromAccountPlaylist(ctx context.Context, p *RemoveTrackFromAccountPlaylistPayload) (res *PlaylistModificationResponse, err error) {
+	var ires interface{}
+	ires, err = c.RemoveTrackFromAccountPlaylistEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*PlaylistModificationResponse), nil
 }

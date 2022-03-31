@@ -23,18 +23,18 @@ import (
 //    command (subcommand1|subcommand2|...)
 //
 func UsageCommands() string {
-	return `account (register|login|get-account-playlist-collection|create-account-playlist|delete-account-playlist|get-account-playlist)
+	return `account (register|login|get-account-playlist-collection|create-account-playlist|delete-account-playlist|get-account-playlist|add-track-to-account-playlist|remove-track-from-account-playlist)
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` account register --body '{
-      "confirmedPassword": "Ipsum et molestiae.",
-      "email": "Et odit vel assumenda.",
-      "firstName": "Porro rerum distinctio minus facilis.",
-      "lastName": "Facere corrupti libero ut.",
-      "password": "Quibusdam omnis nemo provident eos quis ut."
+      "confirmedPassword": "Numquam quos excepturi vero ad est.",
+      "email": "Cumque quisquam dolorem adipisci.",
+      "firstName": "Eos quis ut ut ipsum.",
+      "lastName": "Molestiae voluptas dolorum et.",
+      "password": "Voluptates id recusandae temporibus et dolore."
    }'` + "\n" +
 		""
 }
@@ -75,6 +75,18 @@ func ParseEndpoint(
 		accountGetAccountPlaylistAccountIDFlag  = accountGetAccountPlaylistFlags.String("account-id", "REQUIRED", "Account ID")
 		accountGetAccountPlaylistPlaylistIDFlag = accountGetAccountPlaylistFlags.String("playlist-id", "REQUIRED", "Playlist ID")
 		accountGetAccountPlaylistAuthFlag       = accountGetAccountPlaylistFlags.String("auth", "", "")
+
+		accountAddTrackToAccountPlaylistFlags          = flag.NewFlagSet("add-track-to-account-playlist", flag.ExitOnError)
+		accountAddTrackToAccountPlaylistAccountIDFlag  = accountAddTrackToAccountPlaylistFlags.String("account-id", "REQUIRED", "Account ID")
+		accountAddTrackToAccountPlaylistPlaylistIDFlag = accountAddTrackToAccountPlaylistFlags.String("playlist-id", "REQUIRED", "Playlist ID to modify")
+		accountAddTrackToAccountPlaylistTrackIDFlag    = accountAddTrackToAccountPlaylistFlags.String("track-id", "REQUIRED", "Track ID to be added")
+		accountAddTrackToAccountPlaylistAuthFlag       = accountAddTrackToAccountPlaylistFlags.String("auth", "", "")
+
+		accountRemoveTrackFromAccountPlaylistFlags          = flag.NewFlagSet("remove-track-from-account-playlist", flag.ExitOnError)
+		accountRemoveTrackFromAccountPlaylistAccountIDFlag  = accountRemoveTrackFromAccountPlaylistFlags.String("account-id", "REQUIRED", "Account ID")
+		accountRemoveTrackFromAccountPlaylistPlaylistIDFlag = accountRemoveTrackFromAccountPlaylistFlags.String("playlist-id", "REQUIRED", "Playlist ID to modify")
+		accountRemoveTrackFromAccountPlaylistTrackIDFlag    = accountRemoveTrackFromAccountPlaylistFlags.String("track-id", "REQUIRED", "Track ID to be deleted")
+		accountRemoveTrackFromAccountPlaylistAuthFlag       = accountRemoveTrackFromAccountPlaylistFlags.String("auth", "", "")
 	)
 	accountFlags.Usage = accountUsage
 	accountRegisterFlags.Usage = accountRegisterUsage
@@ -83,6 +95,8 @@ func ParseEndpoint(
 	accountCreateAccountPlaylistFlags.Usage = accountCreateAccountPlaylistUsage
 	accountDeleteAccountPlaylistFlags.Usage = accountDeleteAccountPlaylistUsage
 	accountGetAccountPlaylistFlags.Usage = accountGetAccountPlaylistUsage
+	accountAddTrackToAccountPlaylistFlags.Usage = accountAddTrackToAccountPlaylistUsage
+	accountRemoveTrackFromAccountPlaylistFlags.Usage = accountRemoveTrackFromAccountPlaylistUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -136,6 +150,12 @@ func ParseEndpoint(
 			case "get-account-playlist":
 				epf = accountGetAccountPlaylistFlags
 
+			case "add-track-to-account-playlist":
+				epf = accountAddTrackToAccountPlaylistFlags
+
+			case "remove-track-from-account-playlist":
+				epf = accountRemoveTrackFromAccountPlaylistFlags
+
 			}
 
 		}
@@ -179,6 +199,12 @@ func ParseEndpoint(
 			case "get-account-playlist":
 				endpoint = c.GetAccountPlaylist()
 				data, err = accountc.BuildGetAccountPlaylistPayload(*accountGetAccountPlaylistAccountIDFlag, *accountGetAccountPlaylistPlaylistIDFlag, *accountGetAccountPlaylistAuthFlag)
+			case "add-track-to-account-playlist":
+				endpoint = c.AddTrackToAccountPlaylist()
+				data, err = accountc.BuildAddTrackToAccountPlaylistPayload(*accountAddTrackToAccountPlaylistAccountIDFlag, *accountAddTrackToAccountPlaylistPlaylistIDFlag, *accountAddTrackToAccountPlaylistTrackIDFlag, *accountAddTrackToAccountPlaylistAuthFlag)
+			case "remove-track-from-account-playlist":
+				endpoint = c.RemoveTrackFromAccountPlaylist()
+				data, err = accountc.BuildRemoveTrackFromAccountPlaylistPayload(*accountRemoveTrackFromAccountPlaylistAccountIDFlag, *accountRemoveTrackFromAccountPlaylistPlaylistIDFlag, *accountRemoveTrackFromAccountPlaylistTrackIDFlag, *accountRemoveTrackFromAccountPlaylistAuthFlag)
 			}
 		}
 	}
@@ -202,6 +228,8 @@ COMMAND:
     create-account-playlist: CreateAccountPlaylist implements createAccountPlaylist.
     delete-account-playlist: DeleteAccountPlaylist implements deleteAccountPlaylist.
     get-account-playlist: GetAccountPlaylist implements getAccountPlaylist.
+    add-track-to-account-playlist: AddTrackToAccountPlaylist implements addTrackToAccountPlaylist.
+    remove-track-from-account-playlist: RemoveTrackFromAccountPlaylist implements removeTrackFromAccountPlaylist.
 
 Additional help:
     %[1]s account COMMAND --help
@@ -215,11 +243,11 @@ Register implements register.
 
 Example:
     %[1]s account register --body '{
-      "confirmedPassword": "Ipsum et molestiae.",
-      "email": "Et odit vel assumenda.",
-      "firstName": "Porro rerum distinctio minus facilis.",
-      "lastName": "Facere corrupti libero ut.",
-      "password": "Quibusdam omnis nemo provident eos quis ut."
+      "confirmedPassword": "Numquam quos excepturi vero ad est.",
+      "email": "Cumque quisquam dolorem adipisci.",
+      "firstName": "Eos quis ut ut ipsum.",
+      "lastName": "Molestiae voluptas dolorum et.",
+      "password": "Voluptates id recusandae temporibus et dolore."
    }'
 `, os.Args[0])
 }
@@ -232,8 +260,8 @@ Login implements login.
 
 Example:
     %[1]s account login --body '{
-      "email": "Voluptates id recusandae temporibus et dolore.",
-      "password": "Numquam quos excepturi vero ad est."
+      "email": "Iusto non mollitia qui non culpa laborum.",
+      "password": "Corrupti voluptas officia nostrum quia voluptatum."
    }'
 `, os.Args[0])
 }
@@ -246,7 +274,7 @@ GetAccountPlaylistCollection implements getAccountPlaylistCollection.
     -auth STRING: 
 
 Example:
-    %[1]s account get-account-playlist-collection --account-id 7791143341059954039 --auth "Molestias nobis in minus sint rerum."
+    %[1]s account get-account-playlist-collection --account-id 15798872255790973464 --auth "Corporis aut vero."
 `, os.Args[0])
 }
 
@@ -260,8 +288,8 @@ CreateAccountPlaylist implements createAccountPlaylist.
 
 Example:
     %[1]s account create-account-playlist --body '{
-      "name": "Enim consectetur sit omnis expedita."
-   }' --account-id 8495770996630836523 --auth "Ipsam quis aut."
+      "name": "Dolor ex."
+   }' --account-id 9502402829233404145 --auth "Dolorem et repudiandae cum corporis autem repellendus."
 `, os.Args[0])
 }
 
@@ -274,7 +302,7 @@ DeleteAccountPlaylist implements deleteAccountPlaylist.
     -auth STRING: 
 
 Example:
-    %[1]s account delete-account-playlist --account-id 9502402829233404145 --playlist-id 6919350924649605998 --auth "Et repudiandae cum corporis autem repellendus laudantium."
+    %[1]s account delete-account-playlist --account-id 1039585618931551645 --playlist-id 2942327051863868069 --auth "Unde odit sed nostrum."
 `, os.Args[0])
 }
 
@@ -287,6 +315,34 @@ GetAccountPlaylist implements getAccountPlaylist.
     -auth STRING: 
 
 Example:
-    %[1]s account get-account-playlist --account-id 2611714922576127721 --playlist-id 13822511445190111224 --auth "Voluptatem sequi adipisci iure dolorem nesciunt itaque."
+    %[1]s account get-account-playlist --account-id 5397326595089060801 --playlist-id 17902435237536666665 --auth "Dolor et."
+`, os.Args[0])
+}
+
+func accountAddTrackToAccountPlaylistUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] account add-track-to-account-playlist -account-id UINT -playlist-id UINT -track-id UINT -auth STRING
+
+AddTrackToAccountPlaylist implements addTrackToAccountPlaylist.
+    -account-id UINT: Account ID
+    -playlist-id UINT: Playlist ID to modify
+    -track-id UINT: Track ID to be added
+    -auth STRING: 
+
+Example:
+    %[1]s account add-track-to-account-playlist --account-id 10727286450490359292 --playlist-id 2101079306531990051 --track-id 9750426786919826982 --auth "Eius et quasi repudiandae."
+`, os.Args[0])
+}
+
+func accountRemoveTrackFromAccountPlaylistUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] account remove-track-from-account-playlist -account-id UINT -playlist-id UINT -track-id UINT -auth STRING
+
+RemoveTrackFromAccountPlaylist implements removeTrackFromAccountPlaylist.
+    -account-id UINT: Account ID
+    -playlist-id UINT: Playlist ID to modify
+    -track-id UINT: Track ID to be deleted
+    -auth STRING: 
+
+Example:
+    %[1]s account remove-track-from-account-playlist --account-id 15975472176951581192 --playlist-id 13448498749812279793 --track-id 18231734225788627855 --auth "Voluptate dolor omnis deserunt consectetur ipsa ab."
 `, os.Args[0])
 }

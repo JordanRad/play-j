@@ -40,3 +40,13 @@ func DeleteAccountPlaylistAccountPath(accountID uint, playlistID uint) string {
 func GetAccountPlaylistAccountPath(accountID uint, playlistID uint) string {
 	return fmt.Sprintf("/api/v1/account/%v/playlists/%v", accountID, playlistID)
 }
+
+// AddTrackToAccountPlaylistAccountPath returns the URL path to the account service addTrackToAccountPlaylist HTTP endpoint.
+func AddTrackToAccountPlaylistAccountPath(accountID uint, playlistID uint, trackID uint) string {
+	return fmt.Sprintf("/api/v1/account/%v/playlists/%v/tracks/%v", accountID, playlistID, trackID)
+}
+
+// RemoveTrackFromAccountPlaylistAccountPath returns the URL path to the account service removeTrackFromAccountPlaylist HTTP endpoint.
+func RemoveTrackFromAccountPlaylistAccountPath(accountID uint, playlistID uint, trackID uint) string {
+	return fmt.Sprintf("/api/v1/account/%v/playlists/%v/tracks/%v", accountID, playlistID, trackID)
+}

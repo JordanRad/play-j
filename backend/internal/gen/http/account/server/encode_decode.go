@@ -293,6 +293,130 @@ func DecodeGetAccountPlaylistRequest(mux goahttp.Muxer, decoder func(*http.Reque
 	}
 }
 
+// EncodeAddTrackToAccountPlaylistResponse returns an encoder for responses
+// returned by the account addTrackToAccountPlaylist endpoint.
+func EncodeAddTrackToAccountPlaylistResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res, _ := v.(*account.PlaylistModificationResponse)
+		enc := encoder(ctx, w)
+		body := NewAddTrackToAccountPlaylistResponseBody(res)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeAddTrackToAccountPlaylistRequest returns a decoder for requests sent
+// to the account addTrackToAccountPlaylist endpoint.
+func DecodeAddTrackToAccountPlaylistRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			accountID  uint
+			playlistID uint
+			trackID    uint
+			auth       *string
+			err        error
+
+			params = mux.Vars(r)
+		)
+		{
+			accountIDRaw := params["accountID"]
+			v, err2 := strconv.ParseUint(accountIDRaw, 10, strconv.IntSize)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("accountID", accountIDRaw, "unsigned integer"))
+			}
+			accountID = uint(v)
+		}
+		{
+			playlistIDRaw := params["playlistID"]
+			v, err2 := strconv.ParseUint(playlistIDRaw, 10, strconv.IntSize)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("playlistID", playlistIDRaw, "unsigned integer"))
+			}
+			playlistID = uint(v)
+		}
+		{
+			trackIDRaw := params["trackID"]
+			v, err2 := strconv.ParseUint(trackIDRaw, 10, strconv.IntSize)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("trackID", trackIDRaw, "unsigned integer"))
+			}
+			trackID = uint(v)
+		}
+		authRaw := r.Header.Get("Authorization")
+		if authRaw != "" {
+			auth = &authRaw
+		}
+		if err != nil {
+			return nil, err
+		}
+		payload := NewAddTrackToAccountPlaylistPayload(accountID, playlistID, trackID, auth)
+
+		return payload, nil
+	}
+}
+
+// EncodeRemoveTrackFromAccountPlaylistResponse returns an encoder for
+// responses returned by the account removeTrackFromAccountPlaylist endpoint.
+func EncodeRemoveTrackFromAccountPlaylistResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res, _ := v.(*account.PlaylistModificationResponse)
+		enc := encoder(ctx, w)
+		body := NewRemoveTrackFromAccountPlaylistResponseBody(res)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeRemoveTrackFromAccountPlaylistRequest returns a decoder for requests
+// sent to the account removeTrackFromAccountPlaylist endpoint.
+func DecodeRemoveTrackFromAccountPlaylistRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			accountID  uint
+			playlistID uint
+			trackID    uint
+			auth       *string
+			err        error
+
+			params = mux.Vars(r)
+		)
+		{
+			accountIDRaw := params["accountID"]
+			v, err2 := strconv.ParseUint(accountIDRaw, 10, strconv.IntSize)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("accountID", accountIDRaw, "unsigned integer"))
+			}
+			accountID = uint(v)
+		}
+		{
+			playlistIDRaw := params["playlistID"]
+			v, err2 := strconv.ParseUint(playlistIDRaw, 10, strconv.IntSize)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("playlistID", playlistIDRaw, "unsigned integer"))
+			}
+			playlistID = uint(v)
+		}
+		{
+			trackIDRaw := params["trackID"]
+			v, err2 := strconv.ParseUint(trackIDRaw, 10, strconv.IntSize)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("trackID", trackIDRaw, "unsigned integer"))
+			}
+			trackID = uint(v)
+		}
+		authRaw := r.Header.Get("Authorization")
+		if authRaw != "" {
+			auth = &authRaw
+		}
+		if err != nil {
+			return nil, err
+		}
+		payload := NewRemoveTrackFromAccountPlaylistPayload(accountID, playlistID, trackID, auth)
+
+		return payload, nil
+	}
+}
+
 // marshalAccountAccountPlaylistResponseToAccountPlaylistResponseResponseBody
 // builds a value of type *AccountPlaylistResponseResponseBody from a value of
 // type *account.AccountPlaylistResponse.

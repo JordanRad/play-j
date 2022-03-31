@@ -99,6 +99,20 @@ type GetAccountPlaylistResponseBody struct {
 	TrackIDs []int32 `form:"trackIDs" json:"trackIDs" xml:"trackIDs"`
 }
 
+// AddTrackToAccountPlaylistResponseBody is the type of the "account" service
+// "addTrackToAccountPlaylist" endpoint HTTP response body.
+type AddTrackToAccountPlaylistResponseBody struct {
+	// Operation completion status
+	Message string `form:"message" json:"message" xml:"message"`
+}
+
+// RemoveTrackFromAccountPlaylistResponseBody is the type of the "account"
+// service "removeTrackFromAccountPlaylist" endpoint HTTP response body.
+type RemoveTrackFromAccountPlaylistResponseBody struct {
+	// Operation completion status
+	Message string `form:"message" json:"message" xml:"message"`
+}
+
 // AccountPlaylistResponseResponseBody is used to define fields on response
 // body types.
 type AccountPlaylistResponseResponseBody struct {
@@ -182,6 +196,26 @@ func NewGetAccountPlaylistResponseBody(res *account.AccountPlaylistResponse) *Ge
 	return body
 }
 
+// NewAddTrackToAccountPlaylistResponseBody builds the HTTP response body from
+// the result of the "addTrackToAccountPlaylist" endpoint of the "account"
+// service.
+func NewAddTrackToAccountPlaylistResponseBody(res *account.PlaylistModificationResponse) *AddTrackToAccountPlaylistResponseBody {
+	body := &AddTrackToAccountPlaylistResponseBody{
+		Message: res.Message,
+	}
+	return body
+}
+
+// NewRemoveTrackFromAccountPlaylistResponseBody builds the HTTP response body
+// from the result of the "removeTrackFromAccountPlaylist" endpoint of the
+// "account" service.
+func NewRemoveTrackFromAccountPlaylistResponseBody(res *account.PlaylistModificationResponse) *RemoveTrackFromAccountPlaylistResponseBody {
+	body := &RemoveTrackFromAccountPlaylistResponseBody{
+		Message: res.Message,
+	}
+	return body
+}
+
 // NewRegisterPayload builds a account service register endpoint payload.
 func NewRegisterPayload(body *RegisterRequestBody) *account.RegisterPayload {
 	v := &account.RegisterPayload{
@@ -244,6 +278,30 @@ func NewGetAccountPlaylistPayload(accountID uint, playlistID uint, auth *string)
 	v := &account.GetAccountPlaylistPayload{}
 	v.AccountID = &accountID
 	v.PlaylistID = &playlistID
+	v.Auth = auth
+
+	return v
+}
+
+// NewAddTrackToAccountPlaylistPayload builds a account service
+// addTrackToAccountPlaylist endpoint payload.
+func NewAddTrackToAccountPlaylistPayload(accountID uint, playlistID uint, trackID uint, auth *string) *account.AddTrackToAccountPlaylistPayload {
+	v := &account.AddTrackToAccountPlaylistPayload{}
+	v.AccountID = &accountID
+	v.PlaylistID = &playlistID
+	v.TrackID = &trackID
+	v.Auth = auth
+
+	return v
+}
+
+// NewRemoveTrackFromAccountPlaylistPayload builds a account service
+// removeTrackFromAccountPlaylist endpoint payload.
+func NewRemoveTrackFromAccountPlaylistPayload(accountID uint, playlistID uint, trackID uint, auth *string) *account.RemoveTrackFromAccountPlaylistPayload {
+	v := &account.RemoveTrackFromAccountPlaylistPayload{}
+	v.AccountID = &accountID
+	v.PlaylistID = &playlistID
+	v.TrackID = &trackID
 	v.Auth = auth
 
 	return v

@@ -100,6 +100,38 @@ var _ = Service("account", func() {
 			GET("/{accountID}/playlists/{playlistID}")
 		})
 	})
+
+	Method("addTrackToAccountPlaylist", func() {
+		Result(PlaylistModificationResponse)
+		Payload(func() {
+			Attribute("accountID", UInt, "Account ID")
+			Attribute("playlistID", UInt, "Playlist ID to modify")
+			Attribute("trackID", UInt, "Track ID to be added")
+			Attribute("auth", String, "Authorization Header")
+		})
+		HTTP(func() {
+			Header("auth:Authorization", String, "JSON Web Token", func() {
+				Pattern("^Bearer [^ ]+$")
+			})
+			POST("/{accountID}/playlists/{playlistID}/tracks/{trackID}")
+		})
+	})
+
+	Method("removeTrackFromAccountPlaylist", func() {
+		Result(PlaylistModificationResponse)
+		Payload(func() {
+			Attribute("accountID", UInt, "Account ID")
+			Attribute("playlistID", UInt, "Playlist ID to modify")
+			Attribute("trackID", UInt, "Track ID to be deleted")
+			Attribute("auth", String, "Authorization Header")
+		})
+		HTTP(func() {
+			Header("auth:Authorization", String, "JSON Web Token", func() {
+				Pattern("^Bearer [^ ]+$")
+			})
+			DELETE("/{accountID}/playlists/{playlistID}/tracks/{trackID}")
+		})
+	})
 })
 
 var RegisterResponse = Type("RegisterResponse", func() {
@@ -150,6 +182,11 @@ var CreatePlaylistResponse = Type("CreatePlaylistResponse", func() {
 })
 
 var DeletePlaylistResponse = Type("DeletePlaylistResponse", func() {
+	Attribute("message", String, "Operation completion status")
+	Required("message")
+})
+
+var PlaylistModificationResponse = Type("PlaylistModificationResponse", func() {
 	Attribute("message", String, "Operation completion status")
 	Required("message")
 })

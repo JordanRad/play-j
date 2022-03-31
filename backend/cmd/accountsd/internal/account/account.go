@@ -20,6 +20,7 @@ type PlaylistStore interface {
 	GetUserPlaylist(context.Context, uint, uint) (string, error)
 	GetAllUserPlaylists(context.Context, uint) ([]*dbmodels.Playlist, error)
 	DeleteAccountPlaylist(context.Context, uint, uint) (bool, error)
+	UpdateAccountPlaylist(context.Context, uint, uint, string) (bool, error)
 }
 
 type Service struct {
@@ -169,4 +170,34 @@ func (s *Service) DeleteAccountPlaylist(ctx context.Context, p *account.DeleteAc
 
 func (s *Service) GetAccountPlaylist(ctx context.Context, p *account.GetAccountPlaylistPayload) (*account.AccountPlaylistResponse, error) {
 	return nil, nil
+}
+
+func (s *Service) AddTrackToAccountPlaylist(ctx context.Context, p *account.AddTrackToAccountPlaylistPayload) (*account.PlaylistModificationResponse, error) {
+
+	_, err := s.playlistStore.UpdateAccountPlaylist(ctx, *p.PlaylistID, *p.TrackID, "ADD")
+
+	if err != nil {
+		return nil, fmt.Errorf("service error adding track to a playlist: %w", err)
+	}
+
+	response := &account.PlaylistModificationResponse{
+		Message: fmt.Sprintf("Track with ID: %d has been added to Playlist with ID: %d successfully", *p.TrackID, *p.PlaylistID),
+	}
+
+	return response, nil
+}
+
+func (s *Service) RemoveTrackFromAccountPlaylist(ctx context.Context, p *account.RemoveTrackFromAccountPlaylistPayload) (*account.PlaylistModificationResponse, error) {
+
+	_, err := s.playlistStore.UpdateAccountPlaylist(ctx, *p.PlaylistID, *p.TrackID, "REMOVE")
+
+	if err != nil {
+		return nil, fmt.Errorf("service error removing a track from a playlist: %w", err)
+	}
+
+	response := &account.PlaylistModificationResponse{
+		Message: fmt.Sprintf("Track with ID: %d has been removed from Playlist with ID: %d successfully", *p.TrackID, *p.PlaylistID),
+	}
+
+	return response, nil
 }

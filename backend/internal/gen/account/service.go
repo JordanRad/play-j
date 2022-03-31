@@ -25,6 +25,10 @@ type Service interface {
 	DeleteAccountPlaylist(context.Context, *DeleteAccountPlaylistPayload) (res *DeletePlaylistResponse, err error)
 	// GetAccountPlaylist implements getAccountPlaylist.
 	GetAccountPlaylist(context.Context, *GetAccountPlaylistPayload) (res *AccountPlaylistResponse, err error)
+	// AddTrackToAccountPlaylist implements addTrackToAccountPlaylist.
+	AddTrackToAccountPlaylist(context.Context, *AddTrackToAccountPlaylistPayload) (res *PlaylistModificationResponse, err error)
+	// RemoveTrackFromAccountPlaylist implements removeTrackFromAccountPlaylist.
+	RemoveTrackFromAccountPlaylist(context.Context, *RemoveTrackFromAccountPlaylistPayload) (res *PlaylistModificationResponse, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -35,7 +39,7 @@ const ServiceName = "account"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [6]string{"register", "login", "getAccountPlaylistCollection", "createAccountPlaylist", "deleteAccountPlaylist", "getAccountPlaylist"}
+var MethodNames = [8]string{"register", "login", "getAccountPlaylistCollection", "createAccountPlaylist", "deleteAccountPlaylist", "getAccountPlaylist", "addTrackToAccountPlaylist", "removeTrackFromAccountPlaylist"}
 
 // RegisterPayload is the payload type of the account service register method.
 type RegisterPayload struct {
@@ -148,4 +152,37 @@ type AccountPlaylistResponse struct {
 	Name string
 	// Array of TrackIDs
 	TrackIDs []int32
+}
+
+// AddTrackToAccountPlaylistPayload is the payload type of the account service
+// addTrackToAccountPlaylist method.
+type AddTrackToAccountPlaylistPayload struct {
+	// Account ID
+	AccountID *uint
+	// Playlist ID to modify
+	PlaylistID *uint
+	// Track ID to be added
+	TrackID *uint
+	// Authorization Header
+	Auth *string
+}
+
+// PlaylistModificationResponse is the result type of the account service
+// addTrackToAccountPlaylist method.
+type PlaylistModificationResponse struct {
+	// Operation completion status
+	Message string
+}
+
+// RemoveTrackFromAccountPlaylistPayload is the payload type of the account
+// service removeTrackFromAccountPlaylist method.
+type RemoveTrackFromAccountPlaylistPayload struct {
+	// Account ID
+	AccountID *uint
+	// Playlist ID to modify
+	PlaylistID *uint
+	// Track ID to be deleted
+	TrackID *uint
+	// Authorization Header
+	Auth *string
 }

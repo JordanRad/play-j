@@ -99,6 +99,20 @@ type GetAccountPlaylistResponseBody struct {
 	TrackIDs []int32 `form:"trackIDs,omitempty" json:"trackIDs,omitempty" xml:"trackIDs,omitempty"`
 }
 
+// AddTrackToAccountPlaylistResponseBody is the type of the "account" service
+// "addTrackToAccountPlaylist" endpoint HTTP response body.
+type AddTrackToAccountPlaylistResponseBody struct {
+	// Operation completion status
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+}
+
+// RemoveTrackFromAccountPlaylistResponseBody is the type of the "account"
+// service "removeTrackFromAccountPlaylist" endpoint HTTP response body.
+type RemoveTrackFromAccountPlaylistResponseBody struct {
+	// Operation completion status
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+}
+
 // AccountPlaylistResponseResponseBody is used to define fields on response
 // body types.
 type AccountPlaylistResponseResponseBody struct {
@@ -216,6 +230,28 @@ func NewGetAccountPlaylistAccountPlaylistResponseOK(body *GetAccountPlaylistResp
 	return v
 }
 
+// NewAddTrackToAccountPlaylistPlaylistModificationResponseOK builds a
+// "account" service "addTrackToAccountPlaylist" endpoint result from a HTTP
+// "OK" response.
+func NewAddTrackToAccountPlaylistPlaylistModificationResponseOK(body *AddTrackToAccountPlaylistResponseBody) *account.PlaylistModificationResponse {
+	v := &account.PlaylistModificationResponse{
+		Message: *body.Message,
+	}
+
+	return v
+}
+
+// NewRemoveTrackFromAccountPlaylistPlaylistModificationResponseOK builds a
+// "account" service "removeTrackFromAccountPlaylist" endpoint result from a
+// HTTP "OK" response.
+func NewRemoveTrackFromAccountPlaylistPlaylistModificationResponseOK(body *RemoveTrackFromAccountPlaylistResponseBody) *account.PlaylistModificationResponse {
+	v := &account.PlaylistModificationResponse{
+		Message: *body.Message,
+	}
+
+	return v
+}
+
 // ValidateRegisterResponseBody runs the validations defined on
 // RegisterResponseBody
 func ValidateRegisterResponseBody(body *RegisterResponseBody) (err error) {
@@ -290,6 +326,24 @@ func ValidateGetAccountPlaylistResponseBody(body *GetAccountPlaylistResponseBody
 	}
 	if body.TrackIDs == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("trackIDs", "body"))
+	}
+	return
+}
+
+// ValidateAddTrackToAccountPlaylistResponseBody runs the validations defined
+// on AddTrackToAccountPlaylistResponseBody
+func ValidateAddTrackToAccountPlaylistResponseBody(body *AddTrackToAccountPlaylistResponseBody) (err error) {
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	return
+}
+
+// ValidateRemoveTrackFromAccountPlaylistResponseBody runs the validations
+// defined on RemoveTrackFromAccountPlaylistResponseBody
+func ValidateRemoveTrackFromAccountPlaylistResponseBody(body *RemoveTrackFromAccountPlaylistResponseBody) (err error) {
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
 	}
 	return
 }

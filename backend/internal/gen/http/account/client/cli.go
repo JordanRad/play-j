@@ -23,7 +23,7 @@ func BuildRegisterPayload(accountRegisterBody string) (*account.RegisterPayload,
 	{
 		err = json.Unmarshal([]byte(accountRegisterBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"confirmedPassword\": \"Ipsum et molestiae.\",\n      \"email\": \"Et odit vel assumenda.\",\n      \"firstName\": \"Porro rerum distinctio minus facilis.\",\n      \"lastName\": \"Facere corrupti libero ut.\",\n      \"password\": \"Quibusdam omnis nemo provident eos quis ut.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"confirmedPassword\": \"Numquam quos excepturi vero ad est.\",\n      \"email\": \"Cumque quisquam dolorem adipisci.\",\n      \"firstName\": \"Eos quis ut ut ipsum.\",\n      \"lastName\": \"Molestiae voluptas dolorum et.\",\n      \"password\": \"Voluptates id recusandae temporibus et dolore.\"\n   }'")
 		}
 	}
 	v := &account.RegisterPayload{
@@ -45,7 +45,7 @@ func BuildLoginPayload(accountLoginBody string) (*account.LoginPayload, error) {
 	{
 		err = json.Unmarshal([]byte(accountLoginBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"email\": \"Voluptates id recusandae temporibus et dolore.\",\n      \"password\": \"Numquam quos excepturi vero ad est.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"email\": \"Iusto non mollitia qui non culpa laborum.\",\n      \"password\": \"Corrupti voluptas officia nostrum quia voluptatum.\"\n   }'")
 		}
 	}
 	v := &account.LoginPayload{
@@ -90,7 +90,7 @@ func BuildCreateAccountPlaylistPayload(accountCreateAccountPlaylistBody string, 
 	{
 		err = json.Unmarshal([]byte(accountCreateAccountPlaylistBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"name\": \"Enim consectetur sit omnis expedita.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"name\": \"Dolor ex.\"\n   }'")
 		}
 	}
 	var accountID uint
@@ -184,6 +184,98 @@ func BuildGetAccountPlaylistPayload(accountGetAccountPlaylistAccountID string, a
 	v := &account.GetAccountPlaylistPayload{}
 	v.AccountID = &accountID
 	v.PlaylistID = &playlistID
+	v.Auth = auth
+
+	return v, nil
+}
+
+// BuildAddTrackToAccountPlaylistPayload builds the payload for the account
+// addTrackToAccountPlaylist endpoint from CLI flags.
+func BuildAddTrackToAccountPlaylistPayload(accountAddTrackToAccountPlaylistAccountID string, accountAddTrackToAccountPlaylistPlaylistID string, accountAddTrackToAccountPlaylistTrackID string, accountAddTrackToAccountPlaylistAuth string) (*account.AddTrackToAccountPlaylistPayload, error) {
+	var err error
+	var accountID uint
+	{
+		var v uint64
+		v, err = strconv.ParseUint(accountAddTrackToAccountPlaylistAccountID, 10, 64)
+		accountID = uint(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for accountID, must be UINT")
+		}
+	}
+	var playlistID uint
+	{
+		var v uint64
+		v, err = strconv.ParseUint(accountAddTrackToAccountPlaylistPlaylistID, 10, 64)
+		playlistID = uint(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for playlistID, must be UINT")
+		}
+	}
+	var trackID uint
+	{
+		var v uint64
+		v, err = strconv.ParseUint(accountAddTrackToAccountPlaylistTrackID, 10, 64)
+		trackID = uint(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for trackID, must be UINT")
+		}
+	}
+	var auth *string
+	{
+		if accountAddTrackToAccountPlaylistAuth != "" {
+			auth = &accountAddTrackToAccountPlaylistAuth
+		}
+	}
+	v := &account.AddTrackToAccountPlaylistPayload{}
+	v.AccountID = &accountID
+	v.PlaylistID = &playlistID
+	v.TrackID = &trackID
+	v.Auth = auth
+
+	return v, nil
+}
+
+// BuildRemoveTrackFromAccountPlaylistPayload builds the payload for the
+// account removeTrackFromAccountPlaylist endpoint from CLI flags.
+func BuildRemoveTrackFromAccountPlaylistPayload(accountRemoveTrackFromAccountPlaylistAccountID string, accountRemoveTrackFromAccountPlaylistPlaylistID string, accountRemoveTrackFromAccountPlaylistTrackID string, accountRemoveTrackFromAccountPlaylistAuth string) (*account.RemoveTrackFromAccountPlaylistPayload, error) {
+	var err error
+	var accountID uint
+	{
+		var v uint64
+		v, err = strconv.ParseUint(accountRemoveTrackFromAccountPlaylistAccountID, 10, 64)
+		accountID = uint(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for accountID, must be UINT")
+		}
+	}
+	var playlistID uint
+	{
+		var v uint64
+		v, err = strconv.ParseUint(accountRemoveTrackFromAccountPlaylistPlaylistID, 10, 64)
+		playlistID = uint(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for playlistID, must be UINT")
+		}
+	}
+	var trackID uint
+	{
+		var v uint64
+		v, err = strconv.ParseUint(accountRemoveTrackFromAccountPlaylistTrackID, 10, 64)
+		trackID = uint(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for trackID, must be UINT")
+		}
+	}
+	var auth *string
+	{
+		if accountRemoveTrackFromAccountPlaylistAuth != "" {
+			auth = &accountRemoveTrackFromAccountPlaylistAuth
+		}
+	}
+	v := &account.RemoveTrackFromAccountPlaylistPayload{}
+	v.AccountID = &accountID
+	v.PlaylistID = &playlistID
+	v.TrackID = &trackID
 	v.Auth = auth
 
 	return v, nil

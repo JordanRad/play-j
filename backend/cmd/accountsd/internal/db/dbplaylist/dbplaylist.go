@@ -88,3 +88,26 @@ func (s *Store) GetAllUserPlaylists(ctx context.Context, accountID uint) ([]*dbm
 
 	return playlists, nil
 }
+
+func (s *Store) UpdateAccountPlaylist(ctx context.Context, playlistID uint, trackID uint, operation string) (bool, error) {
+	var result sql.Result
+	var err error
+
+	if operation == "ADD" {
+		result, err = s.DB.Exec("UPDATE playlists SET trackIDs = array_append(trackIDs, $1) WHERE id= $2;", trackID, playlistID)
+	} else {
+		result, err = s.DB.Exec("UPDATE playlists SET trackIDs = array_remove(trackIDs, $1) WHERE id= $2;", trackID, playlistID)
+	}
+
+	if err != nil {
+		return false, fmt.Errorf("db error adding/deleting a track to a playlist: %w", err)
+	}
+
+	rowsAffected, _ := result.RowsAffected()
+
+	if rowsAffected == 1 {
+		return true, nil
+	}
+
+	return false, fmt.Errorf("db error modifiyng a playlist")
+}
