@@ -126,7 +126,17 @@ func (s *Service) GetAccountPlaylist(ctx context.Context, p *playlist.GetAccount
 }
 
 func (s *Service) RenameAccountPlaylist(ctx context.Context, p *playlist.RenameAccountPlaylistPayload) (*playlist.PlaylistModificationResponse, error) {
-	return nil, nil
+	_, err := s.store.UpdateAccountPlaylistName(ctx, *p.PlaylistID, *p.Name)
+
+	if err != nil {
+		return nil, fmt.Errorf("error renaimg a playlist: %w", err)
+	}
+
+	response := &playlist.PlaylistModificationResponse{
+		Message: "Playlist name updated successfully",
+	}
+
+	return response, nil
 }
 
 func (s *Service) AddTrackToAccountPlaylist(ctx context.Context, p *playlist.AddTrackToAccountPlaylistPayload) (*playlist.PlaylistModificationResponse, error) {
