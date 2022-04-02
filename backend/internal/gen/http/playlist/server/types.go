@@ -26,10 +26,11 @@ type CreateAccountPlaylistRequestBody struct {
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 }
 
-// DeleteAccountPlaylistRequestBody is the type of the "playlist" service
-// "deleteAccountPlaylist" endpoint HTTP request body.
-type DeleteAccountPlaylistRequestBody struct {
-	PlaylistID *uint `form:"playlistID,omitempty" json:"playlistID,omitempty" xml:"playlistID,omitempty"`
+// RenameAccountPlaylistRequestBody is the type of the "playlist" service
+// "renameAccountPlaylist" endpoint HTTP request body.
+type RenameAccountPlaylistRequestBody struct {
+	// New playlist name
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 }
 
 // GetAccountPlaylistCollectionResponseBody is the type of the "playlist"
@@ -44,6 +45,13 @@ type GetAccountPlaylistCollectionResponseBody struct {
 // CreateAccountPlaylistResponseBody is the type of the "playlist" service
 // "createAccountPlaylist" endpoint HTTP response body.
 type CreateAccountPlaylistResponseBody struct {
+	// Operation completion status
+	Message string `form:"message" json:"message" xml:"message"`
+}
+
+// RenameAccountPlaylistResponseBody is the type of the "playlist" service
+// "renameAccountPlaylist" endpoint HTTP response body.
+type RenameAccountPlaylistResponseBody struct {
 	// Operation completion status
 	Message string `form:"message" json:"message" xml:"message"`
 }
@@ -116,6 +124,15 @@ func NewCreateAccountPlaylistResponseBody(res *playlist.PlaylistModificationResp
 	return body
 }
 
+// NewRenameAccountPlaylistResponseBody builds the HTTP response body from the
+// result of the "renameAccountPlaylist" endpoint of the "playlist" service.
+func NewRenameAccountPlaylistResponseBody(res *playlist.PlaylistModificationResponse) *RenameAccountPlaylistResponseBody {
+	body := &RenameAccountPlaylistResponseBody{
+		Message: res.Message,
+	}
+	return body
+}
+
 // NewDeleteAccountPlaylistResponseBody builds the HTTP response body from the
 // result of the "deleteAccountPlaylist" endpoint of the "playlist" service.
 func NewDeleteAccountPlaylistResponseBody(res *playlist.PlaylistModificationResponse) *DeleteAccountPlaylistResponseBody {
@@ -183,12 +200,23 @@ func NewCreateAccountPlaylistPayload(body *CreateAccountPlaylistRequestBody, aut
 	return v
 }
 
+// NewRenameAccountPlaylistPayload builds a playlist service
+// renameAccountPlaylist endpoint payload.
+func NewRenameAccountPlaylistPayload(body *RenameAccountPlaylistRequestBody, playlistID uint, auth *string) *playlist.RenameAccountPlaylistPayload {
+	v := &playlist.RenameAccountPlaylistPayload{
+		Name: body.Name,
+	}
+	v.PlaylistID = &playlistID
+	v.Auth = auth
+
+	return v
+}
+
 // NewDeleteAccountPlaylistPayload builds a playlist service
 // deleteAccountPlaylist endpoint payload.
-func NewDeleteAccountPlaylistPayload(body *DeleteAccountPlaylistRequestBody, auth *string) *playlist.DeleteAccountPlaylistPayload {
-	v := &playlist.DeleteAccountPlaylistPayload{
-		PlaylistID: body.PlaylistID,
-	}
+func NewDeleteAccountPlaylistPayload(playlistID uint, auth *string) *playlist.DeleteAccountPlaylistPayload {
+	v := &playlist.DeleteAccountPlaylistPayload{}
+	v.PlaylistID = &playlistID
 	v.Auth = auth
 
 	return v

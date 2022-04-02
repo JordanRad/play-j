@@ -27,6 +27,10 @@ type Client struct {
 	// createAccountPlaylist endpoint.
 	CreateAccountPlaylistDoer goahttp.Doer
 
+	// RenameAccountPlaylist Doer is the HTTP client used to make requests to the
+	// renameAccountPlaylist endpoint.
+	RenameAccountPlaylistDoer goahttp.Doer
+
 	// DeleteAccountPlaylist Doer is the HTTP client used to make requests to the
 	// deleteAccountPlaylist endpoint.
 	DeleteAccountPlaylistDoer goahttp.Doer
@@ -65,6 +69,7 @@ func NewClient(
 	return &Client{
 		GetAccountPlaylistCollectionDoer:   doer,
 		CreateAccountPlaylistDoer:          doer,
+		RenameAccountPlaylistDoer:          doer,
 		DeleteAccountPlaylistDoer:          doer,
 		GetAccountPlaylistDoer:             doer,
 		AddTrackToAccountPlaylistDoer:      doer,
@@ -120,6 +125,30 @@ func (c *Client) CreateAccountPlaylist() goa.Endpoint {
 		resp, err := c.CreateAccountPlaylistDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("playlist", "createAccountPlaylist", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// RenameAccountPlaylist returns an endpoint that makes HTTP requests to the
+// playlist service renameAccountPlaylist server.
+func (c *Client) RenameAccountPlaylist() goa.Endpoint {
+	var (
+		encodeRequest  = EncodeRenameAccountPlaylistRequest(c.encoder)
+		decodeResponse = DecodeRenameAccountPlaylistResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildRenameAccountPlaylistRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.RenameAccountPlaylistDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("playlist", "renameAccountPlaylist", err)
 		}
 		return decodeResponse(resp)
 	}

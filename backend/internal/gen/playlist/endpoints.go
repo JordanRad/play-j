@@ -19,6 +19,7 @@ import (
 type Endpoints struct {
 	GetAccountPlaylistCollection   goa.Endpoint
 	CreateAccountPlaylist          goa.Endpoint
+	RenameAccountPlaylist          goa.Endpoint
 	DeleteAccountPlaylist          goa.Endpoint
 	GetAccountPlaylist             goa.Endpoint
 	AddTrackToAccountPlaylist      goa.Endpoint
@@ -30,6 +31,7 @@ func NewEndpoints(s Service) *Endpoints {
 	return &Endpoints{
 		GetAccountPlaylistCollection:   NewGetAccountPlaylistCollectionEndpoint(s),
 		CreateAccountPlaylist:          NewCreateAccountPlaylistEndpoint(s),
+		RenameAccountPlaylist:          NewRenameAccountPlaylistEndpoint(s),
 		DeleteAccountPlaylist:          NewDeleteAccountPlaylistEndpoint(s),
 		GetAccountPlaylist:             NewGetAccountPlaylistEndpoint(s),
 		AddTrackToAccountPlaylist:      NewAddTrackToAccountPlaylistEndpoint(s),
@@ -41,6 +43,7 @@ func NewEndpoints(s Service) *Endpoints {
 func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.GetAccountPlaylistCollection = m(e.GetAccountPlaylistCollection)
 	e.CreateAccountPlaylist = m(e.CreateAccountPlaylist)
+	e.RenameAccountPlaylist = m(e.RenameAccountPlaylist)
 	e.DeleteAccountPlaylist = m(e.DeleteAccountPlaylist)
 	e.GetAccountPlaylist = m(e.GetAccountPlaylist)
 	e.AddTrackToAccountPlaylist = m(e.AddTrackToAccountPlaylist)
@@ -62,6 +65,15 @@ func NewCreateAccountPlaylistEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*CreateAccountPlaylistPayload)
 		return s.CreateAccountPlaylist(ctx, p)
+	}
+}
+
+// NewRenameAccountPlaylistEndpoint returns an endpoint function that calls the
+// method "renameAccountPlaylist" of service "playlist".
+func NewRenameAccountPlaylistEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*RenameAccountPlaylistPayload)
+		return s.RenameAccountPlaylist(ctx, p)
 	}
 }
 

@@ -172,11 +172,111 @@ func DecodeCreateAccountPlaylistResponse(decoder func(*http.Response) goahttp.De
 	}
 }
 
+// BuildRenameAccountPlaylistRequest instantiates a HTTP request object with
+// method and path set to call the "playlist" service "renameAccountPlaylist"
+// endpoint
+func (c *Client) BuildRenameAccountPlaylistRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	var (
+		playlistID uint
+	)
+	{
+		p, ok := v.(*playlist.RenameAccountPlaylistPayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("playlist", "renameAccountPlaylist", "*playlist.RenameAccountPlaylistPayload", v)
+		}
+		if p.PlaylistID != nil {
+			playlistID = *p.PlaylistID
+		}
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: RenameAccountPlaylistPlaylistPath(playlistID)}
+	req, err := http.NewRequest("PUT", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("playlist", "renameAccountPlaylist", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeRenameAccountPlaylistRequest returns an encoder for requests sent to
+// the playlist renameAccountPlaylist server.
+func EncodeRenameAccountPlaylistRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*playlist.RenameAccountPlaylistPayload)
+		if !ok {
+			return goahttp.ErrInvalidType("playlist", "renameAccountPlaylist", "*playlist.RenameAccountPlaylistPayload", v)
+		}
+		if p.Auth != nil {
+			head := *p.Auth
+			req.Header.Set("Authorization", head)
+		}
+		body := NewRenameAccountPlaylistRequestBody(p)
+		if err := encoder(req).Encode(&body); err != nil {
+			return goahttp.ErrEncodingError("playlist", "renameAccountPlaylist", err)
+		}
+		return nil
+	}
+}
+
+// DecodeRenameAccountPlaylistResponse returns a decoder for responses returned
+// by the playlist renameAccountPlaylist endpoint. restoreBody controls whether
+// the response body should be restored after having been read.
+func DecodeRenameAccountPlaylistResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body RenameAccountPlaylistResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("playlist", "renameAccountPlaylist", err)
+			}
+			err = ValidateRenameAccountPlaylistResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("playlist", "renameAccountPlaylist", err)
+			}
+			res := NewRenameAccountPlaylistPlaylistModificationResponseOK(&body)
+			return res, nil
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("playlist", "renameAccountPlaylist", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // BuildDeleteAccountPlaylistRequest instantiates a HTTP request object with
 // method and path set to call the "playlist" service "deleteAccountPlaylist"
 // endpoint
 func (c *Client) BuildDeleteAccountPlaylistRequest(ctx context.Context, v interface{}) (*http.Request, error) {
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: DeleteAccountPlaylistPlaylistPath()}
+	var (
+		playlistID uint
+	)
+	{
+		p, ok := v.(*playlist.DeleteAccountPlaylistPayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("playlist", "deleteAccountPlaylist", "*playlist.DeleteAccountPlaylistPayload", v)
+		}
+		if p.PlaylistID != nil {
+			playlistID = *p.PlaylistID
+		}
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: DeleteAccountPlaylistPlaylistPath(playlistID)}
 	req, err := http.NewRequest("DELETE", u.String(), nil)
 	if err != nil {
 		return nil, goahttp.ErrInvalidURL("playlist", "deleteAccountPlaylist", u.String(), err)
@@ -199,10 +299,6 @@ func EncodeDeleteAccountPlaylistRequest(encoder func(*http.Request) goahttp.Enco
 		if p.Auth != nil {
 			head := *p.Auth
 			req.Header.Set("Authorization", head)
-		}
-		body := NewDeleteAccountPlaylistRequestBody(p)
-		if err := encoder(req).Encode(&body); err != nil {
-			return goahttp.ErrEncodingError("playlist", "deleteAccountPlaylist", err)
 		}
 		return nil
 	}

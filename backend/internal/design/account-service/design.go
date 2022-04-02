@@ -78,6 +78,21 @@ var _ = Service("playlist", func() {
 		})
 	})
 
+	Method("renameAccountPlaylist", func() {
+		Result(PlaylistModificationResponse)
+		Payload(func() {
+			Attribute("auth", String, "Authorization Header")
+			Attribute("playlistID", UInt, "Playlist id to modify")
+			Attribute("name", String, "New playlist name")
+		})
+		HTTP(func() {
+			Header("auth:Authorization", String, "JSON Web Token", func() {
+				Pattern("^Bearer [^ ]+$")
+			})
+			PUT("/{playlistID}")
+		})
+	})
+
 	Method("deleteAccountPlaylist", func() {
 		Result(PlaylistModificationResponse)
 		Payload(func() {
@@ -88,7 +103,7 @@ var _ = Service("playlist", func() {
 			Header("auth:Authorization", String, "JSON Web Token", func() {
 				Pattern("^Bearer [^ ]+$")
 			})
-			DELETE("/")
+			DELETE("/{playlistID}")
 		})
 	})
 

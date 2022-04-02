@@ -19,6 +19,8 @@ type Service interface {
 	GetAccountPlaylistCollection(context.Context, *GetAccountPlaylistCollectionPayload) (res *AccountPlaylistCollectionResponse, err error)
 	// CreateAccountPlaylist implements createAccountPlaylist.
 	CreateAccountPlaylist(context.Context, *CreateAccountPlaylistPayload) (res *PlaylistModificationResponse, err error)
+	// RenameAccountPlaylist implements renameAccountPlaylist.
+	RenameAccountPlaylist(context.Context, *RenameAccountPlaylistPayload) (res *PlaylistModificationResponse, err error)
 	// DeleteAccountPlaylist implements deleteAccountPlaylist.
 	DeleteAccountPlaylist(context.Context, *DeleteAccountPlaylistPayload) (res *PlaylistModificationResponse, err error)
 	// GetAccountPlaylist implements getAccountPlaylist.
@@ -37,7 +39,7 @@ const ServiceName = "playlist"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [6]string{"getAccountPlaylistCollection", "createAccountPlaylist", "deleteAccountPlaylist", "getAccountPlaylist", "addTrackToAccountPlaylist", "removeTrackFromAccountPlaylist"}
+var MethodNames = [7]string{"getAccountPlaylistCollection", "createAccountPlaylist", "renameAccountPlaylist", "deleteAccountPlaylist", "getAccountPlaylist", "addTrackToAccountPlaylist", "removeTrackFromAccountPlaylist"}
 
 // GetAccountPlaylistCollectionPayload is the payload type of the playlist
 // service getAccountPlaylistCollection method.
@@ -69,6 +71,17 @@ type CreateAccountPlaylistPayload struct {
 type PlaylistModificationResponse struct {
 	// Operation completion status
 	Message string
+}
+
+// RenameAccountPlaylistPayload is the payload type of the playlist service
+// renameAccountPlaylist method.
+type RenameAccountPlaylistPayload struct {
+	// Authorization Header
+	Auth *string
+	// Playlist id to modify
+	PlaylistID *uint
+	// New playlist name
+	Name *string
 }
 
 // DeleteAccountPlaylistPayload is the payload type of the playlist service

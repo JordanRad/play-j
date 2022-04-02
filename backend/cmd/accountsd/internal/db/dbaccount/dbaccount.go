@@ -13,7 +13,7 @@ type Store struct {
 	DB *sql.DB
 }
 
-var _ account.AccountStore = (*Store)(nil)
+var _ account.Store = (*Store)(nil)
 
 func (s *Store) CreateUser(ctx context.Context, user *account.User) (bool, error) {
 

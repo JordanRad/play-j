@@ -25,7 +25,7 @@ func BuildGetAccountPlaylistCollectionPayload(playlistGetAccountPlaylistCollecti
 	{
 		err = json.Unmarshal([]byte(playlistGetAccountPlaylistCollectionBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"accountID\": 11324780232132348642\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"accountID\": 11633052430362461491\n   }'")
 		}
 	}
 	var auth *string
@@ -50,7 +50,7 @@ func BuildCreateAccountPlaylistPayload(playlistCreateAccountPlaylistBody string,
 	{
 		err = json.Unmarshal([]byte(playlistCreateAccountPlaylistBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"name\": \"Et enim consectetur.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"name\": \"Et repudiandae cum corporis autem repellendus laudantium.\"\n   }'")
 		}
 	}
 	var auth *string
@@ -67,15 +67,52 @@ func BuildCreateAccountPlaylistPayload(playlistCreateAccountPlaylistBody string,
 	return v, nil
 }
 
+// BuildRenameAccountPlaylistPayload builds the payload for the playlist
+// renameAccountPlaylist endpoint from CLI flags.
+func BuildRenameAccountPlaylistPayload(playlistRenameAccountPlaylistBody string, playlistRenameAccountPlaylistPlaylistID string, playlistRenameAccountPlaylistAuth string) (*playlist.RenameAccountPlaylistPayload, error) {
+	var err error
+	var body RenameAccountPlaylistRequestBody
+	{
+		err = json.Unmarshal([]byte(playlistRenameAccountPlaylistBody), &body)
+		if err != nil {
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"name\": \"Dolorem nesciunt.\"\n   }'")
+		}
+	}
+	var playlistID uint
+	{
+		var v uint64
+		v, err = strconv.ParseUint(playlistRenameAccountPlaylistPlaylistID, 10, 64)
+		playlistID = uint(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for playlistID, must be UINT")
+		}
+	}
+	var auth *string
+	{
+		if playlistRenameAccountPlaylistAuth != "" {
+			auth = &playlistRenameAccountPlaylistAuth
+		}
+	}
+	v := &playlist.RenameAccountPlaylistPayload{
+		Name: body.Name,
+	}
+	v.PlaylistID = &playlistID
+	v.Auth = auth
+
+	return v, nil
+}
+
 // BuildDeleteAccountPlaylistPayload builds the payload for the playlist
 // deleteAccountPlaylist endpoint from CLI flags.
-func BuildDeleteAccountPlaylistPayload(playlistDeleteAccountPlaylistBody string, playlistDeleteAccountPlaylistAuth string) (*playlist.DeleteAccountPlaylistPayload, error) {
+func BuildDeleteAccountPlaylistPayload(playlistDeleteAccountPlaylistPlaylistID string, playlistDeleteAccountPlaylistAuth string) (*playlist.DeleteAccountPlaylistPayload, error) {
 	var err error
-	var body DeleteAccountPlaylistRequestBody
+	var playlistID uint
 	{
-		err = json.Unmarshal([]byte(playlistDeleteAccountPlaylistBody), &body)
+		var v uint64
+		v, err = strconv.ParseUint(playlistDeleteAccountPlaylistPlaylistID, 10, 64)
+		playlistID = uint(v)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"playlistID\": 1690349288743571665\n   }'")
+			return nil, fmt.Errorf("invalid value for playlistID, must be UINT")
 		}
 	}
 	var auth *string
@@ -84,9 +121,8 @@ func BuildDeleteAccountPlaylistPayload(playlistDeleteAccountPlaylistBody string,
 			auth = &playlistDeleteAccountPlaylistAuth
 		}
 	}
-	v := &playlist.DeleteAccountPlaylistPayload{
-		PlaylistID: body.PlaylistID,
-	}
+	v := &playlist.DeleteAccountPlaylistPayload{}
+	v.PlaylistID = &playlistID
 	v.Auth = auth
 
 	return v, nil

@@ -10,22 +10,13 @@ import (
 	"github.com/JordanRad/play-j/backend/internal/gen/account"
 )
 
-type AccountStore interface {
+type Store interface {
 	CreateUser(context.Context, *User) (bool, error)
 	GetUserByEmail(context.Context, string) (*dbmodels.Account, error)
 }
 
-type PlaylistStore interface {
-	CreateAccountPlaylist(context.Context, uint, string) (bool, error)
-	GetAccountPlaylist(context.Context, uint, uint) (*dbmodels.Playlist, error)
-	GetAllAccountPlaylists(context.Context, uint) ([]*dbmodels.Playlist, error)
-	DeleteAccountPlaylist(context.Context, uint, uint) (bool, error)
-	UpdateAccountPlaylist(context.Context, uint, uint, string) (bool, error)
-}
-
 type Service struct {
-	accountStore  AccountStore
-	playlistStore PlaylistStore
+	store Store
 }
 
 type User struct {
@@ -37,10 +28,9 @@ type User struct {
 	ConfirmPassword string
 }
 
-func NewService(accountStore AccountStore, playlistStore PlaylistStore) *Service {
+func NewService(store Store) *Service {
 	return &Service{
-		accountStore:  accountStore,
-		playlistStore: playlistStore,
+		store: store,
 	}
 }
 
@@ -67,7 +57,7 @@ func (s *Service) Register(ctx context.Context, p *account.RegisterPayload) (*ac
 	}
 
 	// Save in the database
-	_, err := s.accountStore.CreateUser(ctx, newUser)
+	_, err := s.store.CreateUser(ctx, newUser)
 
 	if err != nil {
 		return nil, fmt.Errorf("error creating new user: %w", err)
@@ -82,7 +72,7 @@ func (s *Service) Register(ctx context.Context, p *account.RegisterPayload) (*ac
 
 func (s *Service) Login(ctx context.Context, p *account.LoginPayload) (*account.LoginResponse, error) {
 	// Get the user by email
-	foundAccount, err := s.accountStore.GetUserByEmail(ctx, *p.Email)
+	foundAccount, err := s.store.GetUserByEmail(ctx, *p.Email)
 
 	if err != nil {
 		return nil, errors.New("invalid credentials")

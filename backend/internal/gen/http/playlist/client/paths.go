@@ -23,9 +23,14 @@ func CreateAccountPlaylistPlaylistPath() string {
 	return "/api/v1/account-service/playlists"
 }
 
+// RenameAccountPlaylistPlaylistPath returns the URL path to the playlist service renameAccountPlaylist HTTP endpoint.
+func RenameAccountPlaylistPlaylistPath(playlistID uint) string {
+	return fmt.Sprintf("/api/v1/account-service/playlists/%v", playlistID)
+}
+
 // DeleteAccountPlaylistPlaylistPath returns the URL path to the playlist service deleteAccountPlaylist HTTP endpoint.
-func DeleteAccountPlaylistPlaylistPath() string {
-	return "/api/v1/account-service/playlists"
+func DeleteAccountPlaylistPlaylistPath(playlistID uint) string {
+	return fmt.Sprintf("/api/v1/account-service/playlists/%v", playlistID)
 }
 
 // GetAccountPlaylistPlaylistPath returns the URL path to the playlist service getAccountPlaylist HTTP endpoint.

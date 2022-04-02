@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	account "github.com/JordanRad/play-j/backend/cmd/accountsd/internal/account"
 	"github.com/JordanRad/play-j/backend/cmd/accountsd/internal/db/dbmodels"
+	playlist "github.com/JordanRad/play-j/backend/cmd/accountsd/internal/playlist"
 	"github.com/lib/pq"
 )
 
@@ -14,7 +14,7 @@ type Store struct {
 	DB *sql.DB
 }
 
-var _ account.PlaylistStore = (*Store)(nil)
+var _ playlist.Store = (*Store)(nil)
 
 func (s *Store) CreateAccountPlaylist(ctx context.Context, accountID uint, playlistName string) (bool, error) {
 	result, err := s.DB.Exec("INSERT INTO playlists (accountid,name) VALUES ($1,$2);", accountID, playlistName)
@@ -23,7 +23,11 @@ func (s *Store) CreateAccountPlaylist(ctx context.Context, accountID uint, playl
 		return false, fmt.Errorf("error creating a playlist: %w", err)
 	}
 
-	rowsAffected, _ := result.RowsAffected()
+	rowsAffected, err := result.RowsAffected()
+
+	if err != nil {
+		return false, fmt.Errorf("rows affected error: %w", err)
+	}
 
 	if rowsAffected == 1 {
 		return true, nil
@@ -39,7 +43,11 @@ func (s *Store) DeleteAccountPlaylist(ctx context.Context, accountID uint, playl
 		return false, fmt.Errorf("error deleting a playlist: %w", err)
 	}
 
-	rowsAffected, _ := result.RowsAffected()
+	rowsAffected, err := result.RowsAffected()
+
+	if err != nil {
+		return false, fmt.Errorf("rows affected error: %w", err)
+	}
 
 	if rowsAffected == 1 {
 		return true, nil
@@ -53,16 +61,12 @@ func (s *Store) GetAccountPlaylist(ctx context.Context, accountID uint, playlist
 
 	row := s.DB.QueryRow(`SELECT * FROM playlists WHERE id = $1 AND accountID = $2;`, playlistID, accountID)
 
-	// var trackIDs []int32
-
 	err := row.Scan(
 		&result.ID,
 		&result.Name,
 		&result.CreatedAt,
 		(*pq.Int32Array)(&result.TrackIDs),
 		&result.AccountID)
-
-	// result.TrackIDs = trackIDs
 
 	if err == sql.ErrNoRows {
 		fmt.Println(err)
@@ -102,13 +106,13 @@ func (s *Store) GetAllAccountPlaylists(ctx context.Context, accountID uint) ([]*
 	}
 
 	if err := rows.Err(); err != nil {
-		return make([]*dbmodels.Playlist, 0), fmt.Errorf("rows err: %w", err)
+		return nil, fmt.Errorf("rows err: %w", err)
 	}
 
 	return playlists, nil
 }
 
-func (s *Store) UpdateAccountPlaylist(ctx context.Context, playlistID uint, trackID uint, operation string) (bool, error) {
+func (s *Store) UpdateAccountPlaylistTracks(ctx context.Context, playlistID uint, trackID uint, operation string) (bool, error) {
 	var result sql.Result
 	var err error
 
@@ -122,7 +126,32 @@ func (s *Store) UpdateAccountPlaylist(ctx context.Context, playlistID uint, trac
 		return false, fmt.Errorf("db error adding/deleting a track to a playlist: %w", err)
 	}
 
-	rowsAffected, _ := result.RowsAffected()
+	rowsAffected, err := result.RowsAffected()
+
+	if err != nil {
+		return false, fmt.Errorf("rows affected error: %w", err)
+	}
+
+	if rowsAffected == 1 {
+		return true, nil
+	}
+
+	return false, fmt.Errorf("db error modifiyng a playlist")
+}
+
+func (s *Store) UpdateAccountPlaylistName(ctx context.Context, playlistID uint, newName string) (bool, error) {
+
+	result, err := s.DB.Exec("UPDATE playlists SET name = $1 WHERE id = $2;", newName, playlistID)
+
+	if err != nil {
+		return false, fmt.Errorf("db error updating a playlist name: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+
+	if err != nil {
+		return false, fmt.Errorf("rows affected error: %w", err)
+	}
 
 	if rowsAffected == 1 {
 		return true, nil

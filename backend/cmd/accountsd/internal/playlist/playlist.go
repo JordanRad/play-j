@@ -9,28 +9,37 @@ import (
 	"github.com/JordanRad/play-j/backend/internal/gen/playlist"
 )
 
-type PlaylistStore interface {
+type Store interface {
 	CreateAccountPlaylist(context.Context, uint, string) (bool, error)
 	GetAccountPlaylist(context.Context, uint, uint) (*dbmodels.Playlist, error)
 	GetAllAccountPlaylists(context.Context, uint) ([]*dbmodels.Playlist, error)
 	DeleteAccountPlaylist(context.Context, uint, uint) (bool, error)
-	UpdateAccountPlaylist(context.Context, uint, uint, string) (bool, error)
+	UpdateAccountPlaylistTracks(context.Context, uint, uint, string) (bool, error)
+	UpdateAccountPlaylistName(context.Context, uint, string) (bool, error)
 }
 
 type Service struct {
-	playlistStore PlaylistStore
+	store Store
 }
 
-func NewService(store PlaylistStore) *Service {
+func NewService(store Store) *Service {
 	return &Service{
-		playlistStore: store,
+		store: store,
 	}
 }
 
+// Compile-time assertion that *Service implements the user.Service interface.
+var _ playlist.Service = (*Service)(nil)
+
 func (s *Service) GetAccountPlaylistCollection(ctx context.Context, p *playlist.GetAccountPlaylistCollectionPayload) (*playlist.AccountPlaylistCollectionResponse, error) {
+	// Extract claims from token
+	tokenClaims, err := auth.ExtractJWTCLaims(ctx.Value("jwt").(string))
+	if err != nil {
+		return nil, fmt.Errorf("error extracting token claims: %w", err)
+	}
 
 	// Get playlists by user
-	playlists, err := s.playlistStore.GetAllAccountPlaylists(ctx, *p.AccountID)
+	playlists, err := s.store.GetAllAccountPlaylists(ctx, tokenClaims.AccountID)
 
 	if err != nil {
 		return &playlist.AccountPlaylistCollectionResponse{}, fmt.Errorf("error displaying user's playlists: %w", err)
@@ -58,8 +67,12 @@ func (s *Service) GetAccountPlaylistCollection(ctx context.Context, p *playlist.
 }
 
 func (s *Service) CreateAccountPlaylist(ctx context.Context, p *playlist.CreateAccountPlaylistPayload) (*playlist.PlaylistModificationResponse, error) {
-
-	_, err := s.playlistStore.CreateAccountPlaylist(ctx, 1, *p.Name)
+	// Extract claims from token
+	tokenClaims, err := auth.ExtractJWTCLaims(ctx.Value("jwt").(string))
+	if err != nil {
+		return nil, fmt.Errorf("error extracting token claims: %w", err)
+	}
+	_, err = s.store.CreateAccountPlaylist(ctx, tokenClaims.AccountID, *p.Name)
 	if err != nil {
 		return nil, fmt.Errorf("error creating new playlist: %w", err)
 	}
@@ -72,8 +85,13 @@ func (s *Service) CreateAccountPlaylist(ctx context.Context, p *playlist.CreateA
 }
 
 func (s *Service) DeleteAccountPlaylist(ctx context.Context, p *playlist.DeleteAccountPlaylistPayload) (*playlist.PlaylistModificationResponse, error) {
+	// Extract claims from token
+	tokenClaims, err := auth.ExtractJWTCLaims(ctx.Value("jwt").(string))
+	if err != nil {
+		return nil, fmt.Errorf("error extracting token claims: %w", err)
+	}
 
-	_, err := s.playlistStore.DeleteAccountPlaylist(ctx, 1, *p.PlaylistID)
+	_, err = s.store.DeleteAccountPlaylist(ctx, tokenClaims.AccountID, *p.PlaylistID)
 	if err != nil {
 		return nil, fmt.Errorf("error deleting a playlist: %w", err)
 	}
@@ -86,11 +104,13 @@ func (s *Service) DeleteAccountPlaylist(ctx context.Context, p *playlist.DeleteA
 }
 
 func (s *Service) GetAccountPlaylist(ctx context.Context, p *playlist.GetAccountPlaylistPayload) (*playlist.AccountPlaylistResponse, error) {
+	// Extract claims from token
+	tokenClaims, err := auth.ExtractJWTCLaims(ctx.Value("jwt").(string))
+	if err != nil {
+		return nil, fmt.Errorf("error extracting token claims: %w", err)
+	}
 
-	tokenClaims, tokenerr := auth.ExtractJWTCLaims(ctx.Value("jwt").(string))
-
-	fmt.Println(tokenClaims, tokenerr)
-	singlePlaylist, err := s.playlistStore.GetAccountPlaylist(ctx, tokenClaims.AccountID, *p.PlaylistID)
+	singlePlaylist, err := s.store.GetAccountPlaylist(ctx, tokenClaims.AccountID, *p.PlaylistID)
 
 	if err != nil {
 		return nil, fmt.Errorf("[service] error getting a playlis: %w", err)
@@ -105,9 +125,12 @@ func (s *Service) GetAccountPlaylist(ctx context.Context, p *playlist.GetAccount
 	return response, nil
 }
 
-func (s *Service) AddTrackToAccountPlaylist(ctx context.Context, p *playlist.AddTrackToAccountPlaylistPayload) (*playlist.PlaylistModificationResponse, error) {
+func (s *Service) RenameAccountPlaylist(ctx context.Context, p *playlist.RenameAccountPlaylistPayload) (*playlist.PlaylistModificationResponse, error) {
+	return nil, nil
+}
 
-	_, err := s.playlistStore.UpdateAccountPlaylist(ctx, *p.PlaylistID, *p.TrackID, "ADD")
+func (s *Service) AddTrackToAccountPlaylist(ctx context.Context, p *playlist.AddTrackToAccountPlaylistPayload) (*playlist.PlaylistModificationResponse, error) {
+	_, err := s.store.UpdateAccountPlaylistTracks(ctx, *p.PlaylistID, *p.TrackID, "ADD")
 
 	if err != nil {
 		return nil, fmt.Errorf("service error adding track to a playlist: %w", err)
@@ -121,8 +144,7 @@ func (s *Service) AddTrackToAccountPlaylist(ctx context.Context, p *playlist.Add
 }
 
 func (s *Service) RemoveTrackFromAccountPlaylist(ctx context.Context, p *playlist.RemoveTrackFromAccountPlaylistPayload) (*playlist.PlaylistModificationResponse, error) {
-
-	_, err := s.playlistStore.UpdateAccountPlaylist(ctx, *p.PlaylistID, *p.TrackID, "REMOVE")
+	_, err := s.store.UpdateAccountPlaylistTracks(ctx, *p.PlaylistID, *p.TrackID, "REMOVE")
 
 	if err != nil {
 		return nil, fmt.Errorf("service error removing a track from a playlist: %w", err)

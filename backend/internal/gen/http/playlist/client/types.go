@@ -27,10 +27,11 @@ type CreateAccountPlaylistRequestBody struct {
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 }
 
-// DeleteAccountPlaylistRequestBody is the type of the "playlist" service
-// "deleteAccountPlaylist" endpoint HTTP request body.
-type DeleteAccountPlaylistRequestBody struct {
-	PlaylistID *uint `form:"playlistID,omitempty" json:"playlistID,omitempty" xml:"playlistID,omitempty"`
+// RenameAccountPlaylistRequestBody is the type of the "playlist" service
+// "renameAccountPlaylist" endpoint HTTP request body.
+type RenameAccountPlaylistRequestBody struct {
+	// New playlist name
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 }
 
 // GetAccountPlaylistCollectionResponseBody is the type of the "playlist"
@@ -45,6 +46,13 @@ type GetAccountPlaylistCollectionResponseBody struct {
 // CreateAccountPlaylistResponseBody is the type of the "playlist" service
 // "createAccountPlaylist" endpoint HTTP response body.
 type CreateAccountPlaylistResponseBody struct {
+	// Operation completion status
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+}
+
+// RenameAccountPlaylistResponseBody is the type of the "playlist" service
+// "renameAccountPlaylist" endpoint HTTP response body.
+type RenameAccountPlaylistResponseBody struct {
 	// Operation completion status
 	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
 }
@@ -111,11 +119,11 @@ func NewCreateAccountPlaylistRequestBody(p *playlist.CreateAccountPlaylistPayloa
 	return body
 }
 
-// NewDeleteAccountPlaylistRequestBody builds the HTTP request body from the
-// payload of the "deleteAccountPlaylist" endpoint of the "playlist" service.
-func NewDeleteAccountPlaylistRequestBody(p *playlist.DeleteAccountPlaylistPayload) *DeleteAccountPlaylistRequestBody {
-	body := &DeleteAccountPlaylistRequestBody{
-		PlaylistID: p.PlaylistID,
+// NewRenameAccountPlaylistRequestBody builds the HTTP request body from the
+// payload of the "renameAccountPlaylist" endpoint of the "playlist" service.
+func NewRenameAccountPlaylistRequestBody(p *playlist.RenameAccountPlaylistPayload) *RenameAccountPlaylistRequestBody {
+	body := &RenameAccountPlaylistRequestBody{
+		Name: p.Name,
 	}
 	return body
 }
@@ -138,6 +146,16 @@ func NewGetAccountPlaylistCollectionAccountPlaylistCollectionResponseOK(body *Ge
 // NewCreateAccountPlaylistPlaylistModificationResponseOK builds a "playlist"
 // service "createAccountPlaylist" endpoint result from a HTTP "OK" response.
 func NewCreateAccountPlaylistPlaylistModificationResponseOK(body *CreateAccountPlaylistResponseBody) *playlist.PlaylistModificationResponse {
+	v := &playlist.PlaylistModificationResponse{
+		Message: *body.Message,
+	}
+
+	return v
+}
+
+// NewRenameAccountPlaylistPlaylistModificationResponseOK builds a "playlist"
+// service "renameAccountPlaylist" endpoint result from a HTTP "OK" response.
+func NewRenameAccountPlaylistPlaylistModificationResponseOK(body *RenameAccountPlaylistResponseBody) *playlist.PlaylistModificationResponse {
 	v := &playlist.PlaylistModificationResponse{
 		Message: *body.Message,
 	}
@@ -214,6 +232,15 @@ func ValidateGetAccountPlaylistCollectionResponseBody(body *GetAccountPlaylistCo
 // ValidateCreateAccountPlaylistResponseBody runs the validations defined on
 // CreateAccountPlaylistResponseBody
 func ValidateCreateAccountPlaylistResponseBody(body *CreateAccountPlaylistResponseBody) (err error) {
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	return
+}
+
+// ValidateRenameAccountPlaylistResponseBody runs the validations defined on
+// RenameAccountPlaylistResponseBody
+func ValidateRenameAccountPlaylistResponseBody(body *RenameAccountPlaylistResponseBody) (err error) {
 	if body.Message == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
 	}

@@ -27,22 +27,22 @@ import (
 //
 func UsageCommands() string {
 	return `account (register|login)
-playlist (get-account-playlist-collection|create-account-playlist|delete-account-playlist|get-account-playlist|add-track-to-account-playlist|remove-track-from-account-playlist)
+playlist (get-account-playlist-collection|create-account-playlist|rename-account-playlist|delete-account-playlist|get-account-playlist|add-track-to-account-playlist|remove-track-from-account-playlist)
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` account register --body '{
-      "confirmedPassword": "Cumque quisquam dolorem adipisci.",
-      "email": "Nemo provident eos quis ut ut ipsum.",
-      "firstName": "Ut magnam et.",
-      "lastName": "Vel assumenda eum quibusdam.",
-      "password": "Molestiae voluptas dolorum et."
+      "confirmedPassword": "Ab facilis odio facere et.",
+      "email": "Voluptates id recusandae temporibus et dolore.",
+      "firstName": "Quis ut ut ipsum et molestiae.",
+      "lastName": "Dolorum et labore cumque quisquam dolorem adipisci.",
+      "password": "Numquam quos excepturi vero ad est."
    }'` + "\n" +
 		os.Args[0] + ` playlist get-account-playlist-collection --body '{
-      "accountID": 11324780232132348642
-   }' --auth "Minus sint rerum exercitationem."` + "\n" +
+      "accountID": 11633052430362461491
+   }' --auth "Enim consectetur sit omnis expedita."` + "\n" +
 		""
 }
 
@@ -74,9 +74,14 @@ func ParseEndpoint(
 		playlistCreateAccountPlaylistBodyFlag = playlistCreateAccountPlaylistFlags.String("body", "REQUIRED", "")
 		playlistCreateAccountPlaylistAuthFlag = playlistCreateAccountPlaylistFlags.String("auth", "", "")
 
-		playlistDeleteAccountPlaylistFlags    = flag.NewFlagSet("delete-account-playlist", flag.ExitOnError)
-		playlistDeleteAccountPlaylistBodyFlag = playlistDeleteAccountPlaylistFlags.String("body", "REQUIRED", "")
-		playlistDeleteAccountPlaylistAuthFlag = playlistDeleteAccountPlaylistFlags.String("auth", "", "")
+		playlistRenameAccountPlaylistFlags          = flag.NewFlagSet("rename-account-playlist", flag.ExitOnError)
+		playlistRenameAccountPlaylistBodyFlag       = playlistRenameAccountPlaylistFlags.String("body", "REQUIRED", "")
+		playlistRenameAccountPlaylistPlaylistIDFlag = playlistRenameAccountPlaylistFlags.String("playlist-id", "REQUIRED", "Playlist id to modify")
+		playlistRenameAccountPlaylistAuthFlag       = playlistRenameAccountPlaylistFlags.String("auth", "", "")
+
+		playlistDeleteAccountPlaylistFlags          = flag.NewFlagSet("delete-account-playlist", flag.ExitOnError)
+		playlistDeleteAccountPlaylistPlaylistIDFlag = playlistDeleteAccountPlaylistFlags.String("playlist-id", "REQUIRED", "")
+		playlistDeleteAccountPlaylistAuthFlag       = playlistDeleteAccountPlaylistFlags.String("auth", "", "")
 
 		playlistGetAccountPlaylistFlags          = flag.NewFlagSet("get-account-playlist", flag.ExitOnError)
 		playlistGetAccountPlaylistPlaylistIDFlag = playlistGetAccountPlaylistFlags.String("playlist-id", "REQUIRED", "Playlist ID")
@@ -99,6 +104,7 @@ func ParseEndpoint(
 	playlistFlags.Usage = playlistUsage
 	playlistGetAccountPlaylistCollectionFlags.Usage = playlistGetAccountPlaylistCollectionUsage
 	playlistCreateAccountPlaylistFlags.Usage = playlistCreateAccountPlaylistUsage
+	playlistRenameAccountPlaylistFlags.Usage = playlistRenameAccountPlaylistUsage
 	playlistDeleteAccountPlaylistFlags.Usage = playlistDeleteAccountPlaylistUsage
 	playlistGetAccountPlaylistFlags.Usage = playlistGetAccountPlaylistUsage
 	playlistAddTrackToAccountPlaylistFlags.Usage = playlistAddTrackToAccountPlaylistUsage
@@ -156,6 +162,9 @@ func ParseEndpoint(
 			case "create-account-playlist":
 				epf = playlistCreateAccountPlaylistFlags
 
+			case "rename-account-playlist":
+				epf = playlistRenameAccountPlaylistFlags
+
 			case "delete-account-playlist":
 				epf = playlistDeleteAccountPlaylistFlags
 
@@ -209,9 +218,12 @@ func ParseEndpoint(
 			case "create-account-playlist":
 				endpoint = c.CreateAccountPlaylist()
 				data, err = playlistc.BuildCreateAccountPlaylistPayload(*playlistCreateAccountPlaylistBodyFlag, *playlistCreateAccountPlaylistAuthFlag)
+			case "rename-account-playlist":
+				endpoint = c.RenameAccountPlaylist()
+				data, err = playlistc.BuildRenameAccountPlaylistPayload(*playlistRenameAccountPlaylistBodyFlag, *playlistRenameAccountPlaylistPlaylistIDFlag, *playlistRenameAccountPlaylistAuthFlag)
 			case "delete-account-playlist":
 				endpoint = c.DeleteAccountPlaylist()
-				data, err = playlistc.BuildDeleteAccountPlaylistPayload(*playlistDeleteAccountPlaylistBodyFlag, *playlistDeleteAccountPlaylistAuthFlag)
+				data, err = playlistc.BuildDeleteAccountPlaylistPayload(*playlistDeleteAccountPlaylistPlaylistIDFlag, *playlistDeleteAccountPlaylistAuthFlag)
 			case "get-account-playlist":
 				endpoint = c.GetAccountPlaylist()
 				data, err = playlistc.BuildGetAccountPlaylistPayload(*playlistGetAccountPlaylistPlaylistIDFlag, *playlistGetAccountPlaylistAuthFlag)
@@ -253,11 +265,11 @@ Register implements register.
 
 Example:
     %[1]s account register --body '{
-      "confirmedPassword": "Cumque quisquam dolorem adipisci.",
-      "email": "Nemo provident eos quis ut ut ipsum.",
-      "firstName": "Ut magnam et.",
-      "lastName": "Vel assumenda eum quibusdam.",
-      "password": "Molestiae voluptas dolorum et."
+      "confirmedPassword": "Ab facilis odio facere et.",
+      "email": "Voluptates id recusandae temporibus et dolore.",
+      "firstName": "Quis ut ut ipsum et molestiae.",
+      "lastName": "Dolorum et labore cumque quisquam dolorem adipisci.",
+      "password": "Numquam quos excepturi vero ad est."
    }'
 `, os.Args[0])
 }
@@ -270,8 +282,8 @@ Login implements login.
 
 Example:
     %[1]s account login --body '{
-      "email": "Numquam quos excepturi vero ad est.",
-      "password": "Ab facilis odio facere et."
+      "email": "Corrupti voluptas officia nostrum quia voluptatum.",
+      "password": "Tempora recusandae nobis."
    }'
 `, os.Args[0])
 }
@@ -285,6 +297,7 @@ Usage:
 COMMAND:
     get-account-playlist-collection: GetAccountPlaylistCollection implements getAccountPlaylistCollection.
     create-account-playlist: CreateAccountPlaylist implements createAccountPlaylist.
+    rename-account-playlist: RenameAccountPlaylist implements renameAccountPlaylist.
     delete-account-playlist: DeleteAccountPlaylist implements deleteAccountPlaylist.
     get-account-playlist: GetAccountPlaylist implements getAccountPlaylist.
     add-track-to-account-playlist: AddTrackToAccountPlaylist implements addTrackToAccountPlaylist.
@@ -303,8 +316,8 @@ GetAccountPlaylistCollection implements getAccountPlaylistCollection.
 
 Example:
     %[1]s playlist get-account-playlist-collection --body '{
-      "accountID": 11324780232132348642
-   }' --auth "Minus sint rerum exercitationem."
+      "accountID": 11633052430362461491
+   }' --auth "Enim consectetur sit omnis expedita."
 `, os.Args[0])
 }
 
@@ -317,22 +330,35 @@ CreateAccountPlaylist implements createAccountPlaylist.
 
 Example:
     %[1]s playlist create-account-playlist --body '{
-      "name": "Et enim consectetur."
-   }' --auth "Omnis expedita."
+      "name": "Et repudiandae cum corporis autem repellendus laudantium."
+   }' --auth "Veniam est fuga vel et est quasi."
+`, os.Args[0])
+}
+
+func playlistRenameAccountPlaylistUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] playlist rename-account-playlist -body JSON -playlist-id UINT -auth STRING
+
+RenameAccountPlaylist implements renameAccountPlaylist.
+    -body JSON: 
+    -playlist-id UINT: Playlist id to modify
+    -auth STRING: 
+
+Example:
+    %[1]s playlist rename-account-playlist --body '{
+      "name": "Dolorem nesciunt."
+   }' --playlist-id 17085797678242076213 --auth "Quo praesentium."
 `, os.Args[0])
 }
 
 func playlistDeleteAccountPlaylistUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] playlist delete-account-playlist -body JSON -auth STRING
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] playlist delete-account-playlist -playlist-id UINT -auth STRING
 
 DeleteAccountPlaylist implements deleteAccountPlaylist.
-    -body JSON: 
+    -playlist-id UINT: 
     -auth STRING: 
 
 Example:
-    %[1]s playlist delete-account-playlist --body '{
-      "playlistID": 1690349288743571665
-   }' --auth "Voluptatem eum dolorem."
+    %[1]s playlist delete-account-playlist --playlist-id 17504080427593267764 --auth "Modi qui qui sed libero aut accusamus."
 `, os.Args[0])
 }
 
@@ -344,7 +370,7 @@ GetAccountPlaylist implements getAccountPlaylist.
     -auth STRING: 
 
 Example:
-    %[1]s playlist get-account-playlist --playlist-id 489929142758616090 --auth "Est fuga vel et est quasi."
+    %[1]s playlist get-account-playlist --playlist-id 9949464742914819688 --auth "Et quasi repudiandae voluptatem modi."
 `, os.Args[0])
 }
 
@@ -357,7 +383,7 @@ AddTrackToAccountPlaylist implements addTrackToAccountPlaylist.
     -auth STRING: 
 
 Example:
-    %[1]s playlist add-track-to-account-playlist --playlist-id 17902435237536666665 --track-id 9255568960620001203 --auth "Et eius minima quo."
+    %[1]s playlist add-track-to-account-playlist --playlist-id 14345441535750740261 --track-id 7284110076420113473 --auth "Consectetur ipsa ab quibusdam enim."
 `, os.Args[0])
 }
 
@@ -370,6 +396,6 @@ RemoveTrackFromAccountPlaylist implements removeTrackFromAccountPlaylist.
     -auth STRING: 
 
 Example:
-    %[1]s playlist remove-track-from-account-playlist --playlist-id 18322739240550503054 --track-id 9185038299276282162 --auth "Quae accusantium praesentium sequi."
+    %[1]s playlist remove-track-from-account-playlist --playlist-id 1621365852545103184 --track-id 176531937231245429 --auth "Aut sapiente ut a libero dolore."
 `, os.Args[0])
 }

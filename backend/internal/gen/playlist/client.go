@@ -19,6 +19,7 @@ import (
 type Client struct {
 	GetAccountPlaylistCollectionEndpoint   goa.Endpoint
 	CreateAccountPlaylistEndpoint          goa.Endpoint
+	RenameAccountPlaylistEndpoint          goa.Endpoint
 	DeleteAccountPlaylistEndpoint          goa.Endpoint
 	GetAccountPlaylistEndpoint             goa.Endpoint
 	AddTrackToAccountPlaylistEndpoint      goa.Endpoint
@@ -26,10 +27,11 @@ type Client struct {
 }
 
 // NewClient initializes a "playlist" service client given the endpoints.
-func NewClient(getAccountPlaylistCollection, createAccountPlaylist, deleteAccountPlaylist, getAccountPlaylist, addTrackToAccountPlaylist, removeTrackFromAccountPlaylist goa.Endpoint) *Client {
+func NewClient(getAccountPlaylistCollection, createAccountPlaylist, renameAccountPlaylist, deleteAccountPlaylist, getAccountPlaylist, addTrackToAccountPlaylist, removeTrackFromAccountPlaylist goa.Endpoint) *Client {
 	return &Client{
 		GetAccountPlaylistCollectionEndpoint:   getAccountPlaylistCollection,
 		CreateAccountPlaylistEndpoint:          createAccountPlaylist,
+		RenameAccountPlaylistEndpoint:          renameAccountPlaylist,
 		DeleteAccountPlaylistEndpoint:          deleteAccountPlaylist,
 		GetAccountPlaylistEndpoint:             getAccountPlaylist,
 		AddTrackToAccountPlaylistEndpoint:      addTrackToAccountPlaylist,
@@ -53,6 +55,17 @@ func (c *Client) GetAccountPlaylistCollection(ctx context.Context, p *GetAccount
 func (c *Client) CreateAccountPlaylist(ctx context.Context, p *CreateAccountPlaylistPayload) (res *PlaylistModificationResponse, err error) {
 	var ires interface{}
 	ires, err = c.CreateAccountPlaylistEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*PlaylistModificationResponse), nil
+}
+
+// RenameAccountPlaylist calls the "renameAccountPlaylist" endpoint of the
+// "playlist" service.
+func (c *Client) RenameAccountPlaylist(ctx context.Context, p *RenameAccountPlaylistPayload) (res *PlaylistModificationResponse, err error) {
+	var ires interface{}
+	ires, err = c.RenameAccountPlaylistEndpoint(ctx, p)
 	if err != nil {
 		return
 	}

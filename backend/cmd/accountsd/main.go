@@ -53,7 +53,7 @@ func main() {
 		DB: db,
 	}
 
-	accountService := account.NewService(dbAccountStore, dbPlaylistStore)
+	accountService := account.NewService(dbAccountStore)
 
 	var accountEndpoints *accountsvc.Endpoints = accountsvc.NewEndpoints(accountService)
 

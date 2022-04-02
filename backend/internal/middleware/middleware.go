@@ -2,8 +2,8 @@ package middleware
 
 import (
 	"context"
-	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/JordanRad/play-j/backend/internal/auth"
@@ -25,23 +25,24 @@ var protectedRoutes = []ProtectedRoute{
 	},
 }
 
+func isRouteProtected(method string, URL *url.URL) bool {
+	for _, route := range protectedRoutes {
+		if route.HTTPMethod == method && strings.Contains(URL.Path, route.URLContains) {
+			return true
+		}
+	}
+	return false
+}
+
 func AuthenticateRequest() func(http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			isProtectedRoute := false
-
 			// Check if the route is protected
-			for _, route := range protectedRoutes {
-				if route.HTTPMethod == r.Method && strings.Contains(r.URL.Path, route.URLContains) {
-					isProtectedRoute = true
-				}
-			}
+			isProtectedRoute := isRouteProtected(r.Method, r.URL)
 
 			// Check if the JWT is valid
 			if isProtectedRoute {
-				fmt.Print("Protected Route has been requested \n")
 				authorizationHeader := r.Header.Get("Authorization")
-
 				tokenString := authorizationHeader[7:]
 
 				//Validate the token
@@ -55,7 +56,6 @@ func AuthenticateRequest() func(http.Handler) http.Handler {
 					h.ServeHTTP(w, r)
 				}
 			} else {
-				fmt.Print("Unprotected route has been requested \n")
 				h.ServeHTTP(w, r)
 			}
 		})
@@ -65,13 +65,12 @@ func AuthenticateRequest() func(http.Handler) http.Handler {
 func InjectJWTInContext() func(http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 			// Extract token from the request header
 			authorizationHeader := r.Header.Get("Authorization")
 			tokenString := authorizationHeader[7:]
 
 			// Add the JWT to the context
-			ctx := context.WithValue(r.Context(), string("jwt"), tokenString)
+			ctx := context.WithValue(r.Context(), "jwt", tokenString)
 
 			requestWithContext := r.WithContext(ctx)
 
