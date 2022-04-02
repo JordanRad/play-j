@@ -3,7 +3,9 @@
 // account service
 //
 // Command:
-// $ goa gen github.com/JordanRad/play-j/backend/internal/design -o ./internal/
+// $ goa gen
+// github.com/JordanRad/play-j/backend/internal/design/account-service -o
+// ./internal/
 
 package account
 
@@ -17,18 +19,6 @@ type Service interface {
 	Register(context.Context, *RegisterPayload) (res *RegisterResponse, err error)
 	// Login implements login.
 	Login(context.Context, *LoginPayload) (res *LoginResponse, err error)
-	// GetAccountPlaylistCollection implements getAccountPlaylistCollection.
-	GetAccountPlaylistCollection(context.Context, *GetAccountPlaylistCollectionPayload) (res *AccountPlaylistCollectionResponse, err error)
-	// CreateAccountPlaylist implements createAccountPlaylist.
-	CreateAccountPlaylist(context.Context, *CreateAccountPlaylistPayload) (res *CreatePlaylistResponse, err error)
-	// DeleteAccountPlaylist implements deleteAccountPlaylist.
-	DeleteAccountPlaylist(context.Context, *DeleteAccountPlaylistPayload) (res *DeletePlaylistResponse, err error)
-	// GetAccountPlaylist implements getAccountPlaylist.
-	GetAccountPlaylist(context.Context, *GetAccountPlaylistPayload) (res *AccountPlaylistResponse, err error)
-	// AddTrackToAccountPlaylist implements addTrackToAccountPlaylist.
-	AddTrackToAccountPlaylist(context.Context, *AddTrackToAccountPlaylistPayload) (res *PlaylistModificationResponse, err error)
-	// RemoveTrackFromAccountPlaylist implements removeTrackFromAccountPlaylist.
-	RemoveTrackFromAccountPlaylist(context.Context, *RemoveTrackFromAccountPlaylistPayload) (res *PlaylistModificationResponse, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -39,7 +29,7 @@ const ServiceName = "account"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [8]string{"register", "login", "getAccountPlaylistCollection", "createAccountPlaylist", "deleteAccountPlaylist", "getAccountPlaylist", "addTrackToAccountPlaylist", "removeTrackFromAccountPlaylist"}
+var MethodNames = [2]string{"register", "login"}
 
 // RegisterPayload is the payload type of the account service register method.
 type RegisterPayload struct {
@@ -81,108 +71,4 @@ type LoginResponse struct {
 	Role string
 	// User's role
 	AccountID *string
-}
-
-// GetAccountPlaylistCollectionPayload is the payload type of the account
-// service getAccountPlaylistCollection method.
-type GetAccountPlaylistCollectionPayload struct {
-	AccountID *uint
-	Auth      *string
-}
-
-// AccountPlaylistCollectionResponse is the result type of the account service
-// getAccountPlaylistCollection method.
-type AccountPlaylistCollectionResponse struct {
-	// Number of resources
-	Total int32
-	// Operation completion status
-	Resources []*AccountPlaylistResponse
-}
-
-// CreateAccountPlaylistPayload is the payload type of the account service
-// createAccountPlaylist method.
-type CreateAccountPlaylistPayload struct {
-	// Account ID
-	AccountID *uint
-	// Authorization Header
-	Auth *string
-	// Playlist name
-	Name *string
-}
-
-// CreatePlaylistResponse is the result type of the account service
-// createAccountPlaylist method.
-type CreatePlaylistResponse struct {
-	// Operation completion status
-	Message string
-}
-
-// DeleteAccountPlaylistPayload is the payload type of the account service
-// deleteAccountPlaylist method.
-type DeleteAccountPlaylistPayload struct {
-	AccountID  *uint
-	Auth       *string
-	PlaylistID *uint
-}
-
-// DeletePlaylistResponse is the result type of the account service
-// deleteAccountPlaylist method.
-type DeletePlaylistResponse struct {
-	// Operation completion status
-	Message string
-}
-
-// GetAccountPlaylistPayload is the payload type of the account service
-// getAccountPlaylist method.
-type GetAccountPlaylistPayload struct {
-	// Account ID
-	AccountID *uint
-	// Playlist ID
-	PlaylistID *uint
-	// Authorization Header
-	Auth *string
-}
-
-// AccountPlaylistResponse is the result type of the account service
-// getAccountPlaylist method.
-type AccountPlaylistResponse struct {
-	// Playlist id
-	ID int32
-	// Playlist name
-	Name string
-	// Array of TrackIDs
-	TrackIDs []int32
-}
-
-// AddTrackToAccountPlaylistPayload is the payload type of the account service
-// addTrackToAccountPlaylist method.
-type AddTrackToAccountPlaylistPayload struct {
-	// Account ID
-	AccountID *uint
-	// Playlist ID to modify
-	PlaylistID *uint
-	// Track ID to be added
-	TrackID *uint
-	// Authorization Header
-	Auth *string
-}
-
-// PlaylistModificationResponse is the result type of the account service
-// addTrackToAccountPlaylist method.
-type PlaylistModificationResponse struct {
-	// Operation completion status
-	Message string
-}
-
-// RemoveTrackFromAccountPlaylistPayload is the payload type of the account
-// service removeTrackFromAccountPlaylist method.
-type RemoveTrackFromAccountPlaylistPayload struct {
-	// Account ID
-	AccountID *uint
-	// Playlist ID to modify
-	PlaylistID *uint
-	// Track ID to be deleted
-	TrackID *uint
-	// Authorization Header
-	Auth *string
 }

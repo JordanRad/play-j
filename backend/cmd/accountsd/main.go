@@ -7,8 +7,11 @@ import (
 	account "github.com/JordanRad/play-j/backend/cmd/accountsd/internal/account"
 	dbaccount "github.com/JordanRad/play-j/backend/cmd/accountsd/internal/db/dbaccount"
 	dbplaylist "github.com/JordanRad/play-j/backend/cmd/accountsd/internal/db/dbplaylist"
+	playlist "github.com/JordanRad/play-j/backend/cmd/accountsd/internal/playlist"
 	accountsvc "github.com/JordanRad/play-j/backend/internal/gen/account"
 	accountsrv "github.com/JordanRad/play-j/backend/internal/gen/http/account/server"
+	playlistsrv "github.com/JordanRad/play-j/backend/internal/gen/http/playlist/server"
+	playlistsvc "github.com/JordanRad/play-j/backend/internal/gen/playlist"
 	goahttp "goa.design/goa/v3/http"
 
 	"github.com/JordanRad/play-j/backend/internal/middleware"
@@ -54,6 +57,10 @@ func main() {
 
 	var accountEndpoints *accountsvc.Endpoints = accountsvc.NewEndpoints(accountService)
 
+	playlistService := playlist.NewService(dbPlaylistStore)
+
+	var playlistEndpoints *playlistsvc.Endpoints = playlistsvc.NewEndpoints(playlistService)
+
 	// Provide the transport specific request decoder and response encoder.
 	var (
 		dec = goahttp.RequestDecoder
@@ -68,8 +75,12 @@ func main() {
 	}
 
 	var accountServer *accountsrv.Server = accountsrv.New(accountEndpoints, mux, dec, enc, nil, nil)
-	accountServer.Use(middleware.AuthenticateRequest())
 	accountsrv.Mount(mux, accountServer)
+
+	var playlistServer *playlistsrv.Server = playlistsrv.New(playlistEndpoints, mux, dec, enc, nil, nil)
+	playlistServer.Use(middleware.AuthenticateRequest())
+	playlistServer.Use(middleware.InjectJWTInContext())
+	playlistsrv.Mount(mux, playlistServer)
 
 	fmt.Print("Account service has just started...\n")
 	http.ListenAndServe("localhost:8091", mux)

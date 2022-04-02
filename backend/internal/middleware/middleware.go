@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -57,6 +58,24 @@ func AuthenticateRequest() func(http.Handler) http.Handler {
 				fmt.Print("Unprotected route has been requested \n")
 				h.ServeHTTP(w, r)
 			}
+		})
+	}
+}
+
+func InjectJWTInContext() func(http.Handler) http.Handler {
+	return func(h http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+			// Extract token from the request header
+			authorizationHeader := r.Header.Get("Authorization")
+			tokenString := authorizationHeader[7:]
+
+			// Add the JWT to the context
+			ctx := context.WithValue(r.Context(), string("jwt"), tokenString)
+
+			requestWithContext := r.WithContext(ctx)
+
+			h.ServeHTTP(w, requestWithContext)
 		})
 	}
 }

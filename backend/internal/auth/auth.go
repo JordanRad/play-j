@@ -12,7 +12,7 @@ import (
 type TokenClaims struct {
 	AccountID uint
 	Email     string
-	Exp       int64
+	Exp       float64
 }
 
 // Create the JWT key used to create the signature
@@ -72,13 +72,18 @@ func ExtractJWTCLaims(tokenString string) (TokenClaims, error) {
 	claims := token.Claims.(jwt.MapClaims)
 
 	// Parse the claims to a struct
-	exp := claims["exp"].(int64)
+	exp := claims["exp"].(float64)
 	data := claims["data"].(map[string]interface{})
-	accountID := data["accountID"].(uint)
+	accountID := data["accountID"].(string)
 	email := data["email"].(string)
 
+	accID, err := strconv.Atoi(accountID)
+
+	if err != nil {
+		return TokenClaims{}, fmt.Errorf("error converting the accountID to uint: %w", err)
+	}
 	tokenClaims := TokenClaims{
-		AccountID: accountID,
+		AccountID: uint(accID),
 		Email:     email,
 		Exp:       exp,
 	}

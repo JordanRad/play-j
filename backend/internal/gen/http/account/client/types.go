@@ -3,7 +3,9 @@
 // account HTTP client types
 //
 // Command:
-// $ goa gen github.com/JordanRad/play-j/backend/internal/design -o ./internal/
+// $ goa gen
+// github.com/JordanRad/play-j/backend/internal/design/account-service -o
+// ./internal/
 
 package client
 
@@ -36,13 +38,6 @@ type LoginRequestBody struct {
 	Password *string `form:"password,omitempty" json:"password,omitempty" xml:"password,omitempty"`
 }
 
-// CreateAccountPlaylistRequestBody is the type of the "account" service
-// "createAccountPlaylist" endpoint HTTP request body.
-type CreateAccountPlaylistRequestBody struct {
-	// Playlist name
-	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
-}
-
 // RegisterResponseBody is the type of the "account" service "register"
 // endpoint HTTP response body.
 type RegisterResponseBody struct {
@@ -65,65 +60,6 @@ type LoginResponseBody struct {
 	AccountID *string `form:"accountID,omitempty" json:"accountID,omitempty" xml:"accountID,omitempty"`
 }
 
-// GetAccountPlaylistCollectionResponseBody is the type of the "account"
-// service "getAccountPlaylistCollection" endpoint HTTP response body.
-type GetAccountPlaylistCollectionResponseBody struct {
-	// Number of resources
-	Total *int32 `form:"total,omitempty" json:"total,omitempty" xml:"total,omitempty"`
-	// Operation completion status
-	Resources []*AccountPlaylistResponseResponseBody `form:"resources,omitempty" json:"resources,omitempty" xml:"resources,omitempty"`
-}
-
-// CreateAccountPlaylistResponseBody is the type of the "account" service
-// "createAccountPlaylist" endpoint HTTP response body.
-type CreateAccountPlaylistResponseBody struct {
-	// Operation completion status
-	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
-}
-
-// DeleteAccountPlaylistResponseBody is the type of the "account" service
-// "deleteAccountPlaylist" endpoint HTTP response body.
-type DeleteAccountPlaylistResponseBody struct {
-	// Operation completion status
-	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
-}
-
-// GetAccountPlaylistResponseBody is the type of the "account" service
-// "getAccountPlaylist" endpoint HTTP response body.
-type GetAccountPlaylistResponseBody struct {
-	// Playlist id
-	ID *int32 `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
-	// Playlist name
-	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
-	// Array of TrackIDs
-	TrackIDs []int32 `form:"trackIDs,omitempty" json:"trackIDs,omitempty" xml:"trackIDs,omitempty"`
-}
-
-// AddTrackToAccountPlaylistResponseBody is the type of the "account" service
-// "addTrackToAccountPlaylist" endpoint HTTP response body.
-type AddTrackToAccountPlaylistResponseBody struct {
-	// Operation completion status
-	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
-}
-
-// RemoveTrackFromAccountPlaylistResponseBody is the type of the "account"
-// service "removeTrackFromAccountPlaylist" endpoint HTTP response body.
-type RemoveTrackFromAccountPlaylistResponseBody struct {
-	// Operation completion status
-	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
-}
-
-// AccountPlaylistResponseResponseBody is used to define fields on response
-// body types.
-type AccountPlaylistResponseResponseBody struct {
-	// Playlist id
-	ID *int32 `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
-	// Playlist name
-	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
-	// Array of TrackIDs
-	TrackIDs []int32 `form:"trackIDs,omitempty" json:"trackIDs,omitempty" xml:"trackIDs,omitempty"`
-}
-
 // NewRegisterRequestBody builds the HTTP request body from the payload of the
 // "register" endpoint of the "account" service.
 func NewRegisterRequestBody(p *account.RegisterPayload) *RegisterRequestBody {
@@ -143,15 +79,6 @@ func NewLoginRequestBody(p *account.LoginPayload) *LoginRequestBody {
 	body := &LoginRequestBody{
 		Email:    p.Email,
 		Password: p.Password,
-	}
-	return body
-}
-
-// NewCreateAccountPlaylistRequestBody builds the HTTP request body from the
-// payload of the "createAccountPlaylist" endpoint of the "account" service.
-func NewCreateAccountPlaylistRequestBody(p *account.CreateAccountPlaylistPayload) *CreateAccountPlaylistRequestBody {
-	body := &CreateAccountPlaylistRequestBody{
-		Name: p.Name,
 	}
 	return body
 }
@@ -180,78 +107,6 @@ func NewLoginResponseOK(body *LoginResponseBody) *account.LoginResponse {
 	return v
 }
 
-// NewGetAccountPlaylistCollectionAccountPlaylistCollectionResponseOK builds a
-// "account" service "getAccountPlaylistCollection" endpoint result from a HTTP
-// "OK" response.
-func NewGetAccountPlaylistCollectionAccountPlaylistCollectionResponseOK(body *GetAccountPlaylistCollectionResponseBody) *account.AccountPlaylistCollectionResponse {
-	v := &account.AccountPlaylistCollectionResponse{
-		Total: *body.Total,
-	}
-	v.Resources = make([]*account.AccountPlaylistResponse, len(body.Resources))
-	for i, val := range body.Resources {
-		v.Resources[i] = unmarshalAccountPlaylistResponseResponseBodyToAccountAccountPlaylistResponse(val)
-	}
-
-	return v
-}
-
-// NewCreateAccountPlaylistCreatePlaylistResponseOK builds a "account" service
-// "createAccountPlaylist" endpoint result from a HTTP "OK" response.
-func NewCreateAccountPlaylistCreatePlaylistResponseOK(body *CreateAccountPlaylistResponseBody) *account.CreatePlaylistResponse {
-	v := &account.CreatePlaylistResponse{
-		Message: *body.Message,
-	}
-
-	return v
-}
-
-// NewDeleteAccountPlaylistDeletePlaylistResponseOK builds a "account" service
-// "deleteAccountPlaylist" endpoint result from a HTTP "OK" response.
-func NewDeleteAccountPlaylistDeletePlaylistResponseOK(body *DeleteAccountPlaylistResponseBody) *account.DeletePlaylistResponse {
-	v := &account.DeletePlaylistResponse{
-		Message: *body.Message,
-	}
-
-	return v
-}
-
-// NewGetAccountPlaylistAccountPlaylistResponseOK builds a "account" service
-// "getAccountPlaylist" endpoint result from a HTTP "OK" response.
-func NewGetAccountPlaylistAccountPlaylistResponseOK(body *GetAccountPlaylistResponseBody) *account.AccountPlaylistResponse {
-	v := &account.AccountPlaylistResponse{
-		ID:   *body.ID,
-		Name: *body.Name,
-	}
-	v.TrackIDs = make([]int32, len(body.TrackIDs))
-	for i, val := range body.TrackIDs {
-		v.TrackIDs[i] = val
-	}
-
-	return v
-}
-
-// NewAddTrackToAccountPlaylistPlaylistModificationResponseOK builds a
-// "account" service "addTrackToAccountPlaylist" endpoint result from a HTTP
-// "OK" response.
-func NewAddTrackToAccountPlaylistPlaylistModificationResponseOK(body *AddTrackToAccountPlaylistResponseBody) *account.PlaylistModificationResponse {
-	v := &account.PlaylistModificationResponse{
-		Message: *body.Message,
-	}
-
-	return v
-}
-
-// NewRemoveTrackFromAccountPlaylistPlaylistModificationResponseOK builds a
-// "account" service "removeTrackFromAccountPlaylist" endpoint result from a
-// HTTP "OK" response.
-func NewRemoveTrackFromAccountPlaylistPlaylistModificationResponseOK(body *RemoveTrackFromAccountPlaylistResponseBody) *account.PlaylistModificationResponse {
-	v := &account.PlaylistModificationResponse{
-		Message: *body.Message,
-	}
-
-	return v
-}
-
 // ValidateRegisterResponseBody runs the validations defined on
 // RegisterResponseBody
 func ValidateRegisterResponseBody(body *RegisterResponseBody) (err error) {
@@ -274,91 +129,6 @@ func ValidateLoginResponseBody(body *LoginResponseBody) (err error) {
 	}
 	if body.Role == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("role", "body"))
-	}
-	return
-}
-
-// ValidateGetAccountPlaylistCollectionResponseBody runs the validations
-// defined on GetAccountPlaylistCollectionResponseBody
-func ValidateGetAccountPlaylistCollectionResponseBody(body *GetAccountPlaylistCollectionResponseBody) (err error) {
-	if body.Total == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("total", "body"))
-	}
-	if body.Resources == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("resources", "body"))
-	}
-	for _, e := range body.Resources {
-		if e != nil {
-			if err2 := ValidateAccountPlaylistResponseResponseBody(e); err2 != nil {
-				err = goa.MergeErrors(err, err2)
-			}
-		}
-	}
-	return
-}
-
-// ValidateCreateAccountPlaylistResponseBody runs the validations defined on
-// CreateAccountPlaylistResponseBody
-func ValidateCreateAccountPlaylistResponseBody(body *CreateAccountPlaylistResponseBody) (err error) {
-	if body.Message == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
-	}
-	return
-}
-
-// ValidateDeleteAccountPlaylistResponseBody runs the validations defined on
-// DeleteAccountPlaylistResponseBody
-func ValidateDeleteAccountPlaylistResponseBody(body *DeleteAccountPlaylistResponseBody) (err error) {
-	if body.Message == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
-	}
-	return
-}
-
-// ValidateGetAccountPlaylistResponseBody runs the validations defined on
-// GetAccountPlaylistResponseBody
-func ValidateGetAccountPlaylistResponseBody(body *GetAccountPlaylistResponseBody) (err error) {
-	if body.ID == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
-	}
-	if body.Name == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
-	}
-	if body.TrackIDs == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("trackIDs", "body"))
-	}
-	return
-}
-
-// ValidateAddTrackToAccountPlaylistResponseBody runs the validations defined
-// on AddTrackToAccountPlaylistResponseBody
-func ValidateAddTrackToAccountPlaylistResponseBody(body *AddTrackToAccountPlaylistResponseBody) (err error) {
-	if body.Message == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
-	}
-	return
-}
-
-// ValidateRemoveTrackFromAccountPlaylistResponseBody runs the validations
-// defined on RemoveTrackFromAccountPlaylistResponseBody
-func ValidateRemoveTrackFromAccountPlaylistResponseBody(body *RemoveTrackFromAccountPlaylistResponseBody) (err error) {
-	if body.Message == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
-	}
-	return
-}
-
-// ValidateAccountPlaylistResponseResponseBody runs the validations defined on
-// AccountPlaylistResponseResponseBody
-func ValidateAccountPlaylistResponseResponseBody(body *AccountPlaylistResponseResponseBody) (err error) {
-	if body.ID == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
-	}
-	if body.Name == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
-	}
-	if body.TrackIDs == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("trackIDs", "body"))
 	}
 	return
 }

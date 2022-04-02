@@ -3,7 +3,9 @@
 // account client
 //
 // Command:
-// $ goa gen github.com/JordanRad/play-j/backend/internal/design -o ./internal/
+// $ goa gen
+// github.com/JordanRad/play-j/backend/internal/design/account-service -o
+// ./internal/
 
 package account
 
@@ -15,27 +17,15 @@ import (
 
 // Client is the "account" service client.
 type Client struct {
-	RegisterEndpoint                       goa.Endpoint
-	LoginEndpoint                          goa.Endpoint
-	GetAccountPlaylistCollectionEndpoint   goa.Endpoint
-	CreateAccountPlaylistEndpoint          goa.Endpoint
-	DeleteAccountPlaylistEndpoint          goa.Endpoint
-	GetAccountPlaylistEndpoint             goa.Endpoint
-	AddTrackToAccountPlaylistEndpoint      goa.Endpoint
-	RemoveTrackFromAccountPlaylistEndpoint goa.Endpoint
+	RegisterEndpoint goa.Endpoint
+	LoginEndpoint    goa.Endpoint
 }
 
 // NewClient initializes a "account" service client given the endpoints.
-func NewClient(register, login, getAccountPlaylistCollection, createAccountPlaylist, deleteAccountPlaylist, getAccountPlaylist, addTrackToAccountPlaylist, removeTrackFromAccountPlaylist goa.Endpoint) *Client {
+func NewClient(register, login goa.Endpoint) *Client {
 	return &Client{
-		RegisterEndpoint:                       register,
-		LoginEndpoint:                          login,
-		GetAccountPlaylistCollectionEndpoint:   getAccountPlaylistCollection,
-		CreateAccountPlaylistEndpoint:          createAccountPlaylist,
-		DeleteAccountPlaylistEndpoint:          deleteAccountPlaylist,
-		GetAccountPlaylistEndpoint:             getAccountPlaylist,
-		AddTrackToAccountPlaylistEndpoint:      addTrackToAccountPlaylist,
-		RemoveTrackFromAccountPlaylistEndpoint: removeTrackFromAccountPlaylist,
+		RegisterEndpoint: register,
+		LoginEndpoint:    login,
 	}
 }
 
@@ -57,70 +47,4 @@ func (c *Client) Login(ctx context.Context, p *LoginPayload) (res *LoginResponse
 		return
 	}
 	return ires.(*LoginResponse), nil
-}
-
-// GetAccountPlaylistCollection calls the "getAccountPlaylistCollection"
-// endpoint of the "account" service.
-func (c *Client) GetAccountPlaylistCollection(ctx context.Context, p *GetAccountPlaylistCollectionPayload) (res *AccountPlaylistCollectionResponse, err error) {
-	var ires interface{}
-	ires, err = c.GetAccountPlaylistCollectionEndpoint(ctx, p)
-	if err != nil {
-		return
-	}
-	return ires.(*AccountPlaylistCollectionResponse), nil
-}
-
-// CreateAccountPlaylist calls the "createAccountPlaylist" endpoint of the
-// "account" service.
-func (c *Client) CreateAccountPlaylist(ctx context.Context, p *CreateAccountPlaylistPayload) (res *CreatePlaylistResponse, err error) {
-	var ires interface{}
-	ires, err = c.CreateAccountPlaylistEndpoint(ctx, p)
-	if err != nil {
-		return
-	}
-	return ires.(*CreatePlaylistResponse), nil
-}
-
-// DeleteAccountPlaylist calls the "deleteAccountPlaylist" endpoint of the
-// "account" service.
-func (c *Client) DeleteAccountPlaylist(ctx context.Context, p *DeleteAccountPlaylistPayload) (res *DeletePlaylistResponse, err error) {
-	var ires interface{}
-	ires, err = c.DeleteAccountPlaylistEndpoint(ctx, p)
-	if err != nil {
-		return
-	}
-	return ires.(*DeletePlaylistResponse), nil
-}
-
-// GetAccountPlaylist calls the "getAccountPlaylist" endpoint of the "account"
-// service.
-func (c *Client) GetAccountPlaylist(ctx context.Context, p *GetAccountPlaylistPayload) (res *AccountPlaylistResponse, err error) {
-	var ires interface{}
-	ires, err = c.GetAccountPlaylistEndpoint(ctx, p)
-	if err != nil {
-		return
-	}
-	return ires.(*AccountPlaylistResponse), nil
-}
-
-// AddTrackToAccountPlaylist calls the "addTrackToAccountPlaylist" endpoint of
-// the "account" service.
-func (c *Client) AddTrackToAccountPlaylist(ctx context.Context, p *AddTrackToAccountPlaylistPayload) (res *PlaylistModificationResponse, err error) {
-	var ires interface{}
-	ires, err = c.AddTrackToAccountPlaylistEndpoint(ctx, p)
-	if err != nil {
-		return
-	}
-	return ires.(*PlaylistModificationResponse), nil
-}
-
-// RemoveTrackFromAccountPlaylist calls the "removeTrackFromAccountPlaylist"
-// endpoint of the "account" service.
-func (c *Client) RemoveTrackFromAccountPlaylist(ctx context.Context, p *RemoveTrackFromAccountPlaylistPayload) (res *PlaylistModificationResponse, err error) {
-	var ires interface{}
-	ires, err = c.RemoveTrackFromAccountPlaylistEndpoint(ctx, p)
-	if err != nil {
-		return
-	}
-	return ires.(*PlaylistModificationResponse), nil
 }

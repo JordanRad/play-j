@@ -13,7 +13,7 @@ var _ = Service("account", func() {
 	Description("Account operations")
 
 	HTTP(func() {
-		Path("/api/v1/account") // Prefix to HTTP path of all requests.
+		Path("/api/v1/account-service/accounts") // Prefix to HTTP path of all requests.
 	})
 
 	Method("register", func() {
@@ -41,6 +41,14 @@ var _ = Service("account", func() {
 			POST("/login")
 		})
 	})
+})
+
+var _ = Service("playlist", func() {
+	Description("Playlist operations")
+
+	HTTP(func() {
+		Path("/api/v1/account-service/playlists") // Prefix to HTTP path of all requests.
+	})
 
 	Method("getAccountPlaylistCollection", func() {
 		Result(AccountPlaylistCollectionResponse)
@@ -52,14 +60,13 @@ var _ = Service("account", func() {
 			Header("auth:Authorization", String, "JSON Web Token", func() {
 				Pattern("^Bearer [^ ]+$")
 			})
-			GET("/{accountID}/playlists")
+			GET("/")
 		})
 	})
 
 	Method("createAccountPlaylist", func() {
-		Result(CreatePlaylistResponse)
+		Result(PlaylistModificationResponse)
 		Payload(func() {
-			Attribute("accountID", UInt, "Account ID")
 			Attribute("auth", String, "Authorization Header")
 			Attribute("name", String, "Playlist name")
 		})
@@ -67,14 +74,13 @@ var _ = Service("account", func() {
 			Header("auth:Authorization", String, "JSON Web Token", func() {
 				Pattern("^Bearer [^ ]+$")
 			})
-			POST("/{accountID}/playlists")
+			POST("/")
 		})
 	})
 
 	Method("deleteAccountPlaylist", func() {
-		Result(DeletePlaylistResponse)
+		Result(PlaylistModificationResponse)
 		Payload(func() {
-			Attribute("accountID", UInt)
 			Attribute("auth", String)
 			Attribute("playlistID", UInt)
 		})
@@ -82,14 +88,13 @@ var _ = Service("account", func() {
 			Header("auth:Authorization", String, "JSON Web Token", func() {
 				Pattern("^Bearer [^ ]+$")
 			})
-			DELETE("/{accountID}/playlists/{playlistID}")
+			DELETE("/")
 		})
 	})
 
 	Method("getAccountPlaylist", func() {
 		Result(AccountPlaylistResponse)
 		Payload(func() {
-			Attribute("accountID", UInt, "Account ID")
 			Attribute("playlistID", UInt, "Playlist ID")
 			Attribute("auth", String, "Authorization Header")
 		})
@@ -97,14 +102,13 @@ var _ = Service("account", func() {
 			Header("auth:Authorization", String, "JSON Web Token", func() {
 				Pattern("^Bearer [^ ]+$")
 			})
-			GET("/{accountID}/playlists/{playlistID}")
+			GET("/{playlistID}")
 		})
 	})
 
 	Method("addTrackToAccountPlaylist", func() {
 		Result(PlaylistModificationResponse)
 		Payload(func() {
-			Attribute("accountID", UInt, "Account ID")
 			Attribute("playlistID", UInt, "Playlist ID to modify")
 			Attribute("trackID", UInt, "Track ID to be added")
 			Attribute("auth", String, "Authorization Header")
@@ -113,14 +117,13 @@ var _ = Service("account", func() {
 			Header("auth:Authorization", String, "JSON Web Token", func() {
 				Pattern("^Bearer [^ ]+$")
 			})
-			POST("/{accountID}/playlists/{playlistID}/tracks/{trackID}")
+			POST("/{playlistID}/tracks/{trackID}")
 		})
 	})
 
 	Method("removeTrackFromAccountPlaylist", func() {
 		Result(PlaylistModificationResponse)
 		Payload(func() {
-			Attribute("accountID", UInt, "Account ID")
 			Attribute("playlistID", UInt, "Playlist ID to modify")
 			Attribute("trackID", UInt, "Track ID to be deleted")
 			Attribute("auth", String, "Authorization Header")
@@ -129,7 +132,7 @@ var _ = Service("account", func() {
 			Header("auth:Authorization", String, "JSON Web Token", func() {
 				Pattern("^Bearer [^ ]+$")
 			})
-			DELETE("/{accountID}/playlists/{playlistID}/tracks/{trackID}")
+			DELETE("/{playlistID}/tracks/{trackID}")
 		})
 	})
 })
@@ -161,29 +164,6 @@ var AccountPlaylistResponse = Type("AccountPlaylistResponse", func() {
 	Attribute("trackIDs", ArrayOf(Int32), "Array of TrackIDs")
 
 	Required("id", "name", "trackIDs")
-})
-
-// var TrackResponse = Type("TrackResponse", func() {
-// 	Attribute("trackID", Int32, "Track ID")
-// 	Attribute("name", String, "Track name")
-// 	Attribute("artistID", Int32, "Artist ID")
-// 	Attribute("albumID", Int32, "Album ID")
-// 	Attribute("fullName", String, "Full name")
-// 	Attribute("genre", String, "Track genre")
-// 	Attribute("genre", String, "Track genre")
-// 	Attribute("duration", UInt, "Track duration")
-// 	Attribute("songURL", String, "Track URL")
-// 	Required("id", "name")
-// })
-
-var CreatePlaylistResponse = Type("CreatePlaylistResponse", func() {
-	Attribute("message", String, "Operation completion status")
-	Required("message")
-})
-
-var DeletePlaylistResponse = Type("DeletePlaylistResponse", func() {
-	Attribute("message", String, "Operation completion status")
-	Required("message")
 })
 
 var PlaylistModificationResponse = Type("PlaylistModificationResponse", func() {

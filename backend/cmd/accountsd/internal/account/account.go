@@ -56,7 +56,7 @@ func (s *Service) Register(ctx context.Context, p *account.RegisterPayload) (*ac
 	// Encrypt password
 	encryptedPassword, encryptErr := auth.EncryptPassword(p.Password)
 	if encryptErr != nil {
-		fmt.Errorf("error encrypting the password: %w", encryptErr)
+		return nil, fmt.Errorf("error encrypting the password: %w", encryptErr)
 	}
 
 	newUser := &User{
@@ -107,110 +107,5 @@ func (s *Service) Login(ctx context.Context, p *account.LoginPayload) (*account.
 		RefreshToken: "dfsdvsdfjv sjf",
 		Role:         "ROLE_REG_USER",
 	}
-	return response, nil
-}
-
-func (s *Service) GetAccountPlaylistCollection(ctx context.Context, p *account.GetAccountPlaylistCollectionPayload) (*account.AccountPlaylistCollectionResponse, error) {
-
-	// Get playlists by user
-	playlists, err := s.playlistStore.GetAllAccountPlaylists(ctx, *p.AccountID)
-
-	if err != nil {
-		return &account.AccountPlaylistCollectionResponse{}, fmt.Errorf("error displaying user's playlists: %w", err)
-	}
-
-	resources := make([]*account.AccountPlaylistResponse, 0, len(playlists))
-
-	for _, playlist := range playlists {
-
-		resource := &account.AccountPlaylistResponse{
-			ID:       int32(playlist.ID),
-			Name:     playlist.Name,
-			TrackIDs: playlist.TrackIDs,
-		}
-
-		resources = append(resources, resource)
-	}
-
-	response := &account.AccountPlaylistCollectionResponse{
-		Total:     int32(len(playlists)),
-		Resources: resources,
-	}
-
-	return response, nil
-}
-
-func (s *Service) CreateAccountPlaylist(ctx context.Context, p *account.CreateAccountPlaylistPayload) (*account.CreatePlaylistResponse, error) {
-
-	_, err := s.playlistStore.CreateAccountPlaylist(ctx, *p.AccountID, *p.Name)
-	if err != nil {
-		return nil, fmt.Errorf("error creating new playlist: %w", err)
-	}
-
-	response := &account.CreatePlaylistResponse{
-		Message: "Playlist created successfully",
-	}
-
-	return response, nil
-}
-
-func (s *Service) DeleteAccountPlaylist(ctx context.Context, p *account.DeleteAccountPlaylistPayload) (*account.DeletePlaylistResponse, error) {
-
-	_, err := s.playlistStore.DeleteAccountPlaylist(ctx, *p.AccountID, *p.PlaylistID)
-	if err != nil {
-		return nil, fmt.Errorf("error deleting a playlist: %w", err)
-	}
-
-	response := &account.DeletePlaylistResponse{
-		Message: "Playlist deleted successfully",
-	}
-
-	return response, nil
-}
-
-func (s *Service) GetAccountPlaylist(ctx context.Context, p *account.GetAccountPlaylistPayload) (*account.AccountPlaylistResponse, error) {
-
-	playlist, err := s.playlistStore.GetAccountPlaylist(ctx, *p.AccountID, *p.PlaylistID)
-
-	if err != nil {
-		return nil, fmt.Errorf("[service] error getting a playlis: %w", err)
-	}
-
-	response := &account.AccountPlaylistResponse{
-		ID:       int32(playlist.ID),
-		Name:     playlist.Name,
-		TrackIDs: playlist.TrackIDs,
-	}
-
-	return response, nil
-}
-
-func (s *Service) AddTrackToAccountPlaylist(ctx context.Context, p *account.AddTrackToAccountPlaylistPayload) (*account.PlaylistModificationResponse, error) {
-
-	_, err := s.playlistStore.UpdateAccountPlaylist(ctx, *p.PlaylistID, *p.TrackID, "ADD")
-
-	if err != nil {
-		return nil, fmt.Errorf("service error adding track to a playlist: %w", err)
-	}
-
-	response := &account.PlaylistModificationResponse{
-		Message: fmt.Sprintf("Track with ID: %d has been added to Playlist with ID: %d successfully", *p.TrackID, *p.PlaylistID),
-	}
-
-	return response, nil
-}
-
-func (s *Service) RemoveTrackFromAccountPlaylist(ctx context.Context, p *account.RemoveTrackFromAccountPlaylistPayload) (*account.PlaylistModificationResponse, error) {
-
-	_, err := s.playlistStore.UpdateAccountPlaylist(ctx, *p.PlaylistID, *p.TrackID, "REMOVE")
-
-	if err != nil {
-		return nil, fmt.Errorf("service error removing a track from a playlist: %w", err)
-	}
-
-	response := &account.PlaylistModificationResponse{
-		Message: fmt.Sprintf("Track with ID: %d has been removed from Playlist with ID: %d successfully", *p.TrackID, *p.PlaylistID),
-	}
-
 	return response, nil
 }

@@ -3,7 +3,9 @@
 // account HTTP server types
 //
 // Command:
-// $ goa gen github.com/JordanRad/play-j/backend/internal/design -o ./internal/
+// $ goa gen
+// github.com/JordanRad/play-j/backend/internal/design/account-service -o
+// ./internal/
 
 package server
 
@@ -36,13 +38,6 @@ type LoginRequestBody struct {
 	Password *string `form:"password,omitempty" json:"password,omitempty" xml:"password,omitempty"`
 }
 
-// CreateAccountPlaylistRequestBody is the type of the "account" service
-// "createAccountPlaylist" endpoint HTTP request body.
-type CreateAccountPlaylistRequestBody struct {
-	// Playlist name
-	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
-}
-
 // RegisterResponseBody is the type of the "account" service "register"
 // endpoint HTTP response body.
 type RegisterResponseBody struct {
@@ -63,65 +58,6 @@ type LoginResponseBody struct {
 	Role string `form:"role" json:"role" xml:"role"`
 	// User's role
 	AccountID *string `form:"accountID,omitempty" json:"accountID,omitempty" xml:"accountID,omitempty"`
-}
-
-// GetAccountPlaylistCollectionResponseBody is the type of the "account"
-// service "getAccountPlaylistCollection" endpoint HTTP response body.
-type GetAccountPlaylistCollectionResponseBody struct {
-	// Number of resources
-	Total int32 `form:"total" json:"total" xml:"total"`
-	// Operation completion status
-	Resources []*AccountPlaylistResponseResponseBody `form:"resources" json:"resources" xml:"resources"`
-}
-
-// CreateAccountPlaylistResponseBody is the type of the "account" service
-// "createAccountPlaylist" endpoint HTTP response body.
-type CreateAccountPlaylistResponseBody struct {
-	// Operation completion status
-	Message string `form:"message" json:"message" xml:"message"`
-}
-
-// DeleteAccountPlaylistResponseBody is the type of the "account" service
-// "deleteAccountPlaylist" endpoint HTTP response body.
-type DeleteAccountPlaylistResponseBody struct {
-	// Operation completion status
-	Message string `form:"message" json:"message" xml:"message"`
-}
-
-// GetAccountPlaylistResponseBody is the type of the "account" service
-// "getAccountPlaylist" endpoint HTTP response body.
-type GetAccountPlaylistResponseBody struct {
-	// Playlist id
-	ID int32 `form:"id" json:"id" xml:"id"`
-	// Playlist name
-	Name string `form:"name" json:"name" xml:"name"`
-	// Array of TrackIDs
-	TrackIDs []int32 `form:"trackIDs" json:"trackIDs" xml:"trackIDs"`
-}
-
-// AddTrackToAccountPlaylistResponseBody is the type of the "account" service
-// "addTrackToAccountPlaylist" endpoint HTTP response body.
-type AddTrackToAccountPlaylistResponseBody struct {
-	// Operation completion status
-	Message string `form:"message" json:"message" xml:"message"`
-}
-
-// RemoveTrackFromAccountPlaylistResponseBody is the type of the "account"
-// service "removeTrackFromAccountPlaylist" endpoint HTTP response body.
-type RemoveTrackFromAccountPlaylistResponseBody struct {
-	// Operation completion status
-	Message string `form:"message" json:"message" xml:"message"`
-}
-
-// AccountPlaylistResponseResponseBody is used to define fields on response
-// body types.
-type AccountPlaylistResponseResponseBody struct {
-	// Playlist id
-	ID int32 `form:"id" json:"id" xml:"id"`
-	// Playlist name
-	Name string `form:"name" json:"name" xml:"name"`
-	// Array of TrackIDs
-	TrackIDs []int32 `form:"trackIDs" json:"trackIDs" xml:"trackIDs"`
 }
 
 // NewRegisterResponseBody builds the HTTP response body from the result of the
@@ -146,76 +82,6 @@ func NewLoginResponseBody(res *account.LoginResponse) *LoginResponseBody {
 	return body
 }
 
-// NewGetAccountPlaylistCollectionResponseBody builds the HTTP response body
-// from the result of the "getAccountPlaylistCollection" endpoint of the
-// "account" service.
-func NewGetAccountPlaylistCollectionResponseBody(res *account.AccountPlaylistCollectionResponse) *GetAccountPlaylistCollectionResponseBody {
-	body := &GetAccountPlaylistCollectionResponseBody{
-		Total: res.Total,
-	}
-	if res.Resources != nil {
-		body.Resources = make([]*AccountPlaylistResponseResponseBody, len(res.Resources))
-		for i, val := range res.Resources {
-			body.Resources[i] = marshalAccountAccountPlaylistResponseToAccountPlaylistResponseResponseBody(val)
-		}
-	}
-	return body
-}
-
-// NewCreateAccountPlaylistResponseBody builds the HTTP response body from the
-// result of the "createAccountPlaylist" endpoint of the "account" service.
-func NewCreateAccountPlaylistResponseBody(res *account.CreatePlaylistResponse) *CreateAccountPlaylistResponseBody {
-	body := &CreateAccountPlaylistResponseBody{
-		Message: res.Message,
-	}
-	return body
-}
-
-// NewDeleteAccountPlaylistResponseBody builds the HTTP response body from the
-// result of the "deleteAccountPlaylist" endpoint of the "account" service.
-func NewDeleteAccountPlaylistResponseBody(res *account.DeletePlaylistResponse) *DeleteAccountPlaylistResponseBody {
-	body := &DeleteAccountPlaylistResponseBody{
-		Message: res.Message,
-	}
-	return body
-}
-
-// NewGetAccountPlaylistResponseBody builds the HTTP response body from the
-// result of the "getAccountPlaylist" endpoint of the "account" service.
-func NewGetAccountPlaylistResponseBody(res *account.AccountPlaylistResponse) *GetAccountPlaylistResponseBody {
-	body := &GetAccountPlaylistResponseBody{
-		ID:   res.ID,
-		Name: res.Name,
-	}
-	if res.TrackIDs != nil {
-		body.TrackIDs = make([]int32, len(res.TrackIDs))
-		for i, val := range res.TrackIDs {
-			body.TrackIDs[i] = val
-		}
-	}
-	return body
-}
-
-// NewAddTrackToAccountPlaylistResponseBody builds the HTTP response body from
-// the result of the "addTrackToAccountPlaylist" endpoint of the "account"
-// service.
-func NewAddTrackToAccountPlaylistResponseBody(res *account.PlaylistModificationResponse) *AddTrackToAccountPlaylistResponseBody {
-	body := &AddTrackToAccountPlaylistResponseBody{
-		Message: res.Message,
-	}
-	return body
-}
-
-// NewRemoveTrackFromAccountPlaylistResponseBody builds the HTTP response body
-// from the result of the "removeTrackFromAccountPlaylist" endpoint of the
-// "account" service.
-func NewRemoveTrackFromAccountPlaylistResponseBody(res *account.PlaylistModificationResponse) *RemoveTrackFromAccountPlaylistResponseBody {
-	body := &RemoveTrackFromAccountPlaylistResponseBody{
-		Message: res.Message,
-	}
-	return body
-}
-
 // NewRegisterPayload builds a account service register endpoint payload.
 func NewRegisterPayload(body *RegisterRequestBody) *account.RegisterPayload {
 	v := &account.RegisterPayload{
@@ -235,74 +101,6 @@ func NewLoginPayload(body *LoginRequestBody) *account.LoginPayload {
 		Email:    body.Email,
 		Password: body.Password,
 	}
-
-	return v
-}
-
-// NewGetAccountPlaylistCollectionPayload builds a account service
-// getAccountPlaylistCollection endpoint payload.
-func NewGetAccountPlaylistCollectionPayload(accountID uint, auth *string) *account.GetAccountPlaylistCollectionPayload {
-	v := &account.GetAccountPlaylistCollectionPayload{}
-	v.AccountID = &accountID
-	v.Auth = auth
-
-	return v
-}
-
-// NewCreateAccountPlaylistPayload builds a account service
-// createAccountPlaylist endpoint payload.
-func NewCreateAccountPlaylistPayload(body *CreateAccountPlaylistRequestBody, accountID uint, auth *string) *account.CreateAccountPlaylistPayload {
-	v := &account.CreateAccountPlaylistPayload{
-		Name: body.Name,
-	}
-	v.AccountID = &accountID
-	v.Auth = auth
-
-	return v
-}
-
-// NewDeleteAccountPlaylistPayload builds a account service
-// deleteAccountPlaylist endpoint payload.
-func NewDeleteAccountPlaylistPayload(accountID uint, playlistID uint, auth *string) *account.DeleteAccountPlaylistPayload {
-	v := &account.DeleteAccountPlaylistPayload{}
-	v.AccountID = &accountID
-	v.PlaylistID = &playlistID
-	v.Auth = auth
-
-	return v
-}
-
-// NewGetAccountPlaylistPayload builds a account service getAccountPlaylist
-// endpoint payload.
-func NewGetAccountPlaylistPayload(accountID uint, playlistID uint, auth *string) *account.GetAccountPlaylistPayload {
-	v := &account.GetAccountPlaylistPayload{}
-	v.AccountID = &accountID
-	v.PlaylistID = &playlistID
-	v.Auth = auth
-
-	return v
-}
-
-// NewAddTrackToAccountPlaylistPayload builds a account service
-// addTrackToAccountPlaylist endpoint payload.
-func NewAddTrackToAccountPlaylistPayload(accountID uint, playlistID uint, trackID uint, auth *string) *account.AddTrackToAccountPlaylistPayload {
-	v := &account.AddTrackToAccountPlaylistPayload{}
-	v.AccountID = &accountID
-	v.PlaylistID = &playlistID
-	v.TrackID = &trackID
-	v.Auth = auth
-
-	return v
-}
-
-// NewRemoveTrackFromAccountPlaylistPayload builds a account service
-// removeTrackFromAccountPlaylist endpoint payload.
-func NewRemoveTrackFromAccountPlaylistPayload(accountID uint, playlistID uint, trackID uint, auth *string) *account.RemoveTrackFromAccountPlaylistPayload {
-	v := &account.RemoveTrackFromAccountPlaylistPayload{}
-	v.AccountID = &accountID
-	v.PlaylistID = &playlistID
-	v.TrackID = &trackID
-	v.Auth = auth
 
 	return v
 }
