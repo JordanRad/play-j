@@ -27,9 +27,15 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
+       
+    - name: Install NPM
+      working-directory: ./frontend/playj-client
+      run: npm install -g npm@8.6.0
+      
     - name: Clean & Install NPM dependencies
       working-directory: ./frontend/playj-client
       run: npm ci
+      
     - name: Build the app
       working-directory: ./frontend/playj-client
       run: npm run build
