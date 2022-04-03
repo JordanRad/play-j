@@ -1,0 +1,29 @@
+name: Go Account Service CI
+
+on:
+  push:
+    branches: [ main ]
+    paths: 
+    - 'backend/cmd/accountsd/**'
+  pull_request:
+    branches: [ main ]
+    paths: 
+    - 'backend/cmd/accountsd/**'
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.17
+
+    - name: Build
+      run: go build -v 
+
+#     - name: Test
+#       run: go test -v ./...
