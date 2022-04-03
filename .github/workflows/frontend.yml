@@ -32,7 +32,7 @@ jobs:
       run: npm ci
     - name: Build the app
       working-directory: ./frontend/playj-client
-      run: sudo npm run build
+      run: npm run build
 #     - uses: actions/checkout@v3
 #     - name: Use Node.js ${{ matrix.node-version }}
 #       uses: actions/setup-node@v3
