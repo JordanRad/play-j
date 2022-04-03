@@ -54,11 +54,9 @@ func main() {
 	}
 
 	accountService := account.NewService(dbAccountStore)
-
 	var accountEndpoints *accountsvc.Endpoints = accountsvc.NewEndpoints(accountService)
 
 	playlistService := playlist.NewService(dbPlaylistStore)
-
 	var playlistEndpoints *playlistsvc.Endpoints = playlistsvc.NewEndpoints(playlistService)
 
 	// Provide the transport specific request decoder and response encoder.
