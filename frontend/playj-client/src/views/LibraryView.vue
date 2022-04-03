@@ -2,12 +2,9 @@
 import Navigation from "../components/Navigation.vue";
 import Card from "primevue/card";
 import Button from "primevue/button";
-import Badge from "primevue/badge";
-import Menu from "primevue/menu";
 import ProgressSpinner from "primevue/progressspinner";
 import SplitButton from "primevue/splitbutton";
-import Divider from "primevue/divider";
-import PlaylistService from '../services/PlaylistService'
+// import PlaylistService from '@/services/PlaylistService'
 import { onMounted, ref } from "vue";
 const isLoading = ref(true);
 const playlists = ref(null)
