@@ -15,7 +15,7 @@ type TokenClaims struct {
 	Exp       float64
 }
 
-// Create the JWT key used to create the signature
+// JWT secret used to create the signature
 var secret = []byte("FHvdhfgvdJ98332")
 
 func EncryptPassword(passwordString string) (string, error) {
