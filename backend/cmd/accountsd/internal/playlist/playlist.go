@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/JordanRad/play-j/backend/cmd/accountsd/internal/db/dbmodels"
+	"github.com/JordanRad/play-j/backend/internal/accountservice/gen/playlist"
 	"github.com/JordanRad/play-j/backend/internal/auth"
-	"github.com/JordanRad/play-j/backend/internal/gen/playlist"
 )
 
 type Store interface {

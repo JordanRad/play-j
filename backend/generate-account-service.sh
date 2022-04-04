@@ -1,1 +1,1 @@
-goa gen github.com/JordanRad/play-j/backend/internal/design/account-service -o ./internal/
+goa gen github.com/JordanRad/play-j/backend/internal/design/account-service -o ./internal/accountservice

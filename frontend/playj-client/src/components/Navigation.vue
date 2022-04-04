@@ -38,7 +38,7 @@ const items = ref([
 
 <template>
   <div class="navigation">
-    <Menubar :model="items"> </Menubar>
+    <Menubar class="bg-black-alpha-90" :model="items"> </Menubar>
   </div>
 </template>
 
