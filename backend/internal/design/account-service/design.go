@@ -7,6 +7,7 @@ import (
 var _ = API("accounts", func() {
 	Title("Accounts Backend Service")
 	Description("Microservice for account management & operations")
+
 })
 
 var _ = Service("account", func() {
@@ -149,6 +150,12 @@ var _ = Service("playlist", func() {
 			})
 			DELETE("/{playlistID}/tracks/{trackID}")
 		})
+	})
+})
+
+var _ = Service("swagger", func() {
+	Files("/openapi.json", "./gen/http/openapi.json", func() {
+		Meta("swagger:generate", "false")
 	})
 })
 

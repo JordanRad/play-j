@@ -1,11 +1,15 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"os"
 
 	player "github.com/JordanRad/play-j/backend/cmd/playerd/internal/player"
-
+	playersrv "github.com/JordanRad/play-j/backend/internal/playerservice/gen/http/player/server"
+	playersvc "github.com/JordanRad/play-j/backend/internal/playerservice/gen/player"
 	goahttp "goa.design/goa/v3/http"
 
 	"github.com/JordanRad/play-j/backend/internal/middleware"
@@ -19,7 +23,22 @@ import (
 )
 
 func main() {
-	db, err := sql.Open("pgx", "postgres://playj:playj1307@localhost:5433/playj-accounts-db")
+
+	configFile, err := os.Open("conf.json")
+	if err != nil {
+		log.Fatalf("Config file cannot be read: %v", err)
+	}
+	defer configFile.Close()
+
+	byteValue, _ := ioutil.ReadAll(configFile)
+
+	var configuration map[string]interface{}
+
+	json.Unmarshal([]byte(byteValue), &configuration)
+
+	dbConnectionString := fmt.Sprintf("postgres://%v:%v@%v/%v", configuration["postgresql_user"], configuration["postgresql_password"], configuration["postgresql_host"], configuration["postgresql_db_name"])
+
+	db, err := sql.Open("pgx", dbConnectionString)
 	if err != nil {
 		log.Fatalf("Could not connect to database: %v", err)
 	}
@@ -48,10 +67,7 @@ func main() {
 	// }
 
 	playerService := player.NewService(nil, nil)
-	var accountEndpoints *accountsvc.Endpoints = accountsvc.NewEndpoints(accountService)
-
-	playlistService := playlist.NewService(dbPlaylistStore)
-	var playlistEndpoints *playlistsvc.Endpoints = playlistsvc.NewEndpoints(playlistService)
+	var accountEndpoints *playersvc.Endpoints = playersvc.NewEndpoints(playerService)
 
 	// Provide the transport specific request decoder and response encoder.
 	var (
@@ -66,14 +82,12 @@ func main() {
 		mux = goahttp.NewMuxer()
 	}
 
-	var accountServer *accountsrv.Server = accountsrv.New(accountEndpoints, mux, dec, enc, nil, nil)
-	accountsrv.Mount(mux, accountServer)
+	var playerServer *playersrv.Server = playersrv.New(accountEndpoints, mux, dec, enc, nil, nil)
+	playersrv.Mount(mux, playerServer)
 
-	var playlistServer *playlistsrv.Server = playlistsrv.New(playlistEndpoints, mux, dec, enc, nil, nil)
-	playlistServer.Use(middleware.AuthenticateRequest())
-	playlistServer.Use(middleware.InjectJWTInContext())
-	playlistsrv.Mount(mux, playlistServer)
+	playerServer.Use(middleware.AuthenticateRequest())
+	playerServer.Use(middleware.InjectJWTInContext())
 
-	fmt.Print("Account service has just started...\n")
-	http.ListenAndServe("localhost:8091", mux)
+	fmt.Print("Player service has just started...\n")
+	http.ListenAndServe("localhost:8092", mux)
 }
