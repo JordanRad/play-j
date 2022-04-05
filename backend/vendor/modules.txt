@@ -1,0 +1,150 @@
+# github.com/dimfeld/httppath v0.0.0-20170720192232-ee938bf73598
+## explicit
+github.com/dimfeld/httppath
+# github.com/dimfeld/httptreemux/v5 v5.4.0
+## explicit; go 1.9
+github.com/dimfeld/httptreemux/v5
+# github.com/golang-jwt/jwt v3.2.2+incompatible
+## explicit
+github.com/golang-jwt/jwt
+# github.com/google/uuid v1.3.0
+## explicit
+github.com/google/uuid
+# github.com/gopherjs/gopherjs v0.0.0-20220221023154-0b2280d3ff96
+## explicit; go 1.17
+# github.com/gorilla/websocket v1.5.0
+## explicit; go 1.12
+github.com/gorilla/websocket
+# github.com/jackc/chunkreader/v2 v2.0.1
+## explicit; go 1.12
+github.com/jackc/chunkreader/v2
+# github.com/jackc/pgconn v1.11.0
+## explicit; go 1.12
+github.com/jackc/pgconn
+github.com/jackc/pgconn/internal/ctxwatch
+github.com/jackc/pgconn/stmtcache
+# github.com/jackc/pgio v1.0.0
+## explicit; go 1.12
+github.com/jackc/pgio
+# github.com/jackc/pgpassfile v1.0.0
+## explicit; go 1.12
+github.com/jackc/pgpassfile
+# github.com/jackc/pgproto3/v2 v2.2.0
+## explicit; go 1.12
+github.com/jackc/pgproto3/v2
+# github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b
+## explicit; go 1.14
+github.com/jackc/pgservicefile
+# github.com/jackc/pgtype v1.10.0
+## explicit; go 1.13
+github.com/jackc/pgtype
+# github.com/jackc/pgx/v4 v4.15.0
+## explicit; go 1.13
+github.com/jackc/pgx/v4
+github.com/jackc/pgx/v4/internal/sanitize
+github.com/jackc/pgx/v4/stdlib
+# github.com/jtolds/gls v4.20.0+incompatible
+## explicit
+# github.com/kr/text v0.2.0
+## explicit
+# github.com/lib/pq v1.10.4
+## explicit; go 1.13
+github.com/lib/pq
+github.com/lib/pq/oid
+github.com/lib/pq/scram
+# github.com/manveru/faker v0.0.0-20171103152722-9fbc68a78c4d
+## explicit
+github.com/manveru/faker
+# github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e
+## explicit; go 1.12
+# github.com/rs/cors v1.8.2
+## explicit; go 1.13
+# github.com/sergi/go-diff v1.2.0
+## explicit; go 1.12
+github.com/sergi/go-diff/diffmatchpatch
+# github.com/smartystreets/assertions v1.2.1
+## explicit; go 1.17
+# github.com/zach-klippenstein/goregen v0.0.0-20160303162051-795b5e3961ea
+## explicit
+github.com/zach-klippenstein/goregen
+# goa.design/goa/v3 v3.7.0
+## explicit; go 1.17
+goa.design/goa/v3/cmd/goa
+goa.design/goa/v3/codegen
+goa.design/goa/v3/codegen/cli
+goa.design/goa/v3/codegen/example
+goa.design/goa/v3/codegen/generator
+goa.design/goa/v3/codegen/service
+goa.design/goa/v3/dsl
+goa.design/goa/v3/eval
+goa.design/goa/v3/expr
+goa.design/goa/v3/grpc/codegen
+goa.design/goa/v3/http
+goa.design/goa/v3/http/codegen
+goa.design/goa/v3/http/codegen/openapi
+goa.design/goa/v3/http/codegen/openapi/v2
+goa.design/goa/v3/http/codegen/openapi/v3
+goa.design/goa/v3/pkg
+# goa.design/plugins/v3 v3.7.0
+## explicit; go 1.16
+goa.design/plugins/v3/cors
+goa.design/plugins/v3/cors/dsl
+goa.design/plugins/v3/cors/expr
+# golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd
+## explicit; go 1.17
+golang.org/x/crypto/bcrypt
+golang.org/x/crypto/blowfish
+golang.org/x/crypto/pbkdf2
+# golang.org/x/mod v0.6.0-dev.0.20220106191415-9b9b3d81d5e3
+## explicit; go 1.17
+golang.org/x/mod/internal/lazyregexp
+golang.org/x/mod/module
+golang.org/x/mod/semver
+# golang.org/x/sys v0.0.0-20220317061510-51cd9980dadf
+## explicit; go 1.17
+golang.org/x/sys/execabs
+# golang.org/x/text v0.3.7
+## explicit; go 1.17
+golang.org/x/text/cases
+golang.org/x/text/internal
+golang.org/x/text/internal/language
+golang.org/x/text/internal/language/compact
+golang.org/x/text/internal/tag
+golang.org/x/text/language
+golang.org/x/text/runes
+golang.org/x/text/secure/bidirule
+golang.org/x/text/secure/precis
+golang.org/x/text/transform
+golang.org/x/text/unicode/bidi
+golang.org/x/text/unicode/norm
+golang.org/x/text/width
+# golang.org/x/tools v0.1.10
+## explicit; go 1.17
+golang.org/x/tools/go/ast/astutil
+golang.org/x/tools/go/gcexportdata
+golang.org/x/tools/go/internal/gcimporter
+golang.org/x/tools/go/internal/packagesdriver
+golang.org/x/tools/go/packages
+golang.org/x/tools/imports
+golang.org/x/tools/internal/event
+golang.org/x/tools/internal/event/core
+golang.org/x/tools/internal/event/keys
+golang.org/x/tools/internal/event/label
+golang.org/x/tools/internal/fastwalk
+golang.org/x/tools/internal/gocommand
+golang.org/x/tools/internal/gopathwalk
+golang.org/x/tools/internal/imports
+golang.org/x/tools/internal/packagesinternal
+golang.org/x/tools/internal/typeparams
+golang.org/x/tools/internal/typesinternal
+# golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1
+## explicit; go 1.11
+golang.org/x/xerrors
+golang.org/x/xerrors/internal
+# gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f
+## explicit
+# gopkg.in/yaml.v2 v2.4.0
+## explicit; go 1.15
+gopkg.in/yaml.v2
+# gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
+## explicit

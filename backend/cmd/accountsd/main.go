@@ -28,7 +28,6 @@ import (
 )
 
 func main() {
-
 	configFile, err := os.Open("conf.json")
 	if err != nil {
 		log.Fatalf("Config file cannot be read: %v", err)

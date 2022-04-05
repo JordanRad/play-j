@@ -2,13 +2,17 @@
 import Card from "primevue/card";
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
+import AccountService from "@/services/AccountService.js"
 import { ref } from "vue";
 
 const email = ref("");
 const password = ref("");
 
-function onSubmit() {
+async function onSubmit() {
+
   console.log(email.value, password.value);
+let loginResponse = await AccountService.login(email.value,password.value)
+console.log(loginResponse)
 }
 </script>
 <template>

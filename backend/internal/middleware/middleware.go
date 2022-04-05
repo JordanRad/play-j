@@ -78,3 +78,10 @@ func InjectJWTInContext() func(http.Handler) http.Handler {
 		})
 	}
 }
+
+func CORSHandler() func(http.Handler) http.Handler {
+	return func(h http.Handler) http.Handler {
+
+		return h
+	}
+}

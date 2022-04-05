@@ -40,7 +40,6 @@ func (s *Store) GetUserByEmail(ctx context.Context, email string) (*dbmodels.Acc
 		&result.Username, &result.Email, &result.Password)
 
 	if err == sql.ErrNoRows {
-		fmt.Println(err)
 		return nil, fmt.Errorf("invalid credentials: %w", err)
 	}
 

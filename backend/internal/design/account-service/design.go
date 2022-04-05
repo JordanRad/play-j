@@ -2,12 +2,17 @@ package design
 
 import (
 	. "goa.design/goa/v3/dsl"
+	cors "goa.design/plugins/v3/cors/dsl"
 )
 
 var _ = API("accounts", func() {
 	Title("Accounts Backend Service")
 	Description("Microservice for account management & operations")
-
+	cors.Origin("/.*localhost.*/", func() {
+		cors.Headers("Content-Type", "api_key", "Authorization")
+		cors.Methods("GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS")
+		cors.MaxAge(600)
+	})
 })
 
 var _ = Service("account", func() {

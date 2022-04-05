@@ -1,0 +1,10 @@
+FROM golang:1.17 as builder
+ 
+COPY ./ /github.com/JordanRad/playj/
+WORKDIR /github.com/JordanRad/playj/
+
+RUN CGO_ENABLED=0 go build -mod vendor -o '/bin/accountsd' './cmd/accountsd'
+
+FROM gcr.io/distroless/base:latest
+COPY --from=builder /bin/accountsd /bin/accountsd
+# CMD ["/bin/accountsd"]
