@@ -19,24 +19,14 @@ import (
 
 // BuildGetAccountPlaylistCollectionPayload builds the payload for the playlist
 // getAccountPlaylistCollection endpoint from CLI flags.
-func BuildGetAccountPlaylistCollectionPayload(playlistGetAccountPlaylistCollectionBody string, playlistGetAccountPlaylistCollectionAuth string) (*playlist.GetAccountPlaylistCollectionPayload, error) {
-	var err error
-	var body GetAccountPlaylistCollectionRequestBody
-	{
-		err = json.Unmarshal([]byte(playlistGetAccountPlaylistCollectionBody), &body)
-		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"accountID\": 11633052430362461491\n   }'")
-		}
-	}
+func BuildGetAccountPlaylistCollectionPayload(playlistGetAccountPlaylistCollectionAuth string) (*playlist.GetAccountPlaylistCollectionPayload, error) {
 	var auth *string
 	{
 		if playlistGetAccountPlaylistCollectionAuth != "" {
 			auth = &playlistGetAccountPlaylistCollectionAuth
 		}
 	}
-	v := &playlist.GetAccountPlaylistCollectionPayload{
-		AccountID: body.AccountID,
-	}
+	v := &playlist.GetAccountPlaylistCollectionPayload{}
 	v.Auth = auth
 
 	return v, nil
@@ -50,7 +40,7 @@ func BuildCreateAccountPlaylistPayload(playlistCreateAccountPlaylistBody string,
 	{
 		err = json.Unmarshal([]byte(playlistCreateAccountPlaylistBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"name\": \"Et repudiandae cum corporis autem repellendus laudantium.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"name\": \"Cupiditate ipsam quis aut commodi id delectus.\"\n   }'")
 		}
 	}
 	var auth *string
@@ -75,7 +65,7 @@ func BuildRenameAccountPlaylistPayload(playlistRenameAccountPlaylistBody string,
 	{
 		err = json.Unmarshal([]byte(playlistRenameAccountPlaylistBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"name\": \"Dolorem nesciunt.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"name\": \"Veniam est fuga vel et est quasi.\"\n   }'")
 		}
 	}
 	var playlistID uint

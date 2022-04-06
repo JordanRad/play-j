@@ -53,9 +53,6 @@ type LoginResponse struct {
 	AccountID *string
 }
 
-// Your email and/or password is invalid.
-type NotFound string
-
 // RegisterPayload is the payload type of the account service register method.
 type RegisterPayload struct {
 	// First name of the user
@@ -74,14 +71,4 @@ type RegisterPayload struct {
 type RegisterResponse struct {
 	// Operation completion status
 	Message string
-}
-
-// Error returns an error description.
-func (e NotFound) Error() string {
-	return "Your email and/or password is invalid."
-}
-
-// ErrorName returns "NotFound".
-func (e NotFound) ErrorName() string {
-	return "NotFound"
 }

@@ -13,12 +13,6 @@ import (
 	playlist "github.com/JordanRad/play-j/backend/internal/accountservice/gen/playlist"
 )
 
-// GetAccountPlaylistCollectionRequestBody is the type of the "playlist"
-// service "getAccountPlaylistCollection" endpoint HTTP request body.
-type GetAccountPlaylistCollectionRequestBody struct {
-	AccountID *uint `form:"accountID,omitempty" json:"accountID,omitempty" xml:"accountID,omitempty"`
-}
-
 // CreateAccountPlaylistRequestBody is the type of the "playlist" service
 // "createAccountPlaylist" endpoint HTTP request body.
 type CreateAccountPlaylistRequestBody struct {
@@ -180,10 +174,8 @@ func NewRemoveTrackFromAccountPlaylistResponseBody(res *playlist.PlaylistModific
 
 // NewGetAccountPlaylistCollectionPayload builds a playlist service
 // getAccountPlaylistCollection endpoint payload.
-func NewGetAccountPlaylistCollectionPayload(body *GetAccountPlaylistCollectionRequestBody, auth *string) *playlist.GetAccountPlaylistCollectionPayload {
-	v := &playlist.GetAccountPlaylistCollectionPayload{
-		AccountID: body.AccountID,
-	}
+func NewGetAccountPlaylistCollectionPayload(auth *string) *playlist.GetAccountPlaylistCollectionPayload {
+	v := &playlist.GetAccountPlaylistCollectionPayload{}
 	v.Auth = auth
 
 	return v

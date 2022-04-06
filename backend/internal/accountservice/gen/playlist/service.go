@@ -91,8 +91,7 @@ type DeleteAccountPlaylistPayload struct {
 // GetAccountPlaylistCollectionPayload is the payload type of the playlist
 // service getAccountPlaylistCollection method.
 type GetAccountPlaylistCollectionPayload struct {
-	AccountID *uint
-	Auth      *string
+	Auth *string
 }
 
 // GetAccountPlaylistPayload is the payload type of the playlist service

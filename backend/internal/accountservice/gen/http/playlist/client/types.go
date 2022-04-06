@@ -14,12 +14,6 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
-// GetAccountPlaylistCollectionRequestBody is the type of the "playlist"
-// service "getAccountPlaylistCollection" endpoint HTTP request body.
-type GetAccountPlaylistCollectionRequestBody struct {
-	AccountID *uint `form:"accountID,omitempty" json:"accountID,omitempty" xml:"accountID,omitempty"`
-}
-
 // CreateAccountPlaylistRequestBody is the type of the "playlist" service
 // "createAccountPlaylist" endpoint HTTP request body.
 type CreateAccountPlaylistRequestBody struct {
@@ -98,16 +92,6 @@ type AccountPlaylistResponseResponseBody struct {
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// Array of TrackIDs
 	TrackIDs []int32 `form:"trackIDs,omitempty" json:"trackIDs,omitempty" xml:"trackIDs,omitempty"`
-}
-
-// NewGetAccountPlaylistCollectionRequestBody builds the HTTP request body from
-// the payload of the "getAccountPlaylistCollection" endpoint of the "playlist"
-// service.
-func NewGetAccountPlaylistCollectionRequestBody(p *playlist.GetAccountPlaylistCollectionPayload) *GetAccountPlaylistCollectionRequestBody {
-	body := &GetAccountPlaylistCollectionRequestBody{
-		AccountID: p.AccountID,
-	}
-	return body
 }
 
 // NewCreateAccountPlaylistRequestBody builds the HTTP request body from the

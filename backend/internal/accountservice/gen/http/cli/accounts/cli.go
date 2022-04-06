@@ -34,15 +34,13 @@ playlist (get-account-playlist-collection|create-account-playlist|rename-account
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` account register --body '{
-      "confirmedPassword": "Ab facilis odio facere et.",
-      "email": "Voluptates id recusandae temporibus et dolore.",
-      "firstName": "Quis ut ut ipsum et molestiae.",
-      "lastName": "Dolorum et labore cumque quisquam dolorem adipisci.",
-      "password": "Numquam quos excepturi vero ad est."
+      "confirmedPassword": "Voluptates id recusandae temporibus et dolore.",
+      "email": "Molestiae voluptas dolorum et.",
+      "firstName": "Odit vel assumenda eum quibusdam.",
+      "lastName": "Nemo provident eos quis ut ut ipsum.",
+      "password": "Cumque quisquam dolorem adipisci."
    }'` + "\n" +
-		os.Args[0] + ` playlist get-account-playlist-collection --body '{
-      "accountID": 11633052430362461491
-   }' --auth "Enim consectetur sit omnis expedita."` + "\n" +
+		os.Args[0] + ` playlist get-account-playlist-collection --auth "Ad quo et quasi sint accusamus."` + "\n" +
 		""
 }
 
@@ -67,7 +65,6 @@ func ParseEndpoint(
 		playlistFlags = flag.NewFlagSet("playlist", flag.ContinueOnError)
 
 		playlistGetAccountPlaylistCollectionFlags    = flag.NewFlagSet("get-account-playlist-collection", flag.ExitOnError)
-		playlistGetAccountPlaylistCollectionBodyFlag = playlistGetAccountPlaylistCollectionFlags.String("body", "REQUIRED", "")
 		playlistGetAccountPlaylistCollectionAuthFlag = playlistGetAccountPlaylistCollectionFlags.String("auth", "", "")
 
 		playlistCreateAccountPlaylistFlags    = flag.NewFlagSet("create-account-playlist", flag.ExitOnError)
@@ -214,7 +211,7 @@ func ParseEndpoint(
 			switch epn {
 			case "get-account-playlist-collection":
 				endpoint = c.GetAccountPlaylistCollection()
-				data, err = playlistc.BuildGetAccountPlaylistCollectionPayload(*playlistGetAccountPlaylistCollectionBodyFlag, *playlistGetAccountPlaylistCollectionAuthFlag)
+				data, err = playlistc.BuildGetAccountPlaylistCollectionPayload(*playlistGetAccountPlaylistCollectionAuthFlag)
 			case "create-account-playlist":
 				endpoint = c.CreateAccountPlaylist()
 				data, err = playlistc.BuildCreateAccountPlaylistPayload(*playlistCreateAccountPlaylistBodyFlag, *playlistCreateAccountPlaylistAuthFlag)
@@ -265,11 +262,11 @@ Register implements register.
 
 Example:
     %[1]s account register --body '{
-      "confirmedPassword": "Ab facilis odio facere et.",
-      "email": "Voluptates id recusandae temporibus et dolore.",
-      "firstName": "Quis ut ut ipsum et molestiae.",
-      "lastName": "Dolorum et labore cumque quisquam dolorem adipisci.",
-      "password": "Numquam quos excepturi vero ad est."
+      "confirmedPassword": "Voluptates id recusandae temporibus et dolore.",
+      "email": "Molestiae voluptas dolorum et.",
+      "firstName": "Odit vel assumenda eum quibusdam.",
+      "lastName": "Nemo provident eos quis ut ut ipsum.",
+      "password": "Cumque quisquam dolorem adipisci."
    }'
 `, os.Args[0])
 }
@@ -282,8 +279,8 @@ Login implements login.
 
 Example:
     %[1]s account login --body '{
-      "email": "Corrupti voluptas officia nostrum quia voluptatum.",
-      "password": "Tempora recusandae nobis."
+      "email": "Ab facilis odio facere et.",
+      "password": "Iusto non mollitia qui non culpa laborum."
    }'
 `, os.Args[0])
 }
@@ -308,16 +305,13 @@ Additional help:
 `, os.Args[0])
 }
 func playlistGetAccountPlaylistCollectionUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] playlist get-account-playlist-collection -body JSON -auth STRING
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] playlist get-account-playlist-collection -auth STRING
 
 GetAccountPlaylistCollection implements getAccountPlaylistCollection.
-    -body JSON: 
     -auth STRING: 
 
 Example:
-    %[1]s playlist get-account-playlist-collection --body '{
-      "accountID": 11633052430362461491
-   }' --auth "Enim consectetur sit omnis expedita."
+    %[1]s playlist get-account-playlist-collection --auth "Ad quo et quasi sint accusamus."
 `, os.Args[0])
 }
 
@@ -330,8 +324,8 @@ CreateAccountPlaylist implements createAccountPlaylist.
 
 Example:
     %[1]s playlist create-account-playlist --body '{
-      "name": "Et repudiandae cum corporis autem repellendus laudantium."
-   }' --auth "Veniam est fuga vel et est quasi."
+      "name": "Cupiditate ipsam quis aut commodi id delectus."
+   }' --auth "Ex voluptatem eum dolorem."
 `, os.Args[0])
 }
 
@@ -345,8 +339,8 @@ RenameAccountPlaylist implements renameAccountPlaylist.
 
 Example:
     %[1]s playlist rename-account-playlist --body '{
-      "name": "Dolorem nesciunt."
-   }' --playlist-id 17085797678242076213 --auth "Quo praesentium."
+      "name": "Veniam est fuga vel et est quasi."
+   }' --playlist-id 11297098523777738907 --auth "Sed nostrum aut voluptatem sequi adipisci iure."
 `, os.Args[0])
 }
 
@@ -358,7 +352,7 @@ DeleteAccountPlaylist implements deleteAccountPlaylist.
     -auth STRING: 
 
 Example:
-    %[1]s playlist delete-account-playlist --playlist-id 17504080427593267764 --auth "Modi qui qui sed libero aut accusamus."
+    %[1]s playlist delete-account-playlist --playlist-id 17154888479140832252 --auth "Eius minima quo officia quasi modi qui."
 `, os.Args[0])
 }
 
@@ -370,7 +364,7 @@ GetAccountPlaylist implements getAccountPlaylist.
     -auth STRING: 
 
 Example:
-    %[1]s playlist get-account-playlist --playlist-id 9949464742914819688 --auth "Et quasi repudiandae voluptatem modi."
+    %[1]s playlist get-account-playlist --playlist-id 5067815789457547644 --auth "Accusantium praesentium sequi corporis ullam eius et."
 `, os.Args[0])
 }
 
@@ -383,7 +377,7 @@ AddTrackToAccountPlaylist implements addTrackToAccountPlaylist.
     -auth STRING: 
 
 Example:
-    %[1]s playlist add-track-to-account-playlist --playlist-id 14345441535750740261 --track-id 7284110076420113473 --auth "Consectetur ipsa ab quibusdam enim."
+    %[1]s playlist add-track-to-account-playlist --playlist-id 8463949149280762860 --track-id 15476809024862682459 --auth "Molestiae id voluptatem."
 `, os.Args[0])
 }
 
@@ -396,6 +390,6 @@ RemoveTrackFromAccountPlaylist implements removeTrackFromAccountPlaylist.
     -auth STRING: 
 
 Example:
-    %[1]s playlist remove-track-from-account-playlist --playlist-id 1621365852545103184 --track-id 176531937231245429 --auth "Aut sapiente ut a libero dolore."
+    %[1]s playlist remove-track-from-account-playlist --playlist-id 2595418970752913419 --track-id 4694539394014177486 --auth "Ut ea."
 `, os.Args[0])
 }

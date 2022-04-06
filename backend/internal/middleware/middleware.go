@@ -53,35 +53,15 @@ func AuthenticateRequest() func(http.Handler) http.Handler {
 					w.WriteHeader(http.StatusUnauthorized)
 					w.Write([]byte("401 - Unauthorized. \n Your token has either expired or is invalid"))
 				} else {
-					h.ServeHTTP(w, r)
+					// Add the JWT to the context
+					ctx := context.WithValue(r.Context(), "jwt", tokenString)
+					requestWithContext := r.WithContext(ctx)
+
+					h.ServeHTTP(w, requestWithContext)
 				}
 			} else {
 				h.ServeHTTP(w, r)
 			}
 		})
-	}
-}
-
-func InjectJWTInContext() func(http.Handler) http.Handler {
-	return func(h http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// Extract token from the request header
-			authorizationHeader := r.Header.Get("Authorization")
-			tokenString := authorizationHeader[7:]
-
-			// Add the JWT to the context
-			ctx := context.WithValue(r.Context(), "jwt", tokenString)
-
-			requestWithContext := r.WithContext(ctx)
-
-			h.ServeHTTP(w, requestWithContext)
-		})
-	}
-}
-
-func CORSHandler() func(http.Handler) http.Handler {
-	return func(h http.Handler) http.Handler {
-
-		return h
 	}
 }

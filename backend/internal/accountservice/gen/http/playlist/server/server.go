@@ -514,7 +514,7 @@ func HandlePlaylistOrigin(h http.Handler) http.Handler {
 			if acrm := r.Header.Get("Access-Control-Request-Method"); acrm != "" {
 				// We are handling a preflight request
 				w.Header().Set("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, PATCH, OPTIONS")
-				w.Header().Set("Access-Control-Allow-Headers", "Content-Type, api_key, Authorization")
+				w.Header().Set("Access-Control-Allow-Headers", "*")
 			}
 			h.ServeHTTP(w, r)
 			return

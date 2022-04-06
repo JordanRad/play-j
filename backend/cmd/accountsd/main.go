@@ -94,7 +94,7 @@ func main() {
 
 	var playlistServer *playlistsrv.Server = playlistsrv.New(playlistEndpoints, mux, dec, enc, nil, nil)
 	playlistServer.Use(middleware.AuthenticateRequest())
-	playlistServer.Use(middleware.InjectJWTInContext())
+	// playlistServer.Use(middleware.InjectJWTInContext())
 	playlistsrv.Mount(mux, playlistServer)
 
 	fmt.Print("Account service has just started...\n")

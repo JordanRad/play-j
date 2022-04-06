@@ -40,9 +40,6 @@ func (c *Client) Register(ctx context.Context, p *RegisterPayload) (res *Registe
 }
 
 // Login calls the "login" endpoint of the "account" service.
-// Login may return the following errors:
-//	- "NotFound" (type NotFound)
-//	- error: internal error
 func (c *Client) Login(ctx context.Context, p *LoginPayload) (res *LoginResponse, err error) {
 	var ires interface{}
 	ires, err = c.LoginEndpoint(ctx, p)

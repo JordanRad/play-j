@@ -80,17 +80,16 @@ func (s *Service) Login(ctx context.Context, p *account.LoginPayload) (*account.
 
 	// Verify the password hash
 	isPasswordCorrect := auth.CheckPassword(foundAccount.Password, *p.Password)
-
 	if !isPasswordCorrect {
 		return nil, errors.New("invalid credentials")
 	}
 
 	// Generate JWT
 	token, err := auth.GenerateJWT(foundAccount.ID, foundAccount.Email)
-
 	if err != nil {
 		return nil, fmt.Errorf("error extracting jwt: %w", err)
 	}
+
 	response := &account.LoginResponse{
 		Email:        *p.Email,
 		Token:        token,

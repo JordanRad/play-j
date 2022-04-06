@@ -48,10 +48,6 @@ func EncodeGetAccountPlaylistCollectionRequest(encoder func(*http.Request) goaht
 			head := *p.Auth
 			req.Header.Set("Authorization", head)
 		}
-		body := NewGetAccountPlaylistCollectionRequestBody(p)
-		if err := encoder(req).Encode(&body); err != nil {
-			return goahttp.ErrEncodingError("playlist", "getAccountPlaylistCollection", err)
-		}
 		return nil
 	}
 }

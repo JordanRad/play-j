@@ -9,7 +9,7 @@ var _ = API("accounts", func() {
 	Title("Accounts Backend Service")
 	Description("Microservice for account management & operations")
 	cors.Origin("/.*localhost.*/", func() {
-		cors.Headers("Content-Type", "api_key", "Authorization")
+		cors.Headers("*")
 		cors.Methods("GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS")
 		cors.MaxAge(600)
 	})
@@ -59,7 +59,6 @@ var _ = Service("playlist", func() {
 	Method("getAccountPlaylistCollection", func() {
 		Result(AccountPlaylistCollectionResponse)
 		Payload(func() {
-			Attribute("accountID", UInt)
 			Attribute("auth", String)
 		})
 		HTTP(func() {

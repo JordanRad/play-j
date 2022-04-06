@@ -37,25 +37,13 @@ func EncodeGetAccountPlaylistCollectionResponse(encoder func(context.Context, ht
 func DecodeGetAccountPlaylistCollectionRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			body GetAccountPlaylistCollectionRequestBody
-			err  error
-		)
-		err = decoder(r).Decode(&body)
-		if err != nil {
-			if err == io.EOF {
-				return nil, goa.MissingPayloadError()
-			}
-			return nil, goa.DecodePayloadError(err.Error())
-		}
-
-		var (
 			auth *string
 		)
 		authRaw := r.Header.Get("Authorization")
 		if authRaw != "" {
 			auth = &authRaw
 		}
-		payload := NewGetAccountPlaylistCollectionPayload(&body, auth)
+		payload := NewGetAccountPlaylistCollectionPayload(auth)
 
 		return payload, nil
 	}

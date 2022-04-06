@@ -2,17 +2,22 @@
 import Card from "primevue/card";
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
-import AccountService from "@/services/AccountService.js"
+import AccountService from "@/services/AccountService.js";
 import { ref } from "vue";
-
+import { useRouter } from "vue-router";
+const router = useRouter();
 const email = ref("");
 const password = ref("");
-
+const loginError = ref("");
 async function onSubmit() {
-
   console.log(email.value, password.value);
-let loginResponse = await AccountService.login(email.value,password.value)
-console.log(loginResponse)
+  let loginResponse = await AccountService.login(email.value, password.value);
+  if (loginResponse != null) {
+    localStorage.setItem("user", JSON.stringify(loginResponse));
+    router.push({ name: "home" });
+  }
+
+  loginError.value = "Invalid credentials";
 }
 </script>
 <template>
