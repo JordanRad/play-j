@@ -51,7 +51,7 @@ onMounted(async () => {
         <div class="flex w-full justify-content-center" v-if="isLoading">
           <ProgressSpinner />
         </div>
-        <div v-else class="flex h-24rem w-full justify-content-start flex-wrap">
+        <div v-else class="flex h-24rem w-full flex-wrap">
           <Dialog
             class="shadow-5 border-1 border-white-alpha-10"
             header="Add new playlist"
@@ -71,7 +71,7 @@ onMounted(async () => {
             </template>
           </Dialog>
           <div
-            class="h-4rem md:w-4 w-12 shadow-5 border-1 border-white-alpha-10 mr-auto"
+            class="h-4rem md:w-5 w-12 shadow-5 border-1 border-white-alpha-10 mr-auto"
             v-for="(playlist, index) in playlists"
             :key="index"
           >
