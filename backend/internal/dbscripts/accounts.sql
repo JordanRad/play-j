@@ -10,6 +10,7 @@ create table if not exists accounts (
 create table if not exists playlists (
 	id bigserial primary key,
 	name varchar,
+	createdAt timestamp,
 	trackIDs integer[],
-	accountID BIGSERIAL references accounts(id)
+	accountID bigserial references accounts(id)
 )

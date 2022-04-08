@@ -86,7 +86,6 @@ func main() {
 	playersrv.Mount(mux, playerServer)
 
 	playerServer.Use(middleware.AuthenticateRequest())
-	playerServer.Use(middleware.InjectJWTInContext())
 
 	fmt.Print("Player service has just started...\n")
 	http.ListenAndServe("localhost:8092", mux)
