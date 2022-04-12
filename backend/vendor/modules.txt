@@ -45,6 +45,9 @@ github.com/jackc/pgx/v4/internal/sanitize
 github.com/jackc/pgx/v4/stdlib
 # github.com/jtolds/gls v4.20.0+incompatible
 ## explicit
+# github.com/kelseyhightower/envconfig v1.4.0
+## explicit
+github.com/kelseyhightower/envconfig
 # github.com/kr/text v0.2.0
 ## explicit
 # github.com/lib/pq v1.10.4

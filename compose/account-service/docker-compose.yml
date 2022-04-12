@@ -1,0 +1,34 @@
+version: "3.9"
+services:
+  playj-account-service:
+    depends_on: 
+     - "accounts-db"
+    build:
+     context: ../../backend
+     dockerfile: Dockerfile.accountsd
+    container_name: playj_account_service
+    ports:
+      - "8091:8091"
+    environment:
+     - ACCOUNTSD_POSTGRES_HOST=localhost
+     - ACCOUNTSD_POSTGRES_PORT=5433
+     - ACCOUNTSD_POSTGRES_USER=playj
+     - ACCOUNTSD_POSTGRES_PASSWORD=playj1307
+     - ACCOUNTSD_POSTGRES_DB_NAME=playj-accounts-db
+
+  accounts-db:
+    image: "postgres"
+    restart: "always"
+    container_name: "playj_accounts_db"
+    ports:
+      - "5433:5432"
+
+    environment:
+      POSTGRES_PASSWORD: "playj1307"
+      POSTGRES_USER: "playj"
+      POSTGRES_DB: "playj-accounts-db"
+
+
+
+
+  

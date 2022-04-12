@@ -1,11 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
-	"os"
 
 	account "github.com/JordanRad/play-j/backend/cmd/accountsd/internal/account"
 	dbaccount "github.com/JordanRad/play-j/backend/cmd/accountsd/internal/db/dbaccount"
@@ -28,35 +25,30 @@ import (
 )
 
 func main() {
-	configFile, err := os.Open("conf.json")
+	config, err := configFromEnv()
+
 	if err != nil {
 		log.Fatalf("Config file cannot be read: %v", err)
 	}
-	defer configFile.Close()
 
-	byteValue, _ := ioutil.ReadAll(configFile)
-
-	var configuration map[string]interface{}
-
-	json.Unmarshal([]byte(byteValue), &configuration)
-
-	dbConnectionString := fmt.Sprintf("postgres://%v:%v@%v/%v", configuration["postgresql_user"], configuration["postgresql_password"], configuration["postgresql_host"], configuration["postgresql_db_name"])
-
-	db, err := sql.Open("pgx", dbConnectionString)
+	dbConnectionString := fmt.Sprintf("postgres://%v:%v@%v:%v/%v", config.Postgres.User, config.Postgres.Password, config.Postgres.Host, config.Postgres.Port, config.Postgres.DBName)
+	fmt.Println(dbConnectionString)
+	var db *sql.DB
+	db, err = sql.Open("pgx", dbConnectionString)
 	if err != nil {
 		log.Fatalf("Could not connect to database: %v", err)
 	}
 
 	// Maximum Idle Connections
-	db.SetMaxIdleConns(5)
+	db.SetMaxIdleConns(config.Postgres.MaxIdleConns)
 	// Maximum Open Connections
-	db.SetMaxOpenConns(50)
+	db.SetMaxOpenConns(config.Postgres.MaxOpenConns)
 	// Idle Connection Timeout
 	db.SetConnMaxIdleTime(1 * time.Second)
 	// Connection Lifetime
 	db.SetConnMaxLifetime(30 * time.Second)
 
-	if err := db.Ping(); err != nil {
+	if err = db.Ping(); err != nil {
 		log.Fatalf("Unable to reach database: %v", err)
 	}
 
@@ -94,7 +86,6 @@ func main() {
 
 	var playlistServer *playlistsrv.Server = playlistsrv.New(playlistEndpoints, mux, dec, enc, nil, nil)
 	playlistServer.Use(middleware.AuthenticateRequest())
-	// playlistServer.Use(middleware.InjectJWTInContext())
 	playlistsrv.Mount(mux, playlistServer)
 
 	fmt.Print("Account service has just started...\n")

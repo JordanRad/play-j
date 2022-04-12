@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/jackc/pgx/v4 v4.15.0
+	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lib/pq v1.10.4
 	goa.design/goa/v3 v3.7.0
 	goa.design/plugins/v3 v3.7.0
