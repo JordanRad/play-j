@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/kelseyhightower/envconfig"
 )
 
@@ -15,7 +13,6 @@ type config struct {
 func configFromEnv() (*config, error) {
 	var c config
 	err := envconfig.Process("accountsd", &c)
-	fmt.Println(c)
 	if err != nil {
 		return nil, err
 	}

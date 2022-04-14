@@ -23,6 +23,10 @@ var protectedRoutes = []ProtectedRoute{
 		HTTPMethod:  "POST",
 		URLContains: "/playlists",
 	},
+	{
+		HTTPMethod:  "DELETE",
+		URLContains: "/playlists",
+	},
 }
 
 func isRouteProtected(method string, URL *url.URL) bool {
