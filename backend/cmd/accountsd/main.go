@@ -88,6 +88,7 @@ func main() {
 	playlistServer.Use(middleware.AuthenticateRequest())
 	playlistsrv.Mount(mux, playlistServer)
 
-	fmt.Print("Account service has just started...\n")
-	http.ListenAndServe("localhost:8091", mux)
+	address := fmt.Sprintf("%s:%d", config.HTTP.Host, config.HTTP.Port)
+	fmt.Printf("Account service has just started on %s ...\n", address)
+	http.ListenAndServe(address, mux)
 }
