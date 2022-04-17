@@ -1,8 +1,8 @@
 create table if not exists artists (
 	id bigserial primary key,
 	name varchar,
-    storageFolderName varchar,
-)
+    storageFolderName varchar
+);
 
 create table if not exists albums (
 	id bigserial primary key,
@@ -11,7 +11,7 @@ create table if not exists albums (
     trackIDs integer[] default '{}',
     createdAt timestamp default current_timestamp,
     artistID bigserial references artists(id)
-)
+);
 
 create table if not exists tracks (
 	id bigserial primary key,
@@ -21,4 +21,4 @@ create table if not exists tracks (
     createdAt timestamp default current_timestamp,
 	artistID bigserial references artists(id),
     albumID bigserial references albums(id)
-)
+);

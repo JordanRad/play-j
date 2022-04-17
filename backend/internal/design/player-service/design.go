@@ -30,13 +30,13 @@ var _ = Service("player", func() {
 		})
 		Result(StreamTrackResponse)
 		HTTP(func() {
-			POST("/{trackID}")
+			GET("/{trackID}")
 		})
 	})
 
 })
 
 var StreamTrackResponse = Type("StreamTrackResponse", func() {
-	Attribute("track", ArrayOf(Bytes), "Operation completion status")
+	Attribute("track", Bytes, "Operation completion status")
 	Required("track")
 })
