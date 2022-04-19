@@ -20,3 +20,7 @@ alter table playlists alter column createdAt set default current_timestamp;
 alter table playlists alter column trackIDs set default '{}';
 
 update playlists set trackIDs = '{}', createdAt = current_timestamp where trackIDs is null;
+
+alter table accounts add column is_active boolean;
+
+alter table accounts add column has_active_subscription boolean;

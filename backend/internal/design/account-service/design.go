@@ -188,7 +188,7 @@ var AccountPlaylistResponse = Type("AccountPlaylistResponse", func() {
 	Attribute("id", Int32, "Playlist id")
 	Attribute("name", String, "Playlist name")
 	Attribute("trackIDs", ArrayOf(Int32), "Array of TrackIDs")
-
+	Attribute("createdAt", String, "Time of creation")
 	Required("id", "name", "trackIDs")
 })
 
