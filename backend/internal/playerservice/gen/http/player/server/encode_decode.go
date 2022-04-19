@@ -13,7 +13,7 @@ import (
 	"net/http"
 	"strconv"
 
-	player "github.com/JordanRad/play-j/backend/internal/playerservice/gen/player"
+	playerviews "github.com/JordanRad/play-j/backend/internal/playerservice/gen/player/views"
 	goahttp "goa.design/goa/v3/http"
 	goa "goa.design/goa/v3/pkg"
 )
@@ -22,9 +22,9 @@ import (
 // player getTrackByID endpoint.
 func EncodeGetTrackByIDResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
-		res, _ := v.(*player.StreamTrackResponse)
+		res := v.(*playerviews.MusicFileResponse)
 		enc := encoder(ctx, w)
-		body := NewGetTrackByIDResponseBody(res)
+		body := NewGetTrackByIDResponseBody(res.Projected)
 		w.WriteHeader(http.StatusOK)
 		return enc.Encode(body)
 	}

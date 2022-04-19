@@ -16,6 +16,7 @@ import (
 	"net/url"
 
 	player "github.com/JordanRad/play-j/backend/internal/playerservice/gen/player"
+	playerviews "github.com/JordanRad/play-j/backend/internal/playerservice/gen/player/views"
 	goahttp "goa.design/goa/v3/http"
 )
 
@@ -71,11 +72,13 @@ func DecodeGetTrackByIDResponse(decoder func(*http.Response) goahttp.Decoder, re
 			if err != nil {
 				return nil, goahttp.ErrDecodingError("player", "getTrackByID", err)
 			}
-			err = ValidateGetTrackByIDResponseBody(&body)
-			if err != nil {
+			p := NewGetTrackByIDMusicFileResponseOK(&body)
+			view := "default"
+			vres := &playerviews.MusicFileResponse{Projected: p, View: view}
+			if err = playerviews.ValidateMusicFileResponse(vres); err != nil {
 				return nil, goahttp.ErrValidationError("player", "getTrackByID", err)
 			}
-			res := NewGetTrackByIDStreamTrackResponseOK(&body)
+			res := player.NewMusicFileResponse(vres)
 			return res, nil
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)

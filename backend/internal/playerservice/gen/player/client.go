@@ -27,11 +27,11 @@ func NewClient(getTrackByID goa.Endpoint) *Client {
 }
 
 // GetTrackByID calls the "getTrackByID" endpoint of the "player" service.
-func (c *Client) GetTrackByID(ctx context.Context, p *GetTrackByIDPayload) (res *StreamTrackResponse, err error) {
+func (c *Client) GetTrackByID(ctx context.Context, p *GetTrackByIDPayload) (res *MusicFileResponse, err error) {
 	var ires interface{}
 	ires, err = c.GetTrackByIDEndpoint(ctx, p)
 	if err != nil {
 		return
 	}
-	return ires.(*StreamTrackResponse), nil
+	return ires.(*MusicFileResponse), nil
 }

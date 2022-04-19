@@ -30,14 +30,14 @@ func NewService(store Store, cloudStorage CloudStorage) *Service {
 
 var _ player.Service = (*Service)(nil)
 
-func (s *Service) GetTrackByID(ctx context.Context, p *player.GetTrackByIDPayload) (*player.StreamTrackResponse, error) {
+func (s *Service) GetTrackByID(ctx context.Context, p *player.GetTrackByIDPayload) (*player.MusicFileResponse, error) {
 	track, err := s.cloudStorage.ReadFileFromFolder(ctx, "Metallica", "One")
 	if err != nil {
 		return nil, fmt.Errorf("error reading the file from the bucket: %w", err)
 	}
 
-	response := &player.StreamTrackResponse{
-		Track: track,
+	response := &player.MusicFileResponse{
+		File: track,
 	}
 	return response, nil
 }

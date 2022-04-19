@@ -41,10 +41,3 @@ const items = ref([
     <Menubar class="bg-black-alpha-90" :model="items"> </Menubar>
   </div>
 </template>
-
-<style scoped>
-.p-menubar{
-    display: flex;
-    justify-content: space-evenly;
-}
-</style>

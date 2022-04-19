@@ -9,32 +9,21 @@
 package client
 
 import (
-	player "github.com/JordanRad/play-j/backend/internal/playerservice/gen/player"
-	goa "goa.design/goa/v3/pkg"
+	playerviews "github.com/JordanRad/play-j/backend/internal/playerservice/gen/player/views"
 )
 
 // GetTrackByIDResponseBody is the type of the "player" service "getTrackByID"
 // endpoint HTTP response body.
 type GetTrackByIDResponseBody struct {
-	// Operation completion status
-	Track []byte `form:"track,omitempty" json:"track,omitempty" xml:"track,omitempty"`
+	File []byte `form:"file,omitempty" json:"file,omitempty" xml:"file,omitempty"`
 }
 
-// NewGetTrackByIDStreamTrackResponseOK builds a "player" service
-// "getTrackByID" endpoint result from a HTTP "OK" response.
-func NewGetTrackByIDStreamTrackResponseOK(body *GetTrackByIDResponseBody) *player.StreamTrackResponse {
-	v := &player.StreamTrackResponse{
-		Track: body.Track,
+// NewGetTrackByIDMusicFileResponseOK builds a "player" service "getTrackByID"
+// endpoint result from a HTTP "OK" response.
+func NewGetTrackByIDMusicFileResponseOK(body *GetTrackByIDResponseBody) *playerviews.MusicFileResponseView {
+	v := &playerviews.MusicFileResponseView{
+		File: body.File,
 	}
 
 	return v
-}
-
-// ValidateGetTrackByIDResponseBody runs the validations defined on
-// GetTrackByIDResponseBody
-func ValidateGetTrackByIDResponseBody(body *GetTrackByIDResponseBody) (err error) {
-	if body.Track == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("track", "body"))
-	}
-	return
 }

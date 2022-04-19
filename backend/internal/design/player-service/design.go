@@ -28,15 +28,19 @@ var _ = Service("player", func() {
 
 			Required("trackID")
 		})
-		Result(StreamTrackResponse)
+		Result(MusicFileResponse)
+
 		HTTP(func() {
 			GET("/{trackID}")
+			Header("Content-Type", "media/mpeg")
 		})
 	})
 
 })
 
-var StreamTrackResponse = Type("StreamTrackResponse", func() {
-	Attribute("track", Bytes, "Operation completion status")
-	Required("track")
+var MusicFileResponse = ResultType("audio/mpeg", func() {
+	TypeName("MusicFileResponse")
+	Attributes(func() {
+		Attribute("file", Bytes)
+	})
 })

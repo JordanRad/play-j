@@ -36,6 +36,11 @@ func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 func NewGetTrackByIDEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*GetTrackByIDPayload)
-		return s.GetTrackByID(ctx, p)
+		res, err := s.GetTrackByID(ctx, p)
+		if err != nil {
+			return nil, err
+		}
+		vres := NewViewedMusicFileResponse(res, "default")
+		return vres, nil
 	}
 }

@@ -24,3 +24,15 @@ services:
       POSTGRES_PASSWORD: "playj1307"
       POSTGRES_USER: "playj"
       POSTGRES_DB: "playj-player-db"
+  
+  payments-db:
+    image: "postgres"
+    restart: "always"
+    container_name: "playj_payments_db"
+    ports:
+      - "5435:5432"
+
+    environment:
+      POSTGRES_PASSWORD: "playj1307"
+      POSTGRES_USER: "playj"
+      POSTGRES_DB: "playj-payments-db"

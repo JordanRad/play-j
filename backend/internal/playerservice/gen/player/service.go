@@ -10,12 +10,14 @@ package player
 
 import (
 	"context"
+
+	playerviews "github.com/JordanRad/play-j/backend/internal/playerservice/gen/player/views"
 )
 
 // Player operations
 type Service interface {
 	// GetTrackByID implements getTrackByID.
-	GetTrackByID(context.Context, *GetTrackByIDPayload) (res *StreamTrackResponse, err error)
+	GetTrackByID(context.Context, *GetTrackByIDPayload) (res *MusicFileResponse, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -35,9 +37,39 @@ type GetTrackByIDPayload struct {
 	TrackID uint
 }
 
-// StreamTrackResponse is the result type of the player service getTrackByID
+// MusicFileResponse is the result type of the player service getTrackByID
 // method.
-type StreamTrackResponse struct {
-	// Operation completion status
-	Track []byte
+type MusicFileResponse struct {
+	File []byte
+}
+
+// NewMusicFileResponse initializes result type MusicFileResponse from viewed
+// result type MusicFileResponse.
+func NewMusicFileResponse(vres *playerviews.MusicFileResponse) *MusicFileResponse {
+	return newMusicFileResponse(vres.Projected)
+}
+
+// NewViewedMusicFileResponse initializes viewed result type MusicFileResponse
+// from result type MusicFileResponse using the given view.
+func NewViewedMusicFileResponse(res *MusicFileResponse, view string) *playerviews.MusicFileResponse {
+	p := newMusicFileResponseView(res)
+	return &playerviews.MusicFileResponse{Projected: p, View: "default"}
+}
+
+// newMusicFileResponse converts projected type MusicFileResponse to service
+// type MusicFileResponse.
+func newMusicFileResponse(vres *playerviews.MusicFileResponseView) *MusicFileResponse {
+	res := &MusicFileResponse{
+		File: vres.File,
+	}
+	return res
+}
+
+// newMusicFileResponseView projects result type MusicFileResponse to projected
+// type MusicFileResponseView using the "default" view.
+func newMusicFileResponseView(res *MusicFileResponse) *playerviews.MusicFileResponseView {
+	vres := &playerviews.MusicFileResponseView{
+		File: res.File,
+	}
+	return vres
 }

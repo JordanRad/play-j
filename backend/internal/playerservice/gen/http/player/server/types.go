@@ -10,20 +10,20 @@ package server
 
 import (
 	player "github.com/JordanRad/play-j/backend/internal/playerservice/gen/player"
+	playerviews "github.com/JordanRad/play-j/backend/internal/playerservice/gen/player/views"
 )
 
 // GetTrackByIDResponseBody is the type of the "player" service "getTrackByID"
 // endpoint HTTP response body.
 type GetTrackByIDResponseBody struct {
-	// Operation completion status
-	Track []byte `form:"track" json:"track" xml:"track"`
+	File []byte `form:"file,omitempty" json:"file,omitempty" xml:"file,omitempty"`
 }
 
 // NewGetTrackByIDResponseBody builds the HTTP response body from the result of
 // the "getTrackByID" endpoint of the "player" service.
-func NewGetTrackByIDResponseBody(res *player.StreamTrackResponse) *GetTrackByIDResponseBody {
+func NewGetTrackByIDResponseBody(res *playerviews.MusicFileResponseView) *GetTrackByIDResponseBody {
 	body := &GetTrackByIDResponseBody{
-		Track: res.Track,
+		File: res.File,
 	}
 	return body
 }

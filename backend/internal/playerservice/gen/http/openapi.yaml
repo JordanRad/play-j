@@ -30,80 +30,89 @@ paths:
           description: OK response.
           schema:
             $ref: '#/definitions/PlayerGetTrackByIDResponseBody'
-            required:
-            - track
       schemes:
       - http
 definitions:
   PlayerGetTrackByIDResponseBody:
-    title: PlayerGetTrackByIDResponseBody
+    title: 'Mediatype identifier: audio/mpeg; view=default'
     type: object
     properties:
-      track:
+      file:
         type: string
-        description: Operation completion status
         example:
-        - 72
-        - 97
-        - 114
-        - 117
-        - 109
-        - 32
-        - 117
-        - 116
-        - 32
-        - 105
-        - 110
-        - 118
-        - 101
-        - 110
-        - 116
+        - 86
         - 111
-        - 114
-        - 101
+        - 108
+        - 117
+        - 112
+        - 116
+        - 97
+        - 115
         - 32
         - 101
-        - 115
-        - 115
-        - 101
+        - 116
         - 32
+        - 102
+        - 117
+        - 103
+        - 97
+        - 32
+        - 118
         - 105
+        - 116
+        - 97
+        - 101
+        - 32
+        - 117
+        - 110
         - 100
+        - 101
+        - 32
+        - 113
+        - 117
+        - 111
         - 46
         format: byte
+    description: GetTrackByIDResponseBody result type (default view)
     example:
-      track:
+      file:
       - 86
-      - 111
-      - 108
-      - 117
-      - 112
-      - 116
-      - 97
-      - 115
-      - 32
       - 101
-      - 116
+      - 114
+      - 111
       - 32
-      - 102
-      - 117
-      - 103
       - 97
+      - 112
+      - 101
+      - 114
+      - 105
+      - 97
+      - 109
       - 32
       - 118
-      - 105
-      - 116
-      - 97
       - 101
-      - 32
-      - 117
       - 110
-      - 100
-      - 101
+      - 105
+      - 97
+      - 109
+      - 32
+      - 109
+      - 97
+      - 103
+      - 110
+      - 97
+      - 109
       - 32
       - 113
       - 117
-      - 111
+      - 105
+      - 32
+      - 101
+      - 115
+      - 116
+      - 32
+      - 101
+      - 110
+      - 105
+      - 109
       - 46
-    required:
-    - track

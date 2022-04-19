@@ -12,7 +12,7 @@ type config struct {
 
 func configFromEnv() (*config, error) {
 	var c config
-	err := envconfig.Process("playerd", &c)
+	err := envconfig.Process("paymentsd", &c)
 	if err != nil {
 		return nil, err
 	}
@@ -21,10 +21,10 @@ func configFromEnv() (*config, error) {
 
 type dbConfig struct {
 	Host         string `envconfig:"HOST" default:"localhost"`
-	Port         int    `envconfig:"PORT" default:"5434"`
+	Port         int    `envconfig:"PORT" default:"5435"`
 	User         string `envconfig:"USER" default:"playj"`
 	Password     string `envconfig:"PASSWORD" default:"playj1307"`
-	DBName       string `envconfig:"DB_NAME" default:"playj-player-db"`
+	DBName       string `envconfig:"DB_NAME" default:"playj-payments-db"`
 	MaxIdleConns int    `envconfig:"MAX_IDLE_CONNS" default:"16"`
 	MaxOpenConns int    `envconfig:"MAX_OPEN_CONNS" default:"32"`
 }
