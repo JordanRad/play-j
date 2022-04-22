@@ -60,6 +60,9 @@ github.com/googleapis/gax-go/v2/apierror/internal/proto
 github.com/googleapis/go-type-adapters/adapters
 # github.com/gopherjs/gopherjs v0.0.0-20220221023154-0b2280d3ff96
 ## explicit; go 1.17
+# github.com/gorilla/mux v1.8.0
+## explicit; go 1.12
+github.com/gorilla/mux
 # github.com/gorilla/websocket v1.5.0
 ## explicit; go 1.12
 github.com/gorilla/websocket
