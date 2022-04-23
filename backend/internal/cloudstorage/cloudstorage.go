@@ -19,7 +19,7 @@ func NewCloudStorage(url string) *CloudStorage {
 }
 
 func (cs *CloudStorage) ReadFileFromFolder(ctx context.Context, folderName string, fileName string) ([]byte, error) {
-	bucketURL := fmt.Sprintf("%s?prefix=%s/", "gs://playj-music-storage", "Metallica")
+	bucketURL := fmt.Sprintf("%s?prefix=%s/", "gs://playj-music-storage", folderName)
 	bucket, err := blob.OpenBucket(ctx, bucketURL)
 
 	if err != nil {

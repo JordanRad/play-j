@@ -1,0 +1,156 @@
+swagger: "2.0"
+info:
+  title: Play-J Payment Service
+  description: Microservice for payment operations
+  version: ""
+host: localhost:80
+consumes:
+- application/json
+- application/xml
+- application/gob
+produces:
+- application/json
+- application/xml
+- application/gob
+paths:
+  /api/v1/payment-service/payments:
+    get:
+      tags:
+      - payment
+      summary: getAccountPayments payment
+      operationId: payment#getAccountPayments
+      parameters:
+      - name: Authorization
+        in: header
+        description: JSON Web Token
+        required: true
+        type: string
+        pattern: ^Bearer [^ ]+$
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/PaymentGetAccountPaymentsResponseBody'
+            required:
+            - total
+            - resources
+      schemes:
+      - http
+    post:
+      tags:
+      - payment
+      summary: createAccountPayment payment
+      operationId: payment#createAccountPayment
+      parameters:
+      - name: Authorization
+        in: header
+        description: JSON Web Token
+        required: true
+        type: string
+        pattern: ^Bearer [^ ]+$
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/PaymentCreateAccountPaymentResponseBody'
+            required:
+            - paymentNumber
+            - message
+      schemes:
+      - http
+definitions:
+  PaymentCreateAccountPaymentResponseBody:
+    title: PaymentCreateAccountPaymentResponseBody
+    type: object
+    properties:
+      message:
+        type: string
+        description: Operation status
+        example: Rerum animi.
+      paymentNumber:
+        type: string
+        description: Payment Unique Number
+        example: Ipsum cupiditate quis natus adipisci officiis quasi.
+    example:
+      message: Maxime ut ut.
+      paymentNumber: Excepturi sint.
+    required:
+    - paymentNumber
+    - message
+  PaymentGetAccountPaymentsResponseBody:
+    title: PaymentGetAccountPaymentsResponseBody
+    type: object
+    properties:
+      resources:
+        type: array
+        items:
+          $ref: '#/definitions/PaymentResponseResponseBody'
+        description: Resournces
+        example:
+        - amount: 0.6914599
+          createdAt: Eos iusto saepe aut exercitationem eaque libero.
+          id: 4888721511633999565
+          paymentNumber: Aut id.
+        - amount: 0.6914599
+          createdAt: Eos iusto saepe aut exercitationem eaque libero.
+          id: 4888721511633999565
+          paymentNumber: Aut id.
+      total:
+        type: integer
+        description: Total number of resources
+        example: 14805211578228833185
+        format: int64
+    example:
+      resources:
+      - amount: 0.6914599
+        createdAt: Eos iusto saepe aut exercitationem eaque libero.
+        id: 4888721511633999565
+        paymentNumber: Aut id.
+      - amount: 0.6914599
+        createdAt: Eos iusto saepe aut exercitationem eaque libero.
+        id: 4888721511633999565
+        paymentNumber: Aut id.
+      - amount: 0.6914599
+        createdAt: Eos iusto saepe aut exercitationem eaque libero.
+        id: 4888721511633999565
+        paymentNumber: Aut id.
+      - amount: 0.6914599
+        createdAt: Eos iusto saepe aut exercitationem eaque libero.
+        id: 4888721511633999565
+        paymentNumber: Aut id.
+      total: 9566222834768254387
+    required:
+    - total
+    - resources
+  PaymentResponseResponseBody:
+    title: PaymentResponseResponseBody
+    type: object
+    properties:
+      amount:
+        type: number
+        description: Payment amount
+        example: 0.03326286
+        format: float
+      createdAt:
+        type: string
+        description: Time of creation
+        example: Quas consequatur.
+      id:
+        type: integer
+        description: Id
+        example: 10722261122521618881
+        format: int64
+      paymentNumber:
+        type: string
+        description: Payment Number
+        example: Illum aliquam voluptates quisquam.
+    example:
+      amount: 0.036977686
+      createdAt: Dolorem mollitia omnis et et esse quasi.
+      id: 5349035147482984558
+      paymentNumber: Ab recusandae totam.
+    required:
+    - id
+    - createdAt
+    - paymentNumber
+    - amount

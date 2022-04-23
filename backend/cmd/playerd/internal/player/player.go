@@ -4,9 +4,11 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/JordanRad/play-j/backend/cmd/playerd/internal/db/dbmodels"
+	"github.com/gorilla/mux"
 )
 
 type Store interface {
@@ -33,6 +35,11 @@ var _ PlayerService = (*Service)(nil)
 
 func (s *Service) StreamTrackByID(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
+	vars := mux.Vars(r)
+	trackID, err := strconv.Atoi(vars["trackID"])
+	fmt.Println(trackID)
+	track, err := s.store.GetTrackByID(uint(trackID))
+	fmt.Println(track)
 	musicFile, err := s.cloudStorage.ReadFileFromFolder(ctx, "Metallica", "One.mp3")
 
 	if err != nil {

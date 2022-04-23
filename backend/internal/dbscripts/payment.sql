@@ -1,12 +1,3 @@
-create table if not exists payment_details (
-	id bigserial primary key,
-    cvv varchar,
-    bic varchar,
-    cardNumber varchar,
-    expirationDate varchar,
-    accountID bigserial not null
-);
-
 create table if not exists payments (
 	id bigserial primary key,
     createdAt timestamp default current_timestamp,
@@ -21,3 +12,5 @@ create table if not exists subscriptions (
 	subscriptionType varchar,
     accountID bigserial not null
 );
+
+alter table payments add column amount decimal not null;

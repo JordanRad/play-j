@@ -24,17 +24,11 @@ import (
 	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
-func main() {
-	config, err := configFromEnv()
-
-	if err != nil {
-		log.Fatalf("Config file cannot be read: %v", err)
-	}
-
+func connectDB(config *config) *sql.DB {
 	dbConnectionString := fmt.Sprintf("postgres://%v:%v@%v:%v/%v", config.Postgres.User, config.Postgres.Password, config.Postgres.Host, config.Postgres.Port, config.Postgres.DBName)
 	fmt.Println(dbConnectionString)
 	var db *sql.DB
-	db, err = sql.Open("pgx", dbConnectionString)
+	db, err := sql.Open("pgx", dbConnectionString)
 	if err != nil {
 		log.Fatalf("Could not connect to database: %v", err)
 	}
@@ -53,6 +47,17 @@ func main() {
 	}
 
 	fmt.Print("Connected to database \n")
+	return db
+}
+
+func main() {
+	config, err := configFromEnv()
+
+	if err != nil {
+		log.Fatalf("Config file cannot be read: %v", err)
+	}
+
+	db := connectDB(config)
 
 	dbAccountStore := &dbaccount.Store{
 		DB: db,

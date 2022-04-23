@@ -53,20 +53,20 @@ var _ = Service("payment", func() {
 		})
 	})
 
-	Method("getAccountSubscriptionStatus", func() {
-		Result(PaymentListResponse)
-		Payload(func() {
-			Attribute("auth", String, "Authorization Header")
-			Required("auth")
-		})
+	// Method("getAccountSubscriptionStatus", func() {
+	// 	Result(PaymentListResponse)
+	// 	Payload(func() {
+	// 		Attribute("auth", String, "Authorization Header")
+	// 		Required("auth")
+	// 	})
 
-		HTTP(func() {
-			Header("auth:Authorization", String, "JSON Web Token", func() {
-				Pattern("^Bearer [^ ]+$")
-			})
-			GET("/subscription/")
-		})
-	})
+	// 	HTTP(func() {
+	// 		Header("auth:Authorization", String, "JSON Web Token", func() {
+	// 			Pattern("^Bearer [^ ]+$")
+	// 		})
+	// 		GET("/subscription/")
+	// 	})
+	// })
 
 })
 
@@ -79,15 +79,15 @@ var PaymentListResponse = Type("PaymentListResponse", func() {
 var PaymentResponse = Type("PaymentResponse", func() {
 	Attribute("id", UInt, "Id")
 	Attribute("createdAt", String, "Time of creation")
+	Attribute("paymentNumber", String, "Payment Number")
 	Attribute("amount", Float32, "Payment amount")
-	Required("id", "createdAt", "amount")
+	Required("id", "createdAt", "paymentNumber", "amount")
 })
 
 var TransactionResponse = Type("TransactionResponse", func() {
-	Attribute("id", UInt, "Id")
-	Attribute("createdAt", String, "Time of creation")
-	Attribute("amount", Float32, "Payment amount")
-	Required("id", "createdAt", "amount")
+	Attribute("paymentNumber", String, "Payment Unique Number")
+	Attribute("message", String, "Operation status")
+	Required("paymentNumber", "message")
 })
 
 var SubscriptionStatusResponse = Type("SubscriptionStatusResponse", func() {
