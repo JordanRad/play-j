@@ -8,7 +8,7 @@ import (
 
 	"github.com/JordanRad/play-j/backend/cmd/paymentsd/internal/db/dbmodels"
 	payment "github.com/JordanRad/play-j/backend/cmd/paymentsd/internal/payment"
-	"github.com/JordanRad/play-j/backend/vendor/github.com/google/uuid"
+	"github.com/google/uuid"
 )
 
 type Store struct {
