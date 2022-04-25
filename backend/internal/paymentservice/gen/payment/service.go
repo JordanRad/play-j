@@ -43,6 +43,8 @@ type CreateAccountPaymentPayload struct {
 type GetAccountPaymentsPayload struct {
 	// Authorization Header
 	Auth string
+	// Resource array size
+	Limit int
 }
 
 // PaymentListResponse is the result type of the payment service

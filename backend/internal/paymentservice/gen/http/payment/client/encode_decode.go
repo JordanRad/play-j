@@ -12,6 +12,7 @@ package client
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -48,6 +49,9 @@ func EncodeGetAccountPaymentsRequest(encoder func(*http.Request) goahttp.Encoder
 			head := p.Auth
 			req.Header.Set("Authorization", head)
 		}
+		values := req.URL.Query()
+		values.Add("limit", fmt.Sprintf("%v", p.Limit))
+		req.URL.RawQuery = values.Encode()
 		return nil
 	}
 }

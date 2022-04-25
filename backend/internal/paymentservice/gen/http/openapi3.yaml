@@ -13,6 +13,18 @@ paths:
       - payment
       summary: getAccountPayments payment
       operationId: payment#getAccountPayments
+      parameters:
+      - name: limit
+        in: query
+        description: Resource array size
+        allowEmptyValue: true
+        required: true
+        schema:
+          type: integer
+          description: Resource array size
+          example: 8146423803102082701
+          format: int64
+        example: 3076413798710121998
       responses:
         "200":
           description: OK response.
@@ -22,19 +34,15 @@ paths:
                 $ref: '#/components/schemas/PaymentListResponse'
               example:
                 resources:
-                - amount: 0.6914599
-                  createdAt: Eos iusto saepe aut exercitationem eaque libero.
-                  id: 4888721511633999565
-                  paymentNumber: Aut id.
-                - amount: 0.6914599
-                  createdAt: Eos iusto saepe aut exercitationem eaque libero.
-                  id: 4888721511633999565
-                  paymentNumber: Aut id.
-                - amount: 0.6914599
-                  createdAt: Eos iusto saepe aut exercitationem eaque libero.
-                  id: 4888721511633999565
-                  paymentNumber: Aut id.
-                total: 4398530068892633877
+                - amount: 0.045109253
+                  createdAt: Repudiandae dolores nostrum harum.
+                  id: 5614265788585208775
+                  paymentNumber: Dolor impedit rerum.
+                - amount: 0.045109253
+                  createdAt: Repudiandae dolores nostrum harum.
+                  id: 5614265788585208775
+                  paymentNumber: Dolor impedit rerum.
+                total: 6041450981271446607
     post:
       tags:
       - payment
@@ -48,8 +56,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/TransactionResponse'
               example:
-                message: Impedit rerum cumque tempora odit debitis autem.
-                paymentNumber: Dolores nostrum harum eveniet.
+                message: Quisquam veniam et maiores dolorem mollitia.
+                paymentNumber: Consequatur enim illum aliquam.
+  /api/v1/payment-service/subscriptions:
+    get:
+      tags:
+      - subscription
+      summary: getAccountSubscriptionStatus subscription
+      operationId: subscription#getAccountSubscriptionStatus
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionStatusResponse'
+              example:
+                hasPaid: false
+                type: Molestiae ipsum cupiditate quis natus adipisci.
+                validUntil: Dolorum ab recusandae totam omnis doloremque aperiam.
 components:
   schemas:
     PaymentListResponse:
@@ -61,41 +86,37 @@ components:
             $ref: '#/components/schemas/PaymentResponse'
           description: Resournces
           example:
-          - amount: 0.6914599
-            createdAt: Eos iusto saepe aut exercitationem eaque libero.
-            id: 4888721511633999565
-            paymentNumber: Aut id.
-          - amount: 0.6914599
-            createdAt: Eos iusto saepe aut exercitationem eaque libero.
-            id: 4888721511633999565
-            paymentNumber: Aut id.
-          - amount: 0.6914599
-            createdAt: Eos iusto saepe aut exercitationem eaque libero.
-            id: 4888721511633999565
-            paymentNumber: Aut id.
-          - amount: 0.6914599
-            createdAt: Eos iusto saepe aut exercitationem eaque libero.
-            id: 4888721511633999565
-            paymentNumber: Aut id.
+          - amount: 0.045109253
+            createdAt: Repudiandae dolores nostrum harum.
+            id: 5614265788585208775
+            paymentNumber: Dolor impedit rerum.
+          - amount: 0.045109253
+            createdAt: Repudiandae dolores nostrum harum.
+            id: 5614265788585208775
+            paymentNumber: Dolor impedit rerum.
+          - amount: 0.045109253
+            createdAt: Repudiandae dolores nostrum harum.
+            id: 5614265788585208775
+            paymentNumber: Dolor impedit rerum.
+          - amount: 0.045109253
+            createdAt: Repudiandae dolores nostrum harum.
+            id: 5614265788585208775
+            paymentNumber: Dolor impedit rerum.
         total:
           type: integer
           description: Total number of resources
-          example: 9820895026952485780
+          example: 14874040511910104013
       example:
         resources:
-        - amount: 0.6914599
-          createdAt: Eos iusto saepe aut exercitationem eaque libero.
-          id: 4888721511633999565
-          paymentNumber: Aut id.
-        - amount: 0.6914599
-          createdAt: Eos iusto saepe aut exercitationem eaque libero.
-          id: 4888721511633999565
-          paymentNumber: Aut id.
-        - amount: 0.6914599
-          createdAt: Eos iusto saepe aut exercitationem eaque libero.
-          id: 4888721511633999565
-          paymentNumber: Aut id.
-        total: 6109190808011266092
+        - amount: 0.045109253
+          createdAt: Repudiandae dolores nostrum harum.
+          id: 5614265788585208775
+          paymentNumber: Dolor impedit rerum.
+        - amount: 0.045109253
+          createdAt: Repudiandae dolores nostrum harum.
+          id: 5614265788585208775
+          paymentNumber: Dolor impedit rerum.
+        total: 11169036715849600178
       required:
       - total
       - resources
@@ -105,47 +126,71 @@ components:
         amount:
           type: number
           description: Payment amount
-          example: 0.96438646
+          example: 0.2336284
           format: float
         createdAt:
           type: string
           description: Time of creation
-          example: Non eum omnis est.
+          example: Velit autem amet perferendis eaque adipisci.
         id:
           type: integer
           description: Id
-          example: 7574210935021280401
+          example: 8040373963308048018
         paymentNumber:
           type: string
           description: Payment Number
-          example: Blanditiis deleniti eveniet voluptate eligendi esse.
+          example: Asperiores id doloribus.
       example:
-        amount: 0.088960916
-        createdAt: Nostrum mollitia error laudantium voluptatem laudantium.
-        id: 4242734298011617092
-        paymentNumber: Ex quisquam.
+        amount: 0.09862112
+        createdAt: Vel velit.
+        id: 12577266130048895022
+        paymentNumber: Distinctio vel.
       required:
       - id
       - createdAt
       - paymentNumber
       - amount
+    SubscriptionStatusResponse:
+      type: object
+      properties:
+        hasPaid:
+          type: boolean
+          description: Is the subscrion paid or not
+          example: false
+        type:
+          type: string
+          description: Subscription type
+          example: Ipsa dignissimos mollitia.
+        validUntil:
+          type: string
+          description: Subscription end date
+          example: Provident atque possimus repellat.
+      example:
+        hasPaid: false
+        type: Nisi nesciunt dolorum est in voluptatem maxime.
+        validUntil: Quae sint cum suscipit.
+      required:
+      - hasPaid
+      - validUntil
+      - type
     TransactionResponse:
       type: object
       properties:
         message:
           type: string
           description: Operation status
-          example: Provident voluptatem.
+          example: Ipsum fuga sed doloremque ipsam.
         paymentNumber:
           type: string
           description: Payment Unique Number
-          example: Autem eum laboriosam accusantium.
+          example: Id enim et qui.
       example:
-        message: Et ipsa.
-        paymentNumber: Sunt dolores tempore illo vel voluptatum.
+        message: Eaque qui minima.
+        paymentNumber: Facere labore ducimus vero.
       required:
       - paymentNumber
       - message
 tags:
 - name: payment
   description: Payment operations
+- name: subscription

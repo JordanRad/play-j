@@ -12,6 +12,7 @@ package server
 import (
 	"context"
 	"net/http"
+	"strconv"
 
 	payment "github.com/JordanRad/play-j/backend/internal/paymentservice/gen/payment"
 	goahttp "goa.design/goa/v3/http"
@@ -35,9 +36,21 @@ func EncodeGetAccountPaymentsResponse(encoder func(context.Context, http.Respons
 func DecodeGetAccountPaymentsRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			auth string
-			err  error
+			limit int
+			auth  string
+			err   error
 		)
+		{
+			limitRaw := r.URL.Query().Get("limit")
+			if limitRaw == "" {
+				err = goa.MergeErrors(err, goa.MissingFieldError("limit", "query string"))
+			}
+			v, err2 := strconv.ParseInt(limitRaw, 10, strconv.IntSize)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("limit", limitRaw, "integer"))
+			}
+			limit = int(v)
+		}
 		auth = r.Header.Get("Authorization")
 		if auth == "" {
 			err = goa.MergeErrors(err, goa.MissingFieldError("Authorization", "header"))
@@ -45,7 +58,7 @@ func DecodeGetAccountPaymentsRequest(mux goahttp.Muxer, decoder func(*http.Reque
 		if err != nil {
 			return nil, err
 		}
-		payload := NewGetAccountPaymentsPayload(auth)
+		payload := NewGetAccountPaymentsPayload(limit, auth)
 
 		return payload, nil
 	}

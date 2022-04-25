@@ -20,6 +20,11 @@ paths:
       summary: getAccountPayments payment
       operationId: payment#getAccountPayments
       parameters:
+      - name: limit
+        in: query
+        description: Resource array size
+        required: true
+        type: integer
       - name: Authorization
         in: header
         description: JSON Web Token
@@ -58,6 +63,30 @@ paths:
             - message
       schemes:
       - http
+  /api/v1/payment-service/subscriptions:
+    get:
+      tags:
+      - subscription
+      summary: getAccountSubscriptionStatus subscription
+      operationId: subscription#getAccountSubscriptionStatus
+      parameters:
+      - name: Authorization
+        in: header
+        description: JSON Web Token
+        required: true
+        type: string
+        pattern: ^Bearer [^ ]+$
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/SubscriptionGetAccountSubscriptionStatusResponseBody'
+            required:
+            - hasPaid
+            - validUntil
+            - type
+      schemes:
+      - http
 definitions:
   PaymentCreateAccountPaymentResponseBody:
     title: PaymentCreateAccountPaymentResponseBody
@@ -66,14 +95,14 @@ definitions:
       message:
         type: string
         description: Operation status
-        example: Rerum animi.
+        example: Nostrum mollitia error laudantium voluptatem laudantium.
       paymentNumber:
         type: string
         description: Payment Unique Number
-        example: Ipsum cupiditate quis natus adipisci officiis quasi.
+        example: Eligendi esse iste quia.
     example:
-      message: Maxime ut ut.
-      paymentNumber: Excepturi sint.
+      message: Non modi sed debitis autem.
+      paymentNumber: Ex quisquam.
     required:
     - paymentNumber
     - message
@@ -87,38 +116,34 @@ definitions:
           $ref: '#/definitions/PaymentResponseResponseBody'
         description: Resournces
         example:
-        - amount: 0.6914599
-          createdAt: Eos iusto saepe aut exercitationem eaque libero.
-          id: 4888721511633999565
-          paymentNumber: Aut id.
-        - amount: 0.6914599
-          createdAt: Eos iusto saepe aut exercitationem eaque libero.
-          id: 4888721511633999565
-          paymentNumber: Aut id.
+        - amount: 0.045109253
+          createdAt: Repudiandae dolores nostrum harum.
+          id: 5614265788585208775
+          paymentNumber: Dolor impedit rerum.
+        - amount: 0.045109253
+          createdAt: Repudiandae dolores nostrum harum.
+          id: 5614265788585208775
+          paymentNumber: Dolor impedit rerum.
+        - amount: 0.045109253
+          createdAt: Repudiandae dolores nostrum harum.
+          id: 5614265788585208775
+          paymentNumber: Dolor impedit rerum.
       total:
         type: integer
         description: Total number of resources
-        example: 14805211578228833185
+        example: 12576430019621352510
         format: int64
     example:
       resources:
-      - amount: 0.6914599
-        createdAt: Eos iusto saepe aut exercitationem eaque libero.
-        id: 4888721511633999565
-        paymentNumber: Aut id.
-      - amount: 0.6914599
-        createdAt: Eos iusto saepe aut exercitationem eaque libero.
-        id: 4888721511633999565
-        paymentNumber: Aut id.
-      - amount: 0.6914599
-        createdAt: Eos iusto saepe aut exercitationem eaque libero.
-        id: 4888721511633999565
-        paymentNumber: Aut id.
-      - amount: 0.6914599
-        createdAt: Eos iusto saepe aut exercitationem eaque libero.
-        id: 4888721511633999565
-        paymentNumber: Aut id.
-      total: 9566222834768254387
+      - amount: 0.045109253
+        createdAt: Repudiandae dolores nostrum harum.
+        id: 5614265788585208775
+        paymentNumber: Dolor impedit rerum.
+      - amount: 0.045109253
+        createdAt: Repudiandae dolores nostrum harum.
+        id: 5614265788585208775
+        paymentNumber: Dolor impedit rerum.
+      total: 4396716847613175530
     required:
     - total
     - resources
@@ -129,28 +154,52 @@ definitions:
       amount:
         type: number
         description: Payment amount
-        example: 0.03326286
+        example: 0.5583874
         format: float
       createdAt:
         type: string
         description: Time of creation
-        example: Quas consequatur.
+        example: Rerum animi.
       id:
         type: integer
         description: Id
-        example: 10722261122521618881
+        example: 9981160763808931699
         format: int64
       paymentNumber:
         type: string
         description: Payment Number
-        example: Illum aliquam voluptates quisquam.
+        example: Excepturi sint.
     example:
-      amount: 0.036977686
-      createdAt: Dolorem mollitia omnis et et esse quasi.
-      id: 5349035147482984558
-      paymentNumber: Ab recusandae totam.
+      amount: 0.5680312
+      createdAt: Ut sed vitae.
+      id: 6047946286363235355
+      paymentNumber: Non eum omnis est.
     required:
     - id
     - createdAt
     - paymentNumber
     - amount
+  SubscriptionGetAccountSubscriptionStatusResponseBody:
+    title: SubscriptionGetAccountSubscriptionStatusResponseBody
+    type: object
+    properties:
+      hasPaid:
+        type: boolean
+        description: Is the subscrion paid or not
+        example: true
+      type:
+        type: string
+        description: Subscription type
+        example: Voluptatem facilis sunt dolores tempore.
+      validUntil:
+        type: string
+        description: Subscription end date
+        example: Accusantium commodi.
+    example:
+      hasPaid: false
+      type: Blanditiis ipsam amet.
+      validUntil: Voluptatum quia et.
+    required:
+    - hasPaid
+    - validUntil
+    - type

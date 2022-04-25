@@ -8,10 +8,15 @@ import (
 	"time"
 
 	"github.com/JordanRad/play-j/backend/cmd/paymentsd/internal/db/dbpayments"
+	"github.com/JordanRad/play-j/backend/cmd/paymentsd/internal/db/dbsubscriptions"
 	payment "github.com/JordanRad/play-j/backend/cmd/paymentsd/internal/payment"
 	"github.com/JordanRad/play-j/backend/internal/middleware"
 	paymentsrv "github.com/JordanRad/play-j/backend/internal/paymentservice/gen/http/payment/server"
 	paymentsvc "github.com/JordanRad/play-j/backend/internal/paymentservice/gen/payment"
+
+	subscription "github.com/JordanRad/play-j/backend/cmd/paymentsd/internal/subscription"
+	subscriptionsrv "github.com/JordanRad/play-j/backend/internal/paymentservice/gen/http/subscription/server"
+	subscriptionsvc "github.com/JordanRad/play-j/backend/internal/paymentservice/gen/subscription"
 	_ "github.com/jackc/pgx/v4/stdlib"
 
 	goahttp "goa.design/goa/v3/http"
@@ -56,8 +61,15 @@ func main() {
 		DB: db,
 	}
 
-	paymentService := payment.NewService(paymentStore)
+	subscriptionStore := &dbsubscriptions.Store{
+		DB: db,
+	}
+
+	paymentService := payment.NewService(paymentStore, subscriptionStore)
 	var paymentEndpoints *paymentsvc.Endpoints = paymentsvc.NewEndpoints(paymentService)
+
+	subscriptionService := subscription.NewService(subscriptionStore)
+	var subscriptionEndpoints *subscriptionsvc.Endpoints = subscriptionsvc.NewEndpoints(subscriptionService)
 
 	// Provide the transport specific request decoder and response encoder.
 	var (
@@ -75,6 +87,10 @@ func main() {
 	var paymentServer *paymentsrv.Server = paymentsrv.New(paymentEndpoints, mux, dec, enc, nil, nil)
 	paymentServer.Use(middleware.AuthenticateRequest())
 	paymentsrv.Mount(mux, paymentServer)
+
+	var subscriptionServer *subscriptionsrv.Server = subscriptionsrv.New(subscriptionEndpoints, mux, dec, enc, nil, nil)
+	subscriptionServer.Use(middleware.AuthenticateRequest())
+	subscriptionsrv.Mount(mux, subscriptionServer)
 
 	address := fmt.Sprintf("%s:%d", config.HTTP.Host, config.HTTP.Port)
 	fmt.Printf("Payment service has just started on %s ...\n", address)

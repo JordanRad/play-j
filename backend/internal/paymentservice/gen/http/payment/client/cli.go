@@ -10,17 +10,31 @@
 package client
 
 import (
+	"fmt"
+	"strconv"
+
 	payment "github.com/JordanRad/play-j/backend/internal/paymentservice/gen/payment"
 )
 
 // BuildGetAccountPaymentsPayload builds the payload for the payment
 // getAccountPayments endpoint from CLI flags.
-func BuildGetAccountPaymentsPayload(paymentGetAccountPaymentsAuth string) (*payment.GetAccountPaymentsPayload, error) {
+func BuildGetAccountPaymentsPayload(paymentGetAccountPaymentsLimit string, paymentGetAccountPaymentsAuth string) (*payment.GetAccountPaymentsPayload, error) {
+	var err error
+	var limit int
+	{
+		var v int64
+		v, err = strconv.ParseInt(paymentGetAccountPaymentsLimit, 10, 64)
+		limit = int(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for limit, must be INT")
+		}
+	}
 	var auth string
 	{
 		auth = paymentGetAccountPaymentsAuth
 	}
 	v := &payment.GetAccountPaymentsPayload{}
+	v.Limit = limit
 	v.Auth = auth
 
 	return v, nil

@@ -26,7 +26,8 @@ var _ = Service("payment", func() {
 		Result(PaymentListResponse)
 		Payload(func() {
 			Attribute("auth", String, "Authorization Header")
-			Required("auth")
+			Attribute("limit", Int, "Resource array size")
+			Required("auth", "limit")
 		})
 
 		HTTP(func() {
@@ -34,6 +35,7 @@ var _ = Service("payment", func() {
 				Pattern("^Bearer [^ ]+$")
 			})
 			GET("/")
+			Param("limit")
 		})
 	})
 
@@ -53,21 +55,27 @@ var _ = Service("payment", func() {
 		})
 	})
 
-	// Method("getAccountSubscriptionStatus", func() {
-	// 	Result(PaymentListResponse)
-	// 	Payload(func() {
-	// 		Attribute("auth", String, "Authorization Header")
-	// 		Required("auth")
-	// 	})
+})
 
-	// 	HTTP(func() {
-	// 		Header("auth:Authorization", String, "JSON Web Token", func() {
-	// 			Pattern("^Bearer [^ ]+$")
-	// 		})
-	// 		GET("/subscription/")
-	// 	})
-	// })
+var _ = Service("subscription", func() {
+	HTTP(func() {
+		Path("/api/v1/payment-service/subscriptions") // Prefix to HTTP path of all requests.
+	})
 
+	Method("getAccountSubscriptionStatus", func() {
+		Result(SubscriptionStatusResponse)
+		Payload(func() {
+			Attribute("auth", String, "Authorization Header")
+			Required("auth")
+		})
+
+		HTTP(func() {
+			Header("auth:Authorization", String, "JSON Web Token", func() {
+				Pattern("^Bearer [^ ]+$")
+			})
+			GET("/")
+		})
+	})
 })
 
 var PaymentListResponse = Type("PaymentListResponse", func() {
@@ -91,7 +99,7 @@ var TransactionResponse = Type("TransactionResponse", func() {
 })
 
 var SubscriptionStatusResponse = Type("SubscriptionStatusResponse", func() {
-	Attribute("hasPaid", Boolean, "Total number of resources")
+	Attribute("hasPaid", Boolean, "Is the subscrion paid or not")
 	Attribute("validUntil", String, "Subscription end date")
 	Attribute("type", String, "Subscription type")
 	Required("hasPaid", "validUntil", "type")

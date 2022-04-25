@@ -15,15 +15,15 @@ type Store struct {
 	DB *sql.DB
 }
 
-var _ payment.Store = (*Store)(nil)
+var _ payment.PaymentStore = (*Store)(nil)
 
 func generatePaymentNumber(accountID uint) string {
 	uniqueString := uuid.New()
-	return fmt.Sprintf("%v-PJ%v-%v", time.Now(), accountID, uniqueString)
+	return fmt.Sprintf("%v-PJ%v-%v", time.Now().Unix(), accountID, uniqueString)
 }
 
-func (s *Store) GetAccountPayments(ctx context.Context, accountID uint) ([]*dbmodels.Payment, error) {
-	rows, err := s.DB.Query("SELECT * FROM payments WHERE paidBy = $1;", accountID)
+func (s *Store) GetAccountPayments(ctx context.Context, accountID uint, limit uint) ([]*dbmodels.Payment, error) {
+	rows, err := s.DB.Query("SELECT * FROM payments WHERE paidBy = $1 ORDER BY createdAt DESC LIMIT $2;", accountID, limit)
 
 	if err != nil {
 		return nil, fmt.Errorf("error extracting accounts's payments: %w", err)
@@ -38,8 +38,8 @@ func (s *Store) GetAccountPayments(ctx context.Context, accountID uint) ([]*dbmo
 			&payment.ID,
 			&payment.CreatedAt,
 			&payment.PaymentNumber,
-			&payment.PaidBy,
 			&payment.Amount,
+			&payment.PaidBy,
 		)
 
 		if err != nil {
@@ -72,8 +72,8 @@ func (s *Store) CreatePayment(ctx context.Context, accountID uint, amount float3
 	}
 
 	if rowsAffected == 1 {
-		return "", nil
+		return paymentNumber, nil
 	}
 
-	return paymentNumber, fmt.Errorf("error inserting a payment")
+	return "", fmt.Errorf("error inserting a payment")
 }

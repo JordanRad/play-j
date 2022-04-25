@@ -9,17 +9,24 @@ import (
 	"github.com/JordanRad/play-j/backend/internal/paymentservice/gen/payment"
 )
 
-type Store interface {
-	GetAccountPayments(context.Context, uint) ([]*dbmodels.Payment, error)
-	CreatePayment(context.Context, uint, float32) (bool, error)
-}
-type Service struct {
-	store Store
+type PaymentStore interface {
+	GetAccountPayments(context.Context, uint, uint) ([]*dbmodels.Payment, error)
+	CreatePayment(context.Context, uint, float32) (string, error)
 }
 
-func NewService(store Store) *Service {
+type SubscriptionStore interface {
+	CreateSubscription(context.Context, uint) error
+}
+
+type Service struct {
+	paymentStore      PaymentStore
+	subscriptionStore SubscriptionStore
+}
+
+func NewService(ps PaymentStore, ss SubscriptionStore) *Service {
 	return &Service{
-		store: store,
+		paymentStore:      ps,
+		subscriptionStore: ss,
 	}
 }
 
@@ -30,7 +37,7 @@ var _ payment.Service = (*Service)(nil)
 func toPaymentResponse(paymentEntity *dbmodels.Payment) *payment.PaymentResponse {
 	return &payment.PaymentResponse{
 		ID:            paymentEntity.ID,
-		CreatedAt:     paymentEntity.CreatedAt.Format("2006-01-02 15:04"),
+		CreatedAt:     paymentEntity.CreatedAt.String(),
 		PaymentNumber: paymentEntity.PaymentNumber,
 		Amount:        paymentEntity.Amount,
 	}
@@ -43,7 +50,7 @@ func (s *Service) GetAccountPayments(ctx context.Context, p *payment.GetAccountP
 		return nil, fmt.Errorf("error extracting token claims: %w", err)
 	}
 
-	paymentEntities, err := s.store.GetAccountPayments(ctx, tokenClaims.AccountID)
+	paymentEntities, err := s.paymentStore.GetAccountPayments(ctx, tokenClaims.AccountID, uint(p.Limit))
 
 	if err != nil {
 		return nil, fmt.Errorf("error getting payments: %w", err)
@@ -70,6 +77,24 @@ func (s *Service) CreateAccountPayment(ctx context.Context, p *payment.CreateAcc
 		return nil, fmt.Errorf("error extracting token claims: %w", err)
 	}
 
-	ok, err := s.store.CreatePayment(ctx, tokenClaims.AccountID, 25)
-	return nil, nil
+	//TODO: Turn this operation into one transaction
+	// Insert the payment in the database
+	paymentNumber, err := s.paymentStore.CreatePayment(ctx, tokenClaims.AccountID, 11.99)
+	if err != nil {
+		return nil, fmt.Errorf("error creating a payment: %w", err)
+	}
+
+	// Insert a new subscription in the database
+	err = s.subscriptionStore.CreateSubscription(ctx, tokenClaims.AccountID)
+
+	if err != nil {
+		return nil, fmt.Errorf("error creating a payment: %w", err)
+	}
+
+	response := &payment.TransactionResponse{
+		PaymentNumber: paymentNumber,
+		Message:       "Payment completed successfully",
+	}
+
+	return response, nil
 }

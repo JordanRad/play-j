@@ -16,6 +16,7 @@ import (
 	"os"
 
 	paymentc "github.com/JordanRad/play-j/backend/internal/paymentservice/gen/http/payment/client"
+	subscriptionc "github.com/JordanRad/play-j/backend/internal/paymentservice/gen/http/subscription/client"
 	goahttp "goa.design/goa/v3/http"
 	goa "goa.design/goa/v3/pkg"
 )
@@ -26,12 +27,14 @@ import (
 //
 func UsageCommands() string {
 	return `payment (get-account-payments|create-account-payment)
+subscription get-account-subscription-status
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
-	return os.Args[0] + ` payment get-account-payments --auth "Excepturi adipisci molestiae dolorem autem minus."` + "\n" +
+	return os.Args[0] + ` payment get-account-payments --limit 6377591863020585586 --auth "Placeat voluptatum recusandae."` + "\n" +
+		os.Args[0] + ` subscription get-account-subscription-status --auth "Et et."` + "\n" +
 		""
 }
 
@@ -47,15 +50,24 @@ func ParseEndpoint(
 	var (
 		paymentFlags = flag.NewFlagSet("payment", flag.ContinueOnError)
 
-		paymentGetAccountPaymentsFlags    = flag.NewFlagSet("get-account-payments", flag.ExitOnError)
-		paymentGetAccountPaymentsAuthFlag = paymentGetAccountPaymentsFlags.String("auth", "REQUIRED", "")
+		paymentGetAccountPaymentsFlags     = flag.NewFlagSet("get-account-payments", flag.ExitOnError)
+		paymentGetAccountPaymentsLimitFlag = paymentGetAccountPaymentsFlags.String("limit", "REQUIRED", "")
+		paymentGetAccountPaymentsAuthFlag  = paymentGetAccountPaymentsFlags.String("auth", "REQUIRED", "")
 
 		paymentCreateAccountPaymentFlags    = flag.NewFlagSet("create-account-payment", flag.ExitOnError)
 		paymentCreateAccountPaymentAuthFlag = paymentCreateAccountPaymentFlags.String("auth", "REQUIRED", "")
+
+		subscriptionFlags = flag.NewFlagSet("subscription", flag.ContinueOnError)
+
+		subscriptionGetAccountSubscriptionStatusFlags    = flag.NewFlagSet("get-account-subscription-status", flag.ExitOnError)
+		subscriptionGetAccountSubscriptionStatusAuthFlag = subscriptionGetAccountSubscriptionStatusFlags.String("auth", "REQUIRED", "")
 	)
 	paymentFlags.Usage = paymentUsage
 	paymentGetAccountPaymentsFlags.Usage = paymentGetAccountPaymentsUsage
 	paymentCreateAccountPaymentFlags.Usage = paymentCreateAccountPaymentUsage
+
+	subscriptionFlags.Usage = subscriptionUsage
+	subscriptionGetAccountSubscriptionStatusFlags.Usage = subscriptionGetAccountSubscriptionStatusUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -74,6 +86,8 @@ func ParseEndpoint(
 		switch svcn {
 		case "payment":
 			svcf = paymentFlags
+		case "subscription":
+			svcf = subscriptionFlags
 		default:
 			return nil, nil, fmt.Errorf("unknown service %q", svcn)
 		}
@@ -96,6 +110,13 @@ func ParseEndpoint(
 
 			case "create-account-payment":
 				epf = paymentCreateAccountPaymentFlags
+
+			}
+
+		case "subscription":
+			switch epn {
+			case "get-account-subscription-status":
+				epf = subscriptionGetAccountSubscriptionStatusFlags
 
 			}
 
@@ -124,10 +145,17 @@ func ParseEndpoint(
 			switch epn {
 			case "get-account-payments":
 				endpoint = c.GetAccountPayments()
-				data, err = paymentc.BuildGetAccountPaymentsPayload(*paymentGetAccountPaymentsAuthFlag)
+				data, err = paymentc.BuildGetAccountPaymentsPayload(*paymentGetAccountPaymentsLimitFlag, *paymentGetAccountPaymentsAuthFlag)
 			case "create-account-payment":
 				endpoint = c.CreateAccountPayment()
 				data, err = paymentc.BuildCreateAccountPaymentPayload(*paymentCreateAccountPaymentAuthFlag)
+			}
+		case "subscription":
+			c := subscriptionc.NewClient(scheme, host, doer, enc, dec, restore)
+			switch epn {
+			case "get-account-subscription-status":
+				endpoint = c.GetAccountSubscriptionStatus()
+				data, err = subscriptionc.BuildGetAccountSubscriptionStatusPayload(*subscriptionGetAccountSubscriptionStatusAuthFlag)
 			}
 		}
 	}
@@ -153,13 +181,14 @@ Additional help:
 `, os.Args[0])
 }
 func paymentGetAccountPaymentsUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] payment get-account-payments -auth STRING
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] payment get-account-payments -limit INT -auth STRING
 
 GetAccountPayments implements getAccountPayments.
+    -limit INT: 
     -auth STRING: 
 
 Example:
-    %[1]s payment get-account-payments --auth "Excepturi adipisci molestiae dolorem autem minus."
+    %[1]s payment get-account-payments --limit 6377591863020585586 --auth "Placeat voluptatum recusandae."
 `, os.Args[0])
 }
 
@@ -170,6 +199,31 @@ CreateAccountPayment implements createAccountPayment.
     -auth STRING: 
 
 Example:
-    %[1]s payment create-account-payment --auth "Recusandae ut vitae."
+    %[1]s payment create-account-payment --auth "Autem expedita laudantium earum."
+`, os.Args[0])
+}
+
+// subscriptionUsage displays the usage of the subscription command and its
+// subcommands.
+func subscriptionUsage() {
+	fmt.Fprintf(os.Stderr, `Service is the subscription service interface.
+Usage:
+    %[1]s [globalflags] subscription COMMAND [flags]
+
+COMMAND:
+    get-account-subscription-status: GetAccountSubscriptionStatus implements getAccountSubscriptionStatus.
+
+Additional help:
+    %[1]s subscription COMMAND --help
+`, os.Args[0])
+}
+func subscriptionGetAccountSubscriptionStatusUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] subscription get-account-subscription-status -auth STRING
+
+GetAccountSubscriptionStatus implements getAccountSubscriptionStatus.
+    -auth STRING: 
+
+Example:
+    %[1]s subscription get-account-subscription-status --auth "Et et."
 `, os.Args[0])
 }

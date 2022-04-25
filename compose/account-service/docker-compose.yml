@@ -28,6 +28,10 @@ services:
       POSTGRES_USER: "playj"
       POSTGRES_DB: "playj-accounts-db"
 
+networks:
+  fullstack:
+    driver: bridge
+
 
 
 

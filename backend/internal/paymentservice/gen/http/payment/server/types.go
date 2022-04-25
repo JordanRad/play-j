@@ -70,8 +70,9 @@ func NewCreateAccountPaymentResponseBody(res *payment.TransactionResponse) *Crea
 
 // NewGetAccountPaymentsPayload builds a payment service getAccountPayments
 // endpoint payload.
-func NewGetAccountPaymentsPayload(auth string) *payment.GetAccountPaymentsPayload {
+func NewGetAccountPaymentsPayload(limit int, auth string) *payment.GetAccountPaymentsPayload {
 	v := &payment.GetAccountPaymentsPayload{}
+	v.Limit = limit
 	v.Auth = auth
 
 	return v
