@@ -33,9 +33,9 @@ type RegisterRequestBody struct {
 // request body.
 type LoginRequestBody struct {
 	// Email of the user
-	Email *string `form:"email,omitempty" json:"email,omitempty" xml:"email,omitempty"`
+	Email string `form:"email" json:"email" xml:"email"`
 	// Password of the user
-	Password *string `form:"password,omitempty" json:"password,omitempty" xml:"password,omitempty"`
+	Password string `form:"password" json:"password" xml:"password"`
 }
 
 // RegisterResponseBody is the type of the "account" service "register"

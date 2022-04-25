@@ -34,9 +34,9 @@ var MethodNames = [2]string{"register", "login"}
 // LoginPayload is the payload type of the account service login method.
 type LoginPayload struct {
 	// Email of the user
-	Email *string
+	Email string
 	// Password of the user
-	Password *string
+	Password string
 }
 
 // LoginResponse is the result type of the account service login method.

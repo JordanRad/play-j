@@ -41,6 +41,7 @@ var _ = Service("account", func() {
 		Payload(func() {
 			Attribute("email", String, "Email of the user")
 			Attribute("password", String, "Password of the user")
+			Required("email", "password")
 		})
 		Result(LoginResponse)
 		HTTP(func() {

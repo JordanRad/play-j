@@ -606,8 +606,9 @@ func DecodeRemoveTrackFromAccountPlaylistResponse(decoder func(*http.Response) g
 // type *AccountPlaylistResponseResponseBody.
 func unmarshalAccountPlaylistResponseResponseBodyToPlaylistAccountPlaylistResponse(v *AccountPlaylistResponseResponseBody) *playlist.AccountPlaylistResponse {
 	res := &playlist.AccountPlaylistResponse{
-		ID:   *v.ID,
-		Name: *v.Name,
+		ID:        *v.ID,
+		Name:      *v.Name,
+		CreatedAt: v.CreatedAt,
 	}
 	res.TrackIDs = make([]int32, len(v.TrackIDs))
 	for i, val := range v.TrackIDs {

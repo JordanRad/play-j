@@ -344,8 +344,9 @@ func DecodeRemoveTrackFromAccountPlaylistRequest(mux goahttp.Muxer, decoder func
 // type *playlist.AccountPlaylistResponse.
 func marshalPlaylistAccountPlaylistResponseToAccountPlaylistResponseResponseBody(v *playlist.AccountPlaylistResponse) *AccountPlaylistResponseResponseBody {
 	res := &AccountPlaylistResponseResponseBody{
-		ID:   v.ID,
-		Name: v.Name,
+		ID:        v.ID,
+		Name:      v.Name,
+		CreatedAt: v.CreatedAt,
 	}
 	if v.TrackIDs != nil {
 		res.TrackIDs = make([]int32, len(v.TrackIDs))

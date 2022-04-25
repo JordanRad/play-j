@@ -22,8 +22,12 @@ jobs:
       with:
         go-version: 1.17
 
-    - name: "Run all tests"
-      working-directory: ./backend
+    - name: "Run common tests"
+      working-directory: ./backend/internal
+      run: go test ./... -v
+
+    - name: "Run account service tests"
+      working-directory: ./backend/cmd/accountsd
       run: go test ./... -v
 
     - name: Build

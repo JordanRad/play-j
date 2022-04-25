@@ -66,6 +66,8 @@ type GetAccountPlaylistResponseBody struct {
 	Name string `form:"name" json:"name" xml:"name"`
 	// Array of TrackIDs
 	TrackIDs []int32 `form:"trackIDs" json:"trackIDs" xml:"trackIDs"`
+	// Time of creation
+	CreatedAt *string `form:"createdAt,omitempty" json:"createdAt,omitempty" xml:"createdAt,omitempty"`
 }
 
 // AddTrackToAccountPlaylistResponseBody is the type of the "playlist" service
@@ -91,6 +93,8 @@ type AccountPlaylistResponseResponseBody struct {
 	Name string `form:"name" json:"name" xml:"name"`
 	// Array of TrackIDs
 	TrackIDs []int32 `form:"trackIDs" json:"trackIDs" xml:"trackIDs"`
+	// Time of creation
+	CreatedAt *string `form:"createdAt,omitempty" json:"createdAt,omitempty" xml:"createdAt,omitempty"`
 }
 
 // NewGetAccountPlaylistCollectionResponseBody builds the HTTP response body
@@ -140,8 +144,9 @@ func NewDeleteAccountPlaylistResponseBody(res *playlist.PlaylistModificationResp
 // result of the "getAccountPlaylist" endpoint of the "playlist" service.
 func NewGetAccountPlaylistResponseBody(res *playlist.AccountPlaylistResponse) *GetAccountPlaylistResponseBody {
 	body := &GetAccountPlaylistResponseBody{
-		ID:   res.ID,
-		Name: res.Name,
+		ID:        res.ID,
+		Name:      res.Name,
+		CreatedAt: res.CreatedAt,
 	}
 	if res.TrackIDs != nil {
 		body.TrackIDs = make([]int32, len(res.TrackIDs))

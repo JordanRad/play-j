@@ -59,6 +59,8 @@ type AccountPlaylistResponse struct {
 	Name string
 	// Array of TrackIDs
 	TrackIDs []int32
+	// Time of creation
+	CreatedAt *string
 }
 
 // AddTrackToAccountPlaylistPayload is the payload type of the playlist service

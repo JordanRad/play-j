@@ -10,6 +10,10 @@ import (
 	auth "github.com/JordanRad/play-j/backend/internal/auth"
 )
 
+// You only need **one** of these per package!
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -generate
+
+//counterfeiter:generate . Store
 type Store interface {
 	CreateUser(context.Context, *User) (bool, error)
 	GetUserByEmail(context.Context, string) (*dbmodels.Account, error)
@@ -72,14 +76,14 @@ func (s *Service) Register(ctx context.Context, p *account.RegisterPayload) (*ac
 
 func (s *Service) Login(ctx context.Context, p *account.LoginPayload) (*account.LoginResponse, error) {
 	// Get the user by email
-	foundAccount, err := s.store.GetUserByEmail(ctx, *p.Email)
+	foundAccount, err := s.store.GetUserByEmail(ctx, p.Email)
 
 	if err != nil {
 		return nil, errors.New("invalid credentials")
 	}
 
 	// Verify the password hash
-	isPasswordCorrect := auth.CheckPassword(foundAccount.Password, *p.Password)
+	isPasswordCorrect := auth.CheckPassword(foundAccount.Password, p.Password)
 	if !isPasswordCorrect {
 		return nil, errors.New("invalid credentials")
 	}
@@ -91,7 +95,7 @@ func (s *Service) Login(ctx context.Context, p *account.LoginPayload) (*account.
 	}
 
 	response := &account.LoginResponse{
-		Email:        *p.Email,
+		Email:        p.Email,
 		Token:        token,
 		RefreshToken: "dfsdvsdfjv sjf",
 		Role:         "ROLE_REG_USER",

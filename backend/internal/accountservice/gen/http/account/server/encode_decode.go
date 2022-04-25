@@ -83,6 +83,10 @@ func DecodeLoginRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.D
 			}
 			return nil, goa.DecodePayloadError(err.Error())
 		}
+		err = ValidateLoginRequestBody(&body)
+		if err != nil {
+			return nil, err
+		}
 		payload := NewLoginPayload(&body)
 
 		return payload, nil

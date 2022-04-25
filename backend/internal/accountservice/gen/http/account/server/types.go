@@ -98,8 +98,8 @@ func NewRegisterPayload(body *RegisterRequestBody) *account.RegisterPayload {
 // NewLoginPayload builds a account service login endpoint payload.
 func NewLoginPayload(body *LoginRequestBody) *account.LoginPayload {
 	v := &account.LoginPayload{
-		Email:    body.Email,
-		Password: body.Password,
+		Email:    *body.Email,
+		Password: *body.Password,
 	}
 
 	return v
@@ -122,6 +122,17 @@ func ValidateRegisterRequestBody(body *RegisterRequestBody) (err error) {
 	}
 	if body.LastName == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("lastName", "body"))
+	}
+	return
+}
+
+// ValidateLoginRequestBody runs the validations defined on LoginRequestBody
+func ValidateLoginRequestBody(body *LoginRequestBody) (err error) {
+	if body.Email == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("email", "body"))
+	}
+	if body.Password == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("password", "body"))
 	}
 	return
 }
