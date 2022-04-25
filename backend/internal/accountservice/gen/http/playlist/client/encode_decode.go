@@ -44,8 +44,8 @@ func EncodeGetAccountPlaylistCollectionRequest(encoder func(*http.Request) goaht
 		if !ok {
 			return goahttp.ErrInvalidType("playlist", "getAccountPlaylistCollection", "*playlist.GetAccountPlaylistCollectionPayload", v)
 		}
-		if p.Auth != nil {
-			head := *p.Auth
+		{
+			head := p.Auth
 			req.Header.Set("Authorization", head)
 		}
 		return nil
@@ -116,8 +116,8 @@ func EncodeCreateAccountPlaylistRequest(encoder func(*http.Request) goahttp.Enco
 		if !ok {
 			return goahttp.ErrInvalidType("playlist", "createAccountPlaylist", "*playlist.CreateAccountPlaylistPayload", v)
 		}
-		if p.Auth != nil {
-			head := *p.Auth
+		{
+			head := p.Auth
 			req.Header.Set("Authorization", head)
 		}
 		body := NewCreateAccountPlaylistRequestBody(p)
@@ -180,9 +180,7 @@ func (c *Client) BuildRenameAccountPlaylistRequest(ctx context.Context, v interf
 		if !ok {
 			return nil, goahttp.ErrInvalidType("playlist", "renameAccountPlaylist", "*playlist.RenameAccountPlaylistPayload", v)
 		}
-		if p.PlaylistID != nil {
-			playlistID = *p.PlaylistID
-		}
+		playlistID = p.PlaylistID
 	}
 	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: RenameAccountPlaylistPlaylistPath(playlistID)}
 	req, err := http.NewRequest("PUT", u.String(), nil)
@@ -204,8 +202,8 @@ func EncodeRenameAccountPlaylistRequest(encoder func(*http.Request) goahttp.Enco
 		if !ok {
 			return goahttp.ErrInvalidType("playlist", "renameAccountPlaylist", "*playlist.RenameAccountPlaylistPayload", v)
 		}
-		if p.Auth != nil {
-			head := *p.Auth
+		{
+			head := p.Auth
 			req.Header.Set("Authorization", head)
 		}
 		body := NewRenameAccountPlaylistRequestBody(p)
@@ -268,9 +266,7 @@ func (c *Client) BuildDeleteAccountPlaylistRequest(ctx context.Context, v interf
 		if !ok {
 			return nil, goahttp.ErrInvalidType("playlist", "deleteAccountPlaylist", "*playlist.DeleteAccountPlaylistPayload", v)
 		}
-		if p.PlaylistID != nil {
-			playlistID = *p.PlaylistID
-		}
+		playlistID = p.PlaylistID
 	}
 	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: DeleteAccountPlaylistPlaylistPath(playlistID)}
 	req, err := http.NewRequest("DELETE", u.String(), nil)
@@ -292,8 +288,8 @@ func EncodeDeleteAccountPlaylistRequest(encoder func(*http.Request) goahttp.Enco
 		if !ok {
 			return goahttp.ErrInvalidType("playlist", "deleteAccountPlaylist", "*playlist.DeleteAccountPlaylistPayload", v)
 		}
-		if p.Auth != nil {
-			head := *p.Auth
+		{
+			head := p.Auth
 			req.Header.Set("Authorization", head)
 		}
 		return nil
@@ -352,9 +348,7 @@ func (c *Client) BuildGetAccountPlaylistRequest(ctx context.Context, v interface
 		if !ok {
 			return nil, goahttp.ErrInvalidType("playlist", "getAccountPlaylist", "*playlist.GetAccountPlaylistPayload", v)
 		}
-		if p.PlaylistID != nil {
-			playlistID = *p.PlaylistID
-		}
+		playlistID = p.PlaylistID
 	}
 	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: GetAccountPlaylistPlaylistPath(playlistID)}
 	req, err := http.NewRequest("GET", u.String(), nil)
@@ -376,8 +370,8 @@ func EncodeGetAccountPlaylistRequest(encoder func(*http.Request) goahttp.Encoder
 		if !ok {
 			return goahttp.ErrInvalidType("playlist", "getAccountPlaylist", "*playlist.GetAccountPlaylistPayload", v)
 		}
-		if p.Auth != nil {
-			head := *p.Auth
+		{
+			head := p.Auth
 			req.Header.Set("Authorization", head)
 		}
 		return nil
@@ -552,8 +546,8 @@ func EncodeRemoveTrackFromAccountPlaylistRequest(encoder func(*http.Request) goa
 		if !ok {
 			return goahttp.ErrInvalidType("playlist", "removeTrackFromAccountPlaylist", "*playlist.RemoveTrackFromAccountPlaylistPayload", v)
 		}
-		if p.Auth != nil {
-			head := *p.Auth
+		{
+			head := p.Auth
 			req.Header.Set("Authorization", head)
 		}
 		return nil

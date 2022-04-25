@@ -77,7 +77,7 @@ paths:
       - name: Authorization
         in: header
         description: JSON Web Token
-        required: false
+        required: true
         type: string
         pattern: ^Bearer [^ ]+$
       responses:
@@ -99,7 +99,7 @@ paths:
       - name: Authorization
         in: header
         description: JSON Web Token
-        required: false
+        required: true
         type: string
         pattern: ^Bearer [^ ]+$
       - name: CreateAccountPlaylistRequestBody
@@ -107,6 +107,8 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/PlaylistCreateAccountPlaylistRequestBody'
+          required:
+          - name
       responses:
         "200":
           description: OK response.
@@ -131,7 +133,7 @@ paths:
       - name: Authorization
         in: header
         description: JSON Web Token
-        required: false
+        required: true
         type: string
         pattern: ^Bearer [^ ]+$
       responses:
@@ -159,7 +161,7 @@ paths:
       - name: Authorization
         in: header
         description: JSON Web Token
-        required: false
+        required: true
         type: string
         pattern: ^Bearer [^ ]+$
       - name: RenameAccountPlaylistRequestBody
@@ -167,6 +169,8 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/PlaylistRenameAccountPlaylistRequestBody'
+          required:
+          - name
       responses:
         "200":
           description: OK response.
@@ -189,7 +193,7 @@ paths:
       - name: Authorization
         in: header
         description: JSON Web Token
-        required: false
+        required: true
         type: string
         pattern: ^Bearer [^ ]+$
       responses:
@@ -252,7 +256,7 @@ paths:
       - name: Authorization
         in: header
         description: JSON Web Token
-        required: false
+        required: true
         type: string
         pattern: ^Bearer [^ ]+$
       responses:
@@ -429,6 +433,8 @@ definitions:
         example: Ut optio.
     example:
       name: Rem quisquam magnam sit voluptatem sit amet.
+    required:
+    - name
   PlaylistCreateAccountPlaylistResponseBody:
     title: PlaylistCreateAccountPlaylistResponseBody
     type: object
@@ -564,6 +570,8 @@ definitions:
         example: Illo libero et.
     example:
       name: Qui nemo aperiam.
+    required:
+    - name
   PlaylistRenameAccountPlaylistResponseBody:
     title: PlaylistRenameAccountPlaylistResponseBody
     type: object

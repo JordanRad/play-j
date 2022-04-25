@@ -37,11 +37,15 @@ func EncodeGetAccountPlaylistCollectionResponse(encoder func(context.Context, ht
 func DecodeGetAccountPlaylistCollectionRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			auth *string
+			auth string
+			err  error
 		)
-		authRaw := r.Header.Get("Authorization")
-		if authRaw != "" {
-			auth = &authRaw
+		auth = r.Header.Get("Authorization")
+		if auth == "" {
+			err = goa.MergeErrors(err, goa.MissingFieldError("Authorization", "header"))
+		}
+		if err != nil {
+			return nil, err
 		}
 		payload := NewGetAccountPlaylistCollectionPayload(auth)
 
@@ -76,13 +80,20 @@ func DecodeCreateAccountPlaylistRequest(mux goahttp.Muxer, decoder func(*http.Re
 			}
 			return nil, goa.DecodePayloadError(err.Error())
 		}
+		err = ValidateCreateAccountPlaylistRequestBody(&body)
+		if err != nil {
+			return nil, err
+		}
 
 		var (
-			auth *string
+			auth string
 		)
-		authRaw := r.Header.Get("Authorization")
-		if authRaw != "" {
-			auth = &authRaw
+		auth = r.Header.Get("Authorization")
+		if auth == "" {
+			err = goa.MergeErrors(err, goa.MissingFieldError("Authorization", "header"))
+		}
+		if err != nil {
+			return nil, err
 		}
 		payload := NewCreateAccountPlaylistPayload(&body, auth)
 
@@ -117,10 +128,14 @@ func DecodeRenameAccountPlaylistRequest(mux goahttp.Muxer, decoder func(*http.Re
 			}
 			return nil, goa.DecodePayloadError(err.Error())
 		}
+		err = ValidateRenameAccountPlaylistRequestBody(&body)
+		if err != nil {
+			return nil, err
+		}
 
 		var (
 			playlistID uint
-			auth       *string
+			auth       string
 
 			params = mux.Vars(r)
 		)
@@ -132,9 +147,9 @@ func DecodeRenameAccountPlaylistRequest(mux goahttp.Muxer, decoder func(*http.Re
 			}
 			playlistID = uint(v)
 		}
-		authRaw := r.Header.Get("Authorization")
-		if authRaw != "" {
-			auth = &authRaw
+		auth = r.Header.Get("Authorization")
+		if auth == "" {
+			err = goa.MergeErrors(err, goa.MissingFieldError("Authorization", "header"))
 		}
 		if err != nil {
 			return nil, err
@@ -163,7 +178,7 @@ func DecodeDeleteAccountPlaylistRequest(mux goahttp.Muxer, decoder func(*http.Re
 	return func(r *http.Request) (interface{}, error) {
 		var (
 			playlistID uint
-			auth       *string
+			auth       string
 			err        error
 
 			params = mux.Vars(r)
@@ -176,9 +191,9 @@ func DecodeDeleteAccountPlaylistRequest(mux goahttp.Muxer, decoder func(*http.Re
 			}
 			playlistID = uint(v)
 		}
-		authRaw := r.Header.Get("Authorization")
-		if authRaw != "" {
-			auth = &authRaw
+		auth = r.Header.Get("Authorization")
+		if auth == "" {
+			err = goa.MergeErrors(err, goa.MissingFieldError("Authorization", "header"))
 		}
 		if err != nil {
 			return nil, err
@@ -207,7 +222,7 @@ func DecodeGetAccountPlaylistRequest(mux goahttp.Muxer, decoder func(*http.Reque
 	return func(r *http.Request) (interface{}, error) {
 		var (
 			playlistID uint
-			auth       *string
+			auth       string
 			err        error
 
 			params = mux.Vars(r)
@@ -220,9 +235,9 @@ func DecodeGetAccountPlaylistRequest(mux goahttp.Muxer, decoder func(*http.Reque
 			}
 			playlistID = uint(v)
 		}
-		authRaw := r.Header.Get("Authorization")
-		if authRaw != "" {
-			auth = &authRaw
+		auth = r.Header.Get("Authorization")
+		if auth == "" {
+			err = goa.MergeErrors(err, goa.MissingFieldError("Authorization", "header"))
 		}
 		if err != nil {
 			return nil, err
@@ -305,7 +320,7 @@ func DecodeRemoveTrackFromAccountPlaylistRequest(mux goahttp.Muxer, decoder func
 		var (
 			playlistID uint
 			trackID    uint
-			auth       *string
+			auth       string
 			err        error
 
 			params = mux.Vars(r)
@@ -326,9 +341,9 @@ func DecodeRemoveTrackFromAccountPlaylistRequest(mux goahttp.Muxer, decoder func
 			}
 			trackID = uint(v)
 		}
-		authRaw := r.Header.Get("Authorization")
-		if authRaw != "" {
-			auth = &authRaw
+		auth = r.Header.Get("Authorization")
+		if auth == "" {
+			err = goa.MergeErrors(err, goa.MissingFieldError("Authorization", "header"))
 		}
 		if err != nil {
 			return nil, err

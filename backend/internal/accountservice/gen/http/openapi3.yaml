@@ -377,6 +377,8 @@ components:
           example: Laudantium quis harum reprehenderit.
       example:
         name: Maiores repudiandae eos.
+      required:
+      - name
     LoginRequestBody:
       type: object
       properties:

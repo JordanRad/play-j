@@ -61,6 +61,7 @@ var _ = Service("playlist", func() {
 		Result(AccountPlaylistCollectionResponse)
 		Payload(func() {
 			Attribute("auth", String)
+			Required("auth")
 		})
 		HTTP(func() {
 			Header("auth:Authorization", String, "JSON Web Token", func() {
@@ -75,6 +76,7 @@ var _ = Service("playlist", func() {
 		Payload(func() {
 			Attribute("auth", String, "Authorization Header")
 			Attribute("name", String, "Playlist name")
+			Required("auth", "name")
 		})
 		HTTP(func() {
 			Header("auth:Authorization", String, "JSON Web Token", func() {
@@ -90,6 +92,7 @@ var _ = Service("playlist", func() {
 			Attribute("auth", String, "Authorization Header")
 			Attribute("playlistID", UInt, "Playlist id to modify")
 			Attribute("name", String, "New playlist name")
+			Required("auth", "playlistID", "name")
 		})
 		HTTP(func() {
 			Header("auth:Authorization", String, "JSON Web Token", func() {
@@ -104,6 +107,7 @@ var _ = Service("playlist", func() {
 		Payload(func() {
 			Attribute("auth", String)
 			Attribute("playlistID", UInt)
+			Required("auth", "playlistID")
 		})
 		HTTP(func() {
 			Header("auth:Authorization", String, "JSON Web Token", func() {
@@ -118,6 +122,7 @@ var _ = Service("playlist", func() {
 		Payload(func() {
 			Attribute("playlistID", UInt, "Playlist ID")
 			Attribute("auth", String, "Authorization Header")
+			Required("auth", "playlistID")
 		})
 		HTTP(func() {
 			Header("auth:Authorization", String, "JSON Web Token", func() {
@@ -148,6 +153,7 @@ var _ = Service("playlist", func() {
 			Attribute("playlistID", UInt, "Playlist ID to modify")
 			Attribute("trackID", UInt, "Track ID to be deleted")
 			Attribute("auth", String, "Authorization Header")
+			Required("auth")
 		})
 		HTTP(func() {
 			Header("auth:Authorization", String, "JSON Web Token", func() {

@@ -9,6 +9,11 @@ import (
 	"github.com/JordanRad/play-j/backend/internal/auth"
 )
 
+// You only need **one** of these per package!
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -generate
+
+//counterfeiter:generate . Store
+
 type Store interface {
 	CreateAccountPlaylist(context.Context, uint, string) (bool, error)
 	GetAccountPlaylist(context.Context, uint, uint) (*dbmodels.Playlist, error)
@@ -72,7 +77,7 @@ func (s *Service) CreateAccountPlaylist(ctx context.Context, p *playlist.CreateA
 	if err != nil {
 		return nil, fmt.Errorf("error extracting token claims: %w", err)
 	}
-	_, err = s.store.CreateAccountPlaylist(ctx, tokenClaims.AccountID, *p.Name)
+	_, err = s.store.CreateAccountPlaylist(ctx, tokenClaims.AccountID, p.Name)
 	if err != nil {
 		return nil, fmt.Errorf("error creating new playlist: %w", err)
 	}
@@ -91,7 +96,7 @@ func (s *Service) DeleteAccountPlaylist(ctx context.Context, p *playlist.DeleteA
 		return nil, fmt.Errorf("error extracting token claims: %w", err)
 	}
 
-	_, err = s.store.DeleteAccountPlaylist(ctx, tokenClaims.AccountID, *p.PlaylistID)
+	_, err = s.store.DeleteAccountPlaylist(ctx, tokenClaims.AccountID, p.PlaylistID)
 	if err != nil {
 		return nil, fmt.Errorf("error deleting a playlist: %w", err)
 	}
@@ -110,7 +115,7 @@ func (s *Service) GetAccountPlaylist(ctx context.Context, p *playlist.GetAccount
 		return nil, fmt.Errorf("error extracting token claims: %w", err)
 	}
 
-	singlePlaylist, err := s.store.GetAccountPlaylist(ctx, tokenClaims.AccountID, *p.PlaylistID)
+	singlePlaylist, err := s.store.GetAccountPlaylist(ctx, tokenClaims.AccountID, p.PlaylistID)
 
 	if err != nil {
 		return nil, fmt.Errorf("[service] error getting a playlis: %w", err)
@@ -126,7 +131,12 @@ func (s *Service) GetAccountPlaylist(ctx context.Context, p *playlist.GetAccount
 }
 
 func (s *Service) RenameAccountPlaylist(ctx context.Context, p *playlist.RenameAccountPlaylistPayload) (*playlist.PlaylistModificationResponse, error) {
-	_, err := s.store.UpdateAccountPlaylistName(ctx, *p.PlaylistID, *p.Name)
+	// Extract claims from token
+	_, err := auth.ExtractJWTCLaims(ctx.Value("jwt").(string))
+	if err != nil {
+		return nil, fmt.Errorf("error extracting token claims: %w", err)
+	}
+	_, err = s.store.UpdateAccountPlaylistName(ctx, p.PlaylistID, p.Name)
 
 	if err != nil {
 		return nil, fmt.Errorf("error renaimg a playlist: %w", err)

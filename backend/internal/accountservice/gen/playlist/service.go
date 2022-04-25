@@ -78,31 +78,31 @@ type AddTrackToAccountPlaylistPayload struct {
 // createAccountPlaylist method.
 type CreateAccountPlaylistPayload struct {
 	// Authorization Header
-	Auth *string
+	Auth string
 	// Playlist name
-	Name *string
+	Name string
 }
 
 // DeleteAccountPlaylistPayload is the payload type of the playlist service
 // deleteAccountPlaylist method.
 type DeleteAccountPlaylistPayload struct {
-	Auth       *string
-	PlaylistID *uint
+	Auth       string
+	PlaylistID uint
 }
 
 // GetAccountPlaylistCollectionPayload is the payload type of the playlist
 // service getAccountPlaylistCollection method.
 type GetAccountPlaylistCollectionPayload struct {
-	Auth *string
+	Auth string
 }
 
 // GetAccountPlaylistPayload is the payload type of the playlist service
 // getAccountPlaylist method.
 type GetAccountPlaylistPayload struct {
 	// Playlist ID
-	PlaylistID *uint
+	PlaylistID uint
 	// Authorization Header
-	Auth *string
+	Auth string
 }
 
 // PlaylistModificationResponse is the result type of the playlist service
@@ -120,16 +120,16 @@ type RemoveTrackFromAccountPlaylistPayload struct {
 	// Track ID to be deleted
 	TrackID *uint
 	// Authorization Header
-	Auth *string
+	Auth string
 }
 
 // RenameAccountPlaylistPayload is the payload type of the playlist service
 // renameAccountPlaylist method.
 type RenameAccountPlaylistPayload struct {
 	// Authorization Header
-	Auth *string
+	Auth string
 	// Playlist id to modify
-	PlaylistID *uint
+	PlaylistID uint
 	// New playlist name
-	Name *string
+	Name string
 }

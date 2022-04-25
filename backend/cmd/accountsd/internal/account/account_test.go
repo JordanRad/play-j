@@ -30,7 +30,7 @@ var _ = Describe("Account Service", func() {
 			response *accountgen.RegisterResponse
 			err      error
 		)
-		Describe("WITH matching passwords given", func() {
+		Describe("Given matching passwords", func() {
 
 			JustBeforeEach(func() {
 				ctx = context.Background()
@@ -69,7 +69,7 @@ var _ = Describe("Account Service", func() {
 			})
 		})
 
-		Describe("WITHOUT matching passwords given", func() {
+		Describe("Given NOT matching passwords", func() {
 
 			JustBeforeEach(func() {
 				ctx = context.Background()
@@ -93,7 +93,7 @@ var _ = Describe("Account Service", func() {
 	})
 
 	Describe("Login", func() {
-		Describe("With correct password", func() {
+		Describe("Given correct password", func() {
 
 			var (
 				ctx      context.Context
@@ -145,7 +145,7 @@ var _ = Describe("Account Service", func() {
 			})
 		})
 
-		Describe("With INCORRECT password", func() {
+		Describe("Given INCORECT password", func() {
 
 			var (
 				ctx      context.Context

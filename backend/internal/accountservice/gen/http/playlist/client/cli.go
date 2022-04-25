@@ -20,11 +20,9 @@ import (
 // BuildGetAccountPlaylistCollectionPayload builds the payload for the playlist
 // getAccountPlaylistCollection endpoint from CLI flags.
 func BuildGetAccountPlaylistCollectionPayload(playlistGetAccountPlaylistCollectionAuth string) (*playlist.GetAccountPlaylistCollectionPayload, error) {
-	var auth *string
+	var auth string
 	{
-		if playlistGetAccountPlaylistCollectionAuth != "" {
-			auth = &playlistGetAccountPlaylistCollectionAuth
-		}
+		auth = playlistGetAccountPlaylistCollectionAuth
 	}
 	v := &playlist.GetAccountPlaylistCollectionPayload{}
 	v.Auth = auth
@@ -43,11 +41,9 @@ func BuildCreateAccountPlaylistPayload(playlistCreateAccountPlaylistBody string,
 			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"name\": \"Cum corporis autem repellendus.\"\n   }'")
 		}
 	}
-	var auth *string
+	var auth string
 	{
-		if playlistCreateAccountPlaylistAuth != "" {
-			auth = &playlistCreateAccountPlaylistAuth
-		}
+		auth = playlistCreateAccountPlaylistAuth
 	}
 	v := &playlist.CreateAccountPlaylistPayload{
 		Name: body.Name,
@@ -77,16 +73,14 @@ func BuildRenameAccountPlaylistPayload(playlistRenameAccountPlaylistBody string,
 			return nil, fmt.Errorf("invalid value for playlistID, must be UINT")
 		}
 	}
-	var auth *string
+	var auth string
 	{
-		if playlistRenameAccountPlaylistAuth != "" {
-			auth = &playlistRenameAccountPlaylistAuth
-		}
+		auth = playlistRenameAccountPlaylistAuth
 	}
 	v := &playlist.RenameAccountPlaylistPayload{
 		Name: body.Name,
 	}
-	v.PlaylistID = &playlistID
+	v.PlaylistID = playlistID
 	v.Auth = auth
 
 	return v, nil
@@ -105,14 +99,12 @@ func BuildDeleteAccountPlaylistPayload(playlistDeleteAccountPlaylistPlaylistID s
 			return nil, fmt.Errorf("invalid value for playlistID, must be UINT")
 		}
 	}
-	var auth *string
+	var auth string
 	{
-		if playlistDeleteAccountPlaylistAuth != "" {
-			auth = &playlistDeleteAccountPlaylistAuth
-		}
+		auth = playlistDeleteAccountPlaylistAuth
 	}
 	v := &playlist.DeleteAccountPlaylistPayload{}
-	v.PlaylistID = &playlistID
+	v.PlaylistID = playlistID
 	v.Auth = auth
 
 	return v, nil
@@ -131,14 +123,12 @@ func BuildGetAccountPlaylistPayload(playlistGetAccountPlaylistPlaylistID string,
 			return nil, fmt.Errorf("invalid value for playlistID, must be UINT")
 		}
 	}
-	var auth *string
+	var auth string
 	{
-		if playlistGetAccountPlaylistAuth != "" {
-			auth = &playlistGetAccountPlaylistAuth
-		}
+		auth = playlistGetAccountPlaylistAuth
 	}
 	v := &playlist.GetAccountPlaylistPayload{}
-	v.PlaylistID = &playlistID
+	v.PlaylistID = playlistID
 	v.Auth = auth
 
 	return v, nil
@@ -202,11 +192,9 @@ func BuildRemoveTrackFromAccountPlaylistPayload(playlistRemoveTrackFromAccountPl
 			return nil, fmt.Errorf("invalid value for trackID, must be UINT")
 		}
 	}
-	var auth *string
+	var auth string
 	{
-		if playlistRemoveTrackFromAccountPlaylistAuth != "" {
-			auth = &playlistRemoveTrackFromAccountPlaylistAuth
-		}
+		auth = playlistRemoveTrackFromAccountPlaylistAuth
 	}
 	v := &playlist.RemoveTrackFromAccountPlaylistPayload{}
 	v.PlaylistID = &playlistID

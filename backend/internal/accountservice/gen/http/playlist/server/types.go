@@ -11,6 +11,7 @@ package server
 
 import (
 	playlist "github.com/JordanRad/play-j/backend/internal/accountservice/gen/playlist"
+	goa "goa.design/goa/v3/pkg"
 )
 
 // CreateAccountPlaylistRequestBody is the type of the "playlist" service
@@ -179,7 +180,7 @@ func NewRemoveTrackFromAccountPlaylistResponseBody(res *playlist.PlaylistModific
 
 // NewGetAccountPlaylistCollectionPayload builds a playlist service
 // getAccountPlaylistCollection endpoint payload.
-func NewGetAccountPlaylistCollectionPayload(auth *string) *playlist.GetAccountPlaylistCollectionPayload {
+func NewGetAccountPlaylistCollectionPayload(auth string) *playlist.GetAccountPlaylistCollectionPayload {
 	v := &playlist.GetAccountPlaylistCollectionPayload{}
 	v.Auth = auth
 
@@ -188,9 +189,9 @@ func NewGetAccountPlaylistCollectionPayload(auth *string) *playlist.GetAccountPl
 
 // NewCreateAccountPlaylistPayload builds a playlist service
 // createAccountPlaylist endpoint payload.
-func NewCreateAccountPlaylistPayload(body *CreateAccountPlaylistRequestBody, auth *string) *playlist.CreateAccountPlaylistPayload {
+func NewCreateAccountPlaylistPayload(body *CreateAccountPlaylistRequestBody, auth string) *playlist.CreateAccountPlaylistPayload {
 	v := &playlist.CreateAccountPlaylistPayload{
-		Name: body.Name,
+		Name: *body.Name,
 	}
 	v.Auth = auth
 
@@ -199,11 +200,11 @@ func NewCreateAccountPlaylistPayload(body *CreateAccountPlaylistRequestBody, aut
 
 // NewRenameAccountPlaylistPayload builds a playlist service
 // renameAccountPlaylist endpoint payload.
-func NewRenameAccountPlaylistPayload(body *RenameAccountPlaylistRequestBody, playlistID uint, auth *string) *playlist.RenameAccountPlaylistPayload {
+func NewRenameAccountPlaylistPayload(body *RenameAccountPlaylistRequestBody, playlistID uint, auth string) *playlist.RenameAccountPlaylistPayload {
 	v := &playlist.RenameAccountPlaylistPayload{
-		Name: body.Name,
+		Name: *body.Name,
 	}
-	v.PlaylistID = &playlistID
+	v.PlaylistID = playlistID
 	v.Auth = auth
 
 	return v
@@ -211,9 +212,9 @@ func NewRenameAccountPlaylistPayload(body *RenameAccountPlaylistRequestBody, pla
 
 // NewDeleteAccountPlaylistPayload builds a playlist service
 // deleteAccountPlaylist endpoint payload.
-func NewDeleteAccountPlaylistPayload(playlistID uint, auth *string) *playlist.DeleteAccountPlaylistPayload {
+func NewDeleteAccountPlaylistPayload(playlistID uint, auth string) *playlist.DeleteAccountPlaylistPayload {
 	v := &playlist.DeleteAccountPlaylistPayload{}
-	v.PlaylistID = &playlistID
+	v.PlaylistID = playlistID
 	v.Auth = auth
 
 	return v
@@ -221,9 +222,9 @@ func NewDeleteAccountPlaylistPayload(playlistID uint, auth *string) *playlist.De
 
 // NewGetAccountPlaylistPayload builds a playlist service getAccountPlaylist
 // endpoint payload.
-func NewGetAccountPlaylistPayload(playlistID uint, auth *string) *playlist.GetAccountPlaylistPayload {
+func NewGetAccountPlaylistPayload(playlistID uint, auth string) *playlist.GetAccountPlaylistPayload {
 	v := &playlist.GetAccountPlaylistPayload{}
-	v.PlaylistID = &playlistID
+	v.PlaylistID = playlistID
 	v.Auth = auth
 
 	return v
@@ -242,11 +243,29 @@ func NewAddTrackToAccountPlaylistPayload(playlistID uint, trackID uint, auth *st
 
 // NewRemoveTrackFromAccountPlaylistPayload builds a playlist service
 // removeTrackFromAccountPlaylist endpoint payload.
-func NewRemoveTrackFromAccountPlaylistPayload(playlistID uint, trackID uint, auth *string) *playlist.RemoveTrackFromAccountPlaylistPayload {
+func NewRemoveTrackFromAccountPlaylistPayload(playlistID uint, trackID uint, auth string) *playlist.RemoveTrackFromAccountPlaylistPayload {
 	v := &playlist.RemoveTrackFromAccountPlaylistPayload{}
 	v.PlaylistID = &playlistID
 	v.TrackID = &trackID
 	v.Auth = auth
 
 	return v
+}
+
+// ValidateCreateAccountPlaylistRequestBody runs the validations defined on
+// CreateAccountPlaylistRequestBody
+func ValidateCreateAccountPlaylistRequestBody(body *CreateAccountPlaylistRequestBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	return
+}
+
+// ValidateRenameAccountPlaylistRequestBody runs the validations defined on
+// RenameAccountPlaylistRequestBody
+func ValidateRenameAccountPlaylistRequestBody(body *RenameAccountPlaylistRequestBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	return
 }

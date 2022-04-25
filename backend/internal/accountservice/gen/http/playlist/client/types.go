@@ -18,14 +18,14 @@ import (
 // "createAccountPlaylist" endpoint HTTP request body.
 type CreateAccountPlaylistRequestBody struct {
 	// Playlist name
-	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	Name string `form:"name" json:"name" xml:"name"`
 }
 
 // RenameAccountPlaylistRequestBody is the type of the "playlist" service
 // "renameAccountPlaylist" endpoint HTTP request body.
 type RenameAccountPlaylistRequestBody struct {
 	// New playlist name
-	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	Name string `form:"name" json:"name" xml:"name"`
 }
 
 // GetAccountPlaylistCollectionResponseBody is the type of the "playlist"

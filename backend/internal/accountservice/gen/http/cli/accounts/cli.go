@@ -65,24 +65,24 @@ func ParseEndpoint(
 		playlistFlags = flag.NewFlagSet("playlist", flag.ContinueOnError)
 
 		playlistGetAccountPlaylistCollectionFlags    = flag.NewFlagSet("get-account-playlist-collection", flag.ExitOnError)
-		playlistGetAccountPlaylistCollectionAuthFlag = playlistGetAccountPlaylistCollectionFlags.String("auth", "", "")
+		playlistGetAccountPlaylistCollectionAuthFlag = playlistGetAccountPlaylistCollectionFlags.String("auth", "REQUIRED", "")
 
 		playlistCreateAccountPlaylistFlags    = flag.NewFlagSet("create-account-playlist", flag.ExitOnError)
 		playlistCreateAccountPlaylistBodyFlag = playlistCreateAccountPlaylistFlags.String("body", "REQUIRED", "")
-		playlistCreateAccountPlaylistAuthFlag = playlistCreateAccountPlaylistFlags.String("auth", "", "")
+		playlistCreateAccountPlaylistAuthFlag = playlistCreateAccountPlaylistFlags.String("auth", "REQUIRED", "")
 
 		playlistRenameAccountPlaylistFlags          = flag.NewFlagSet("rename-account-playlist", flag.ExitOnError)
 		playlistRenameAccountPlaylistBodyFlag       = playlistRenameAccountPlaylistFlags.String("body", "REQUIRED", "")
 		playlistRenameAccountPlaylistPlaylistIDFlag = playlistRenameAccountPlaylistFlags.String("playlist-id", "REQUIRED", "Playlist id to modify")
-		playlistRenameAccountPlaylistAuthFlag       = playlistRenameAccountPlaylistFlags.String("auth", "", "")
+		playlistRenameAccountPlaylistAuthFlag       = playlistRenameAccountPlaylistFlags.String("auth", "REQUIRED", "")
 
 		playlistDeleteAccountPlaylistFlags          = flag.NewFlagSet("delete-account-playlist", flag.ExitOnError)
 		playlistDeleteAccountPlaylistPlaylistIDFlag = playlistDeleteAccountPlaylistFlags.String("playlist-id", "REQUIRED", "")
-		playlistDeleteAccountPlaylistAuthFlag       = playlistDeleteAccountPlaylistFlags.String("auth", "", "")
+		playlistDeleteAccountPlaylistAuthFlag       = playlistDeleteAccountPlaylistFlags.String("auth", "REQUIRED", "")
 
 		playlistGetAccountPlaylistFlags          = flag.NewFlagSet("get-account-playlist", flag.ExitOnError)
 		playlistGetAccountPlaylistPlaylistIDFlag = playlistGetAccountPlaylistFlags.String("playlist-id", "REQUIRED", "Playlist ID")
-		playlistGetAccountPlaylistAuthFlag       = playlistGetAccountPlaylistFlags.String("auth", "", "")
+		playlistGetAccountPlaylistAuthFlag       = playlistGetAccountPlaylistFlags.String("auth", "REQUIRED", "")
 
 		playlistAddTrackToAccountPlaylistFlags          = flag.NewFlagSet("add-track-to-account-playlist", flag.ExitOnError)
 		playlistAddTrackToAccountPlaylistPlaylistIDFlag = playlistAddTrackToAccountPlaylistFlags.String("playlist-id", "REQUIRED", "Playlist ID to modify")
@@ -92,7 +92,7 @@ func ParseEndpoint(
 		playlistRemoveTrackFromAccountPlaylistFlags          = flag.NewFlagSet("remove-track-from-account-playlist", flag.ExitOnError)
 		playlistRemoveTrackFromAccountPlaylistPlaylistIDFlag = playlistRemoveTrackFromAccountPlaylistFlags.String("playlist-id", "REQUIRED", "Playlist ID to modify")
 		playlistRemoveTrackFromAccountPlaylistTrackIDFlag    = playlistRemoveTrackFromAccountPlaylistFlags.String("track-id", "REQUIRED", "Track ID to be deleted")
-		playlistRemoveTrackFromAccountPlaylistAuthFlag       = playlistRemoveTrackFromAccountPlaylistFlags.String("auth", "", "")
+		playlistRemoveTrackFromAccountPlaylistAuthFlag       = playlistRemoveTrackFromAccountPlaylistFlags.String("auth", "REQUIRED", "")
 	)
 	accountFlags.Usage = accountUsage
 	accountRegisterFlags.Usage = accountRegisterUsage
