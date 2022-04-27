@@ -50,10 +50,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
       
-      - name: Dcoker Build Image
+      - name: Docker Build Image
         working-directory: ./backend
         run: |
-          docker build . --file Dockerfile.accountsd tag:latest
+          docker build --tag latest -f Dockerfile.accountsd .
           
       - name: Docker Push
         run: |
