@@ -55,9 +55,15 @@ jobs:
         run: |
           docker build --tag account-service -f Dockerfile.accountsd .
           
+          
+      - name: Retag Docker Image
+        working-directory: ./backend
+        run: |
+          docker tag account-service:latest ${{ secrets.DOCKERHUB_USERNAME }}/playj/account-service:latest
+          
       - name: Docker Push
         run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/playj:account-service
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/playj/account-service:latest
           
           
         
