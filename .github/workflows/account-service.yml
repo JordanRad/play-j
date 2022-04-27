@@ -39,6 +39,9 @@ jobs:
     needs: build
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
@@ -58,7 +61,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
-          context: ./backend
+          context: .
           file: Dockerfile.accountsd
           push: true
           tags: latest
