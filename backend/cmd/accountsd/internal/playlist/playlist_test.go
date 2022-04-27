@@ -418,4 +418,64 @@ var _ = Describe("Playlist Service", func() {
 			})
 		})
 	})
+
+	Describe("DeleteAccountPlaylist", func() {
+		Describe("Given a valid JWT", func() {
+			var (
+				ctx      context.Context
+				response *playlistgen.PlaylistModificationResponse
+				err      error
+			)
+
+			JustBeforeEach(func() {
+				ctx = context.Background()
+				ctx = context.WithValue(ctx, "jwt", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImFjY291bnRJRCI6IjEiLCJlbWFpbCI6ImpvZXNtaXRoQGFidi5iZyJ9LCJleHAiOjM5OTk5OTE1MjgsImlzcyI6InBsYXlqLWFjY291bnQtc2VydmljZSJ9.fMaYAI_qnb97cfI7bsYT-WK8U9FAT0_DGXLJi5ejmPA")
+				payload := &playlistgen.DeleteAccountPlaylistPayload{
+					Auth:       "Bearer token",
+					PlaylistID: 1,
+				}
+				response, err = service.DeleteAccountPlaylist(ctx, payload)
+			})
+
+			When("track is removed from a playlist susccessfully", func() {
+				BeforeEach(func() {
+					fakeStore.DeleteAccountPlaylistReturns(true, nil)
+				})
+
+				It("should return a success message", func() {
+					Expect(response.Message).To(Equal("Playlist deleted successfully"))
+				})
+				It("should NOT return any error", func() {
+					Expect(err).To(Not(HaveOccurred()))
+				})
+			})
+
+		})
+
+		Describe("Given an INVALID JWT", func() {
+			var (
+				ctx      context.Context
+				response *playlistgen.PlaylistModificationResponse
+				err      error
+			)
+
+			JustBeforeEach(func() {
+				ctx = context.Background()
+				ctx = context.WithValue(ctx, "jwt", "eyJhbGpXVCJ9.eyJkYX9.fMfUPA")
+				payload := &playlistgen.DeleteAccountPlaylistPayload{
+					Auth:       "Bearer token",
+					PlaylistID: 1,
+				}
+				response, err = service.DeleteAccountPlaylist(ctx, payload)
+			})
+
+			When("operation is unathorized", func() {
+
+				It("should return an error", func() {
+					Expect(response).To(BeNil())
+					Expect(err).To(HaveOccurred())
+				})
+			})
+		})
+	})
 })
