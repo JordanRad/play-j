@@ -12,32 +12,32 @@ on:
     - 'backend/cmd/accountsd/**'
 
 jobs:
-#   build:
-#     name: Setup, Test & Build
-#     runs-on: ubuntu-latest
-#     steps:
-#     - uses: actions/checkout@v3
+  build:
+    name: Setup, Test & Build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
 
-#     - name: Set up Go
-#       uses: actions/setup-go@v3
-#       with:
-#         go-version: 1.17
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.17
 
-#     - name: "Run common tests"
-#       working-directory: ./backend/internal
-#       run: go test ./... -v --cover
+    - name: "Run common tests"
+      working-directory: ./backend/internal
+      run: go test ./... -v --cover
 
-#     - name: "Run account service tests"
-#       working-directory: ./backend/cmd/accountsd
-#       run: go test ./... -v --cover
+    - name: "Run account service tests"
+      working-directory: ./backend/cmd/accountsd
+      run: go test ./... -v --cover
 
-#     - name: Build
-#       working-directory: ./backend/cmd/accountsd
-#       run: go build -v 
+    - name: Build
+      working-directory: ./backend/cmd/accountsd
+      run: go build -v 
       
       
   docker:
-    #needs: build
+    needs: build
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     steps:
