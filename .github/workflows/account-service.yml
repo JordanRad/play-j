@@ -53,11 +53,11 @@ jobs:
       - name: Docker Build Image
         working-directory: ./backend
         run: |
-          docker build --tag latest -f Dockerfile.accountsd .
+          docker build --tag account-service -f Dockerfile.accountsd .
           
       - name: Docker Push
         run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/playj
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/playj:account-service
           
           
         
