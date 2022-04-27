@@ -515,12 +515,8 @@ func (c *Client) BuildRemoveTrackFromAccountPlaylistRequest(ctx context.Context,
 		if !ok {
 			return nil, goahttp.ErrInvalidType("playlist", "removeTrackFromAccountPlaylist", "*playlist.RemoveTrackFromAccountPlaylistPayload", v)
 		}
-		if p.PlaylistID != nil {
-			playlistID = *p.PlaylistID
-		}
-		if p.TrackID != nil {
-			trackID = *p.TrackID
-		}
+		playlistID = p.PlaylistID
+		trackID = p.TrackID
 	}
 	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: RemoveTrackFromAccountPlaylistPlaylistPath(playlistID, trackID)}
 	req, err := http.NewRequest("DELETE", u.String(), nil)

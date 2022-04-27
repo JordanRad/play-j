@@ -116,9 +116,9 @@ type PlaylistModificationResponse struct {
 // service removeTrackFromAccountPlaylist method.
 type RemoveTrackFromAccountPlaylistPayload struct {
 	// Playlist ID to modify
-	PlaylistID *uint
+	PlaylistID uint
 	// Track ID to be deleted
-	TrackID *uint
+	TrackID uint
 	// Authorization Header
 	Auth string
 }

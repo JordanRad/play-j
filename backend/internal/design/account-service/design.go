@@ -154,7 +154,7 @@ var _ = Service("playlist", func() {
 			Attribute("playlistID", UInt, "Playlist ID to modify")
 			Attribute("trackID", UInt, "Track ID to be deleted")
 			Attribute("auth", String, "Authorization Header")
-			Required("auth")
+			Required("auth", "trackID", "playlistID")
 		})
 		HTTP(func() {
 			Header("auth:Authorization", String, "JSON Web Token", func() {

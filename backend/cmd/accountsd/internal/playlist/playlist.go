@@ -170,14 +170,20 @@ func (s *Service) AddTrackToAccountPlaylist(ctx context.Context, p *playlist.Add
 }
 
 func (s *Service) RemoveTrackFromAccountPlaylist(ctx context.Context, p *playlist.RemoveTrackFromAccountPlaylistPayload) (*playlist.PlaylistModificationResponse, error) {
-	_, err := s.store.UpdateAccountPlaylistTracks(ctx, *p.PlaylistID, *p.TrackID, "REMOVE")
+	// Extract claims from token
+	_, err := auth.ExtractJWTCLaims(ctx.Value("jwt").(string))
+	if err != nil {
+		return nil, fmt.Errorf("error extracting token claims: %w", err)
+	}
+
+	_, err = s.store.UpdateAccountPlaylistTracks(ctx, p.PlaylistID, p.TrackID, "REMOVE")
 
 	if err != nil {
 		return nil, fmt.Errorf("service error removing a track from a playlist: %w", err)
 	}
 
 	response := &playlist.PlaylistModificationResponse{
-		Message: fmt.Sprintf("Track with ID: %d has been removed from Playlist with ID: %d successfully", *p.TrackID, *p.PlaylistID),
+		Message: fmt.Sprintf("Track with ID: %d has been removed from Playlist with ID: %d successfully", p.TrackID, p.PlaylistID),
 	}
 
 	return response, nil

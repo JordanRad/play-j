@@ -195,8 +195,8 @@ func BuildRemoveTrackFromAccountPlaylistPayload(playlistRemoveTrackFromAccountPl
 		auth = playlistRemoveTrackFromAccountPlaylistAuth
 	}
 	v := &playlist.RemoveTrackFromAccountPlaylistPayload{}
-	v.PlaylistID = &playlistID
-	v.TrackID = &trackID
+	v.PlaylistID = playlistID
+	v.TrackID = trackID
 	v.Auth = auth
 
 	return v, nil

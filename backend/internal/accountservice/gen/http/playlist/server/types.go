@@ -245,8 +245,8 @@ func NewAddTrackToAccountPlaylistPayload(playlistID uint, trackID uint, auth str
 // removeTrackFromAccountPlaylist endpoint payload.
 func NewRemoveTrackFromAccountPlaylistPayload(playlistID uint, trackID uint, auth string) *playlist.RemoveTrackFromAccountPlaylistPayload {
 	v := &playlist.RemoveTrackFromAccountPlaylistPayload{}
-	v.PlaylistID = &playlistID
-	v.TrackID = &trackID
+	v.PlaylistID = playlistID
+	v.TrackID = trackID
 	v.Auth = auth
 
 	return v

@@ -356,4 +356,66 @@ var _ = Describe("Playlist Service", func() {
 			})
 		})
 	})
+
+	Describe("RemoveTrackFromAccountPlaylist", func() {
+		Describe("Given a valid JWT", func() {
+			var (
+				ctx      context.Context
+				response *playlistgen.PlaylistModificationResponse
+				err      error
+			)
+
+			JustBeforeEach(func() {
+				ctx = context.Background()
+				ctx = context.WithValue(ctx, "jwt", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImFjY291bnRJRCI6IjEiLCJlbWFpbCI6ImpvZXNtaXRoQGFidi5iZyJ9LCJleHAiOjM5OTk5OTE1MjgsImlzcyI6InBsYXlqLWFjY291bnQtc2VydmljZSJ9.fMaYAI_qnb97cfI7bsYT-WK8U9FAT0_DGXLJi5ejmPA")
+				payload := &playlistgen.RemoveTrackFromAccountPlaylistPayload{
+					Auth:       "Bearer token",
+					PlaylistID: 1,
+					TrackID:    101,
+				}
+				response, err = service.RemoveTrackFromAccountPlaylist(ctx, payload)
+			})
+
+			When("track is removed from a playlist susccessfully", func() {
+				BeforeEach(func() {
+					fakeStore.UpdateAccountPlaylistTracksReturns(true, nil)
+				})
+
+				It("should return a success message", func() {
+					Expect(response.Message).To(Equal(fmt.Sprintf("Track with ID: %d has been removed from Playlist with ID: %d successfully", 101, 1)))
+				})
+				It("should NOT return any error", func() {
+					Expect(err).To(Not(HaveOccurred()))
+				})
+			})
+
+		})
+
+		Describe("Given an INVALID JWT", func() {
+			var (
+				ctx      context.Context
+				response *playlistgen.PlaylistModificationResponse
+				err      error
+			)
+
+			JustBeforeEach(func() {
+				ctx = context.Background()
+				ctx = context.WithValue(ctx, "jwt", "eyJhbGpXVCJ9.eyJkYX9.fMfUPA")
+				payload := &playlistgen.RemoveTrackFromAccountPlaylistPayload{
+					Auth:       "Bearer token",
+					PlaylistID: 1,
+					TrackID:    101,
+				}
+				response, err = service.RemoveTrackFromAccountPlaylist(ctx, payload)
+			})
+
+			When("operation is unathorized", func() {
+
+				It("should return an error", func() {
+					Expect(response).To(BeNil())
+					Expect(err).To(HaveOccurred())
+				})
+			})
+		})
+	})
 })
