@@ -11,7 +11,6 @@ on:
     - 'backend/cmd/accountsd/**'
 
 jobs:
-
   build:
     name: Setup, Test & Build
     runs-on: ubuntu-latest
@@ -36,8 +35,8 @@ jobs:
       run: go build -v 
       
       
-      
   docker:
+    needs: build
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     steps:
@@ -59,8 +58,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
-          dockerfile: Dockerfile.accountsd
           context: ./backend
+          file: Dockerfile.accountsd
           push: true
           tags: latest
           labels: account-service
