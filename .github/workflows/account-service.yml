@@ -50,7 +50,7 @@ jobs:
           PASSWORD: ${{ secrets.DOCKEHUB_PASSWORD }}
         
         run: |
-          docker login -u $USER -p $PASSWORD
+          echo "$PASSWORD" | docker login -u "$USER" --password-stdin
       
       - name: Dcoker Build Image
         working-directory: ./backend
