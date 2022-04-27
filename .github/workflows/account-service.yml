@@ -13,6 +13,7 @@ on:
 jobs:
 
   build:
+    name: Setup, Test & Build
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -33,3 +34,34 @@ jobs:
     - name: Build
       working-directory: ./backend/cmd/accountsd
       run: go build -v 
+      
+      
+      
+  docker:
+    name: Push Docker image to Docker Hub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+      
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: j2r1307/playj
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          dockerfile: Dockerfile.accountsd
+          context: ./backend
+          push: true
+          tags: latest
+          labels: account-service
+  
