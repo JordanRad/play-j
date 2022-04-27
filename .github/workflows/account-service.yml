@@ -59,11 +59,12 @@ jobs:
       - name: Retag Docker Image
         working-directory: ./backend
         run: |
-          docker tag account-service:latest ${{ secrets.DOCKERHUB_USERNAME }}/playj/account-service:latest
+          docker tag account-service:latest ${{ secrets.DOCKERHUB_USERNAME }}/playj:account-service
+
           
       - name: Docker Push
         run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/playj/account-service:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/playj:account-service
           
           
         
