@@ -267,7 +267,7 @@ func DecodeAddTrackToAccountPlaylistRequest(mux goahttp.Muxer, decoder func(*htt
 		var (
 			playlistID uint
 			trackID    uint
-			auth       *string
+			auth       string
 			err        error
 
 			params = mux.Vars(r)
@@ -288,9 +288,9 @@ func DecodeAddTrackToAccountPlaylistRequest(mux goahttp.Muxer, decoder func(*htt
 			}
 			trackID = uint(v)
 		}
-		authRaw := r.Header.Get("Authorization")
-		if authRaw != "" {
-			auth = &authRaw
+		auth = r.Header.Get("Authorization")
+		if auth == "" {
+			err = goa.MergeErrors(err, goa.MissingFieldError("Authorization", "header"))
 		}
 		if err != nil {
 			return nil, err

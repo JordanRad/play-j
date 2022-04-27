@@ -150,14 +150,20 @@ func (s *Service) RenameAccountPlaylist(ctx context.Context, p *playlist.RenameA
 }
 
 func (s *Service) AddTrackToAccountPlaylist(ctx context.Context, p *playlist.AddTrackToAccountPlaylistPayload) (*playlist.PlaylistModificationResponse, error) {
-	_, err := s.store.UpdateAccountPlaylistTracks(ctx, *p.PlaylistID, *p.TrackID, "ADD")
+	// Extract claims from token
+	_, err := auth.ExtractJWTCLaims(ctx.Value("jwt").(string))
+	if err != nil {
+		return nil, fmt.Errorf("error extracting token claims: %w", err)
+	}
+
+	_, err = s.store.UpdateAccountPlaylistTracks(ctx, p.PlaylistID, p.TrackID, "ADD")
 
 	if err != nil {
 		return nil, fmt.Errorf("service error adding track to a playlist: %w", err)
 	}
 
 	response := &playlist.PlaylistModificationResponse{
-		Message: fmt.Sprintf("Track with ID: %d has been added to Playlist with ID: %d successfully", *p.TrackID, *p.PlaylistID),
+		Message: fmt.Sprintf("Track with ID: %d has been added to Playlist with ID: %d successfully", p.TrackID, p.PlaylistID),
 	}
 
 	return response, nil

@@ -25,11 +25,11 @@ jobs:
 
     - name: "Run common tests"
       working-directory: ./backend/internal
-      run: go test ./... -v
+      run: go test ./... -v --cover
 
     - name: "Run account service tests"
       working-directory: ./backend/cmd/accountsd
-      run: go test ./... -v
+      run: go test ./... -v --cover
 
     - name: Build
       working-directory: ./backend/cmd/accountsd

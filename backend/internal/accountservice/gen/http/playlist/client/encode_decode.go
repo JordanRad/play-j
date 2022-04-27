@@ -431,12 +431,8 @@ func (c *Client) BuildAddTrackToAccountPlaylistRequest(ctx context.Context, v in
 		if !ok {
 			return nil, goahttp.ErrInvalidType("playlist", "addTrackToAccountPlaylist", "*playlist.AddTrackToAccountPlaylistPayload", v)
 		}
-		if p.PlaylistID != nil {
-			playlistID = *p.PlaylistID
-		}
-		if p.TrackID != nil {
-			trackID = *p.TrackID
-		}
+		playlistID = p.PlaylistID
+		trackID = p.TrackID
 	}
 	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: AddTrackToAccountPlaylistPlaylistPath(playlistID, trackID)}
 	req, err := http.NewRequest("POST", u.String(), nil)
@@ -458,8 +454,8 @@ func EncodeAddTrackToAccountPlaylistRequest(encoder func(*http.Request) goahttp.
 		if !ok {
 			return goahttp.ErrInvalidType("playlist", "addTrackToAccountPlaylist", "*playlist.AddTrackToAccountPlaylistPayload", v)
 		}
-		if p.Auth != nil {
-			head := *p.Auth
+		{
+			head := p.Auth
 			req.Header.Set("Authorization", head)
 		}
 		return nil

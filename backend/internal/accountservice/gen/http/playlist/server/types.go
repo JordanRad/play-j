@@ -232,10 +232,10 @@ func NewGetAccountPlaylistPayload(playlistID uint, auth string) *playlist.GetAcc
 
 // NewAddTrackToAccountPlaylistPayload builds a playlist service
 // addTrackToAccountPlaylist endpoint payload.
-func NewAddTrackToAccountPlaylistPayload(playlistID uint, trackID uint, auth *string) *playlist.AddTrackToAccountPlaylistPayload {
+func NewAddTrackToAccountPlaylistPayload(playlistID uint, trackID uint, auth string) *playlist.AddTrackToAccountPlaylistPayload {
 	v := &playlist.AddTrackToAccountPlaylistPayload{}
-	v.PlaylistID = &playlistID
-	v.TrackID = &trackID
+	v.PlaylistID = playlistID
+	v.TrackID = trackID
 	v.Auth = auth
 
 	return v

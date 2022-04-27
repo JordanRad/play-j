@@ -156,15 +156,13 @@ func BuildAddTrackToAccountPlaylistPayload(playlistAddTrackToAccountPlaylistPlay
 			return nil, fmt.Errorf("invalid value for trackID, must be UINT")
 		}
 	}
-	var auth *string
+	var auth string
 	{
-		if playlistAddTrackToAccountPlaylistAuth != "" {
-			auth = &playlistAddTrackToAccountPlaylistAuth
-		}
+		auth = playlistAddTrackToAccountPlaylistAuth
 	}
 	v := &playlist.AddTrackToAccountPlaylistPayload{}
-	v.PlaylistID = &playlistID
-	v.TrackID = &trackID
+	v.PlaylistID = playlistID
+	v.TrackID = trackID
 	v.Auth = auth
 
 	return v, nil

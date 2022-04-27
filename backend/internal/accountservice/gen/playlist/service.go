@@ -67,11 +67,11 @@ type AccountPlaylistResponse struct {
 // addTrackToAccountPlaylist method.
 type AddTrackToAccountPlaylistPayload struct {
 	// Playlist ID to modify
-	PlaylistID *uint
+	PlaylistID uint
 	// Track ID to be added
-	TrackID *uint
+	TrackID uint
 	// Authorization Header
-	Auth *string
+	Auth string
 }
 
 // CreateAccountPlaylistPayload is the payload type of the playlist service

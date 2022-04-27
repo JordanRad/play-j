@@ -225,7 +225,7 @@ paths:
       - name: Authorization
         in: header
         description: JSON Web Token
-        required: false
+        required: true
         type: string
         pattern: ^Bearer [^ ]+$
       responses:

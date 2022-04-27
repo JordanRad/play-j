@@ -87,7 +87,7 @@ func ParseEndpoint(
 		playlistAddTrackToAccountPlaylistFlags          = flag.NewFlagSet("add-track-to-account-playlist", flag.ExitOnError)
 		playlistAddTrackToAccountPlaylistPlaylistIDFlag = playlistAddTrackToAccountPlaylistFlags.String("playlist-id", "REQUIRED", "Playlist ID to modify")
 		playlistAddTrackToAccountPlaylistTrackIDFlag    = playlistAddTrackToAccountPlaylistFlags.String("track-id", "REQUIRED", "Track ID to be added")
-		playlistAddTrackToAccountPlaylistAuthFlag       = playlistAddTrackToAccountPlaylistFlags.String("auth", "", "")
+		playlistAddTrackToAccountPlaylistAuthFlag       = playlistAddTrackToAccountPlaylistFlags.String("auth", "REQUIRED", "")
 
 		playlistRemoveTrackFromAccountPlaylistFlags          = flag.NewFlagSet("remove-track-from-account-playlist", flag.ExitOnError)
 		playlistRemoveTrackFromAccountPlaylistPlaylistIDFlag = playlistRemoveTrackFromAccountPlaylistFlags.String("playlist-id", "REQUIRED", "Playlist ID to modify")
