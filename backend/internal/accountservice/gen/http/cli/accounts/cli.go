@@ -26,7 +26,7 @@ import (
 //    command (subcommand1|subcommand2|...)
 //
 func UsageCommands() string {
-	return `account (register|login)
+	return `account (register|login|get-profile)
 playlist (get-account-playlist-collection|create-account-playlist|rename-account-playlist|delete-account-playlist|get-account-playlist|add-track-to-account-playlist|remove-track-from-account-playlist)
 `
 }
@@ -34,13 +34,13 @@ playlist (get-account-playlist-collection|create-account-playlist|rename-account
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` account register --body '{
-      "confirmedPassword": "Numquam quos excepturi vero ad est.",
-      "email": "Dolorum et labore cumque quisquam dolorem adipisci.",
-      "firstName": "Quibusdam omnis nemo provident eos quis ut.",
-      "lastName": "Ipsum et molestiae.",
-      "password": "Voluptates id recusandae temporibus et dolore."
+      "confirmedPassword": "Expedita quidem cupiditate ipsam quis.",
+      "email": "Ipsum illum cupiditate corporis aut.",
+      "firstName": "Minus sint rerum exercitationem.",
+      "lastName": "Quo et quasi sint.",
+      "password": "Natus et enim consectetur sit."
    }'` + "\n" +
-		os.Args[0] + ` playlist get-account-playlist-collection --auth "Illum cupiditate corporis aut vero."` + "\n" +
+		os.Args[0] + ` playlist get-account-playlist-collection --auth "Voluptate dolor omnis deserunt consectetur ipsa ab."` + "\n" +
 		""
 }
 
@@ -61,6 +61,9 @@ func ParseEndpoint(
 
 		accountLoginFlags    = flag.NewFlagSet("login", flag.ExitOnError)
 		accountLoginBodyFlag = accountLoginFlags.String("body", "REQUIRED", "")
+
+		accountGetProfileFlags             = flag.NewFlagSet("get-profile", flag.ExitOnError)
+		accountGetProfilePaymentsLimitFlag = accountGetProfileFlags.String("payments-limit", "REQUIRED", "")
 
 		playlistFlags = flag.NewFlagSet("playlist", flag.ContinueOnError)
 
@@ -97,6 +100,7 @@ func ParseEndpoint(
 	accountFlags.Usage = accountUsage
 	accountRegisterFlags.Usage = accountRegisterUsage
 	accountLoginFlags.Usage = accountLoginUsage
+	accountGetProfileFlags.Usage = accountGetProfileUsage
 
 	playlistFlags.Usage = playlistUsage
 	playlistGetAccountPlaylistCollectionFlags.Usage = playlistGetAccountPlaylistCollectionUsage
@@ -148,6 +152,9 @@ func ParseEndpoint(
 
 			case "login":
 				epf = accountLoginFlags
+
+			case "get-profile":
+				epf = accountGetProfileFlags
 
 			}
 
@@ -205,6 +212,9 @@ func ParseEndpoint(
 			case "login":
 				endpoint = c.Login()
 				data, err = accountc.BuildLoginPayload(*accountLoginBodyFlag)
+			case "get-profile":
+				endpoint = c.GetProfile()
+				data, err = accountc.BuildGetProfilePayload(*accountGetProfilePaymentsLimitFlag)
 			}
 		case "playlist":
 			c := playlistc.NewClient(scheme, host, doer, enc, dec, restore)
@@ -249,6 +259,7 @@ Usage:
 COMMAND:
     register: Register implements register.
     login: Login implements login.
+    get-profile: GetProfile implements getProfile.
 
 Additional help:
     %[1]s account COMMAND --help
@@ -262,11 +273,11 @@ Register implements register.
 
 Example:
     %[1]s account register --body '{
-      "confirmedPassword": "Numquam quos excepturi vero ad est.",
-      "email": "Dolorum et labore cumque quisquam dolorem adipisci.",
-      "firstName": "Quibusdam omnis nemo provident eos quis ut.",
-      "lastName": "Ipsum et molestiae.",
-      "password": "Voluptates id recusandae temporibus et dolore."
+      "confirmedPassword": "Expedita quidem cupiditate ipsam quis.",
+      "email": "Ipsum illum cupiditate corporis aut.",
+      "firstName": "Minus sint rerum exercitationem.",
+      "lastName": "Quo et quasi sint.",
+      "password": "Natus et enim consectetur sit."
    }'
 `, os.Args[0])
 }
@@ -279,9 +290,20 @@ Login implements login.
 
 Example:
     %[1]s account login --body '{
-      "email": "Iusto non mollitia qui non culpa laborum.",
-      "password": "Corrupti voluptas officia nostrum quia voluptatum."
+      "email": "Et repudiandae cum corporis autem repellendus laudantium.",
+      "password": "Veniam est fuga vel et est quasi."
    }'
+`, os.Args[0])
+}
+
+func accountGetProfileUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] account get-profile -payments-limit INT
+
+GetProfile implements getProfile.
+    -payments-limit INT: 
+
+Example:
+    %[1]s account get-profile --payments-limit 8280708390738491956
 `, os.Args[0])
 }
 
@@ -311,7 +333,7 @@ GetAccountPlaylistCollection implements getAccountPlaylistCollection.
     -auth STRING: 
 
 Example:
-    %[1]s playlist get-account-playlist-collection --auth "Illum cupiditate corporis aut vero."
+    %[1]s playlist get-account-playlist-collection --auth "Voluptate dolor omnis deserunt consectetur ipsa ab."
 `, os.Args[0])
 }
 
@@ -324,8 +346,8 @@ CreateAccountPlaylist implements createAccountPlaylist.
 
 Example:
     %[1]s playlist create-account-playlist --body '{
-      "name": "Cum corporis autem repellendus."
-   }' --auth "Non veniam est."
+      "name": "A praesentium rerum accusamus occaecati velit et."
+   }' --auth "Est voluptatibus voluptas."
 `, os.Args[0])
 }
 
@@ -339,8 +361,8 @@ RenameAccountPlaylist implements renameAccountPlaylist.
 
 Example:
     %[1]s playlist rename-account-playlist --body '{
-      "name": "Voluptatem sequi adipisci iure dolorem nesciunt itaque."
-   }' --playlist-id 5048963703141644532 --auth "Praesentium commodi ratione."
+      "name": "Vitae dolore temporibus dolore."
+   }' --playlist-id 11778886652900693490 --auth "Rerum veniam."
 `, os.Args[0])
 }
 
@@ -352,7 +374,7 @@ DeleteAccountPlaylist implements deleteAccountPlaylist.
     -auth STRING: 
 
 Example:
-    %[1]s playlist delete-account-playlist --playlist-id 16587001386555198618 --auth "Qui qui sed."
+    %[1]s playlist delete-account-playlist --playlist-id 1877739173214190378 --auth "Suscipit quia tempora."
 `, os.Args[0])
 }
 
@@ -364,7 +386,7 @@ GetAccountPlaylist implements getAccountPlaylist.
     -auth STRING: 
 
 Example:
-    %[1]s playlist get-account-playlist --playlist-id 9750426786919826982 --auth "Eius et quasi repudiandae."
+    %[1]s playlist get-account-playlist --playlist-id 15783820592834352615 --auth "Dolorem voluptas et culpa doloremque."
 `, os.Args[0])
 }
 
@@ -377,7 +399,7 @@ AddTrackToAccountPlaylist implements addTrackToAccountPlaylist.
     -auth STRING: 
 
 Example:
-    %[1]s playlist add-track-to-account-playlist --playlist-id 7897115789263760436 --track-id 14345441535750740261 --auth "Deserunt consectetur ipsa ab quibusdam enim ratione."
+    %[1]s playlist add-track-to-account-playlist --playlist-id 8368893647381533371 --track-id 13236977993118018236 --auth "Voluptas libero id est."
 `, os.Args[0])
 }
 
@@ -390,6 +412,6 @@ RemoveTrackFromAccountPlaylist implements removeTrackFromAccountPlaylist.
     -auth STRING: 
 
 Example:
-    %[1]s playlist remove-track-from-account-playlist --playlist-id 8873083792410562693 --track-id 7249225158853866608 --auth "A libero dolore aliquid voluptas ut."
+    %[1]s playlist remove-track-from-account-playlist --playlist-id 3204963864533037578 --track-id 12756086805493295026 --auth "Ex ratione alias ipsum suscipit quos."
 `, os.Args[0])
 }

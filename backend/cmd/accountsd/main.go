@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
@@ -13,6 +14,10 @@ import (
 	playlistsrv "github.com/JordanRad/play-j/backend/internal/accountservice/gen/http/playlist/server"
 	playlistsvc "github.com/JordanRad/play-j/backend/internal/accountservice/gen/playlist"
 	goahttp "goa.design/goa/v3/http"
+
+	pb "github.com/JordanRad/play-j/backend/internal/paymentservice/gen/grpc/payment/pb"
+
+	"google.golang.org/grpc"
 
 	"github.com/JordanRad/play-j/backend/internal/middleware"
 
@@ -51,6 +56,31 @@ func connectDB(config *config) *sql.DB {
 }
 
 func main() {
+
+	go func() {
+		var conn *grpc.ClientConn
+		conn, err := grpc.Dial(":5002", grpc.WithInsecure())
+		if err != nil {
+			log.Fatalf("cannot connect to gRPC server: %s", err)
+		}
+		defer conn.Close()
+
+		paymentClient := pb.NewPaymentClient(conn)
+		fmt.Printf("gRPC client is connected to gRPC server on localhost:%d ...\n", 5002)
+		ctx := context.Background()
+		p := &pb.GetPaymentsByAccountIDRequest{
+			AccountId: 3,
+			Limit:     2,
+		}
+		resp, err := paymentClient.GetPaymentsByAccountID(ctx, p)
+
+		if err != nil {
+			fmt.Printf("error gRPC response: %s", err)
+		}
+
+		fmt.Print(resp)
+
+	}()
 	config, err := configFromEnv()
 
 	if err != nil {
@@ -87,6 +117,7 @@ func main() {
 	}
 
 	var accountServer *accountsrv.Server = accountsrv.New(accountEndpoints, mux, dec, enc, nil, nil)
+	accountServer.Use(middleware.AuthenticateRequest())
 	accountsrv.Mount(mux, accountServer)
 
 	var playlistServer *playlistsrv.Server = playlistsrv.New(playlistEndpoints, mux, dec, enc, nil, nil)

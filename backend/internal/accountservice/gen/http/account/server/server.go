@@ -22,10 +22,11 @@ import (
 
 // Server lists the account service endpoint HTTP handlers.
 type Server struct {
-	Mounts   []*MountPoint
-	Register http.Handler
-	Login    http.Handler
-	CORS     http.Handler
+	Mounts     []*MountPoint
+	Register   http.Handler
+	Login      http.Handler
+	GetProfile http.Handler
+	CORS       http.Handler
 }
 
 // ErrorNamer is an interface implemented by generated error structs that
@@ -63,12 +64,15 @@ func New(
 		Mounts: []*MountPoint{
 			{"Register", "POST", "/api/v1/account-service/accounts/register"},
 			{"Login", "POST", "/api/v1/account-service/accounts/login"},
+			{"GetProfile", "GET", "/api/v1/account-service/accounts/profile"},
 			{"CORS", "OPTIONS", "/api/v1/account-service/accounts/register"},
 			{"CORS", "OPTIONS", "/api/v1/account-service/accounts/login"},
+			{"CORS", "OPTIONS", "/api/v1/account-service/accounts/profile"},
 		},
-		Register: NewRegisterHandler(e.Register, mux, decoder, encoder, errhandler, formatter),
-		Login:    NewLoginHandler(e.Login, mux, decoder, encoder, errhandler, formatter),
-		CORS:     NewCORSHandler(),
+		Register:   NewRegisterHandler(e.Register, mux, decoder, encoder, errhandler, formatter),
+		Login:      NewLoginHandler(e.Login, mux, decoder, encoder, errhandler, formatter),
+		GetProfile: NewGetProfileHandler(e.GetProfile, mux, decoder, encoder, errhandler, formatter),
+		CORS:       NewCORSHandler(),
 	}
 }
 
@@ -79,6 +83,7 @@ func (s *Server) Service() string { return "account" }
 func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.Register = m(s.Register)
 	s.Login = m(s.Login)
+	s.GetProfile = m(s.GetProfile)
 	s.CORS = m(s.CORS)
 }
 
@@ -86,6 +91,7 @@ func (s *Server) Use(m func(http.Handler) http.Handler) {
 func Mount(mux goahttp.Muxer, h *Server) {
 	MountRegisterHandler(mux, h.Register)
 	MountLoginHandler(mux, h.Login)
+	MountGetProfileHandler(mux, h.GetProfile)
 	MountCORSHandler(mux, h.CORS)
 }
 
@@ -196,12 +202,64 @@ func NewLoginHandler(
 	})
 }
 
+// MountGetProfileHandler configures the mux to serve the "account" service
+// "getProfile" endpoint.
+func MountGetProfileHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := HandleAccountOrigin(h).(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("GET", "/api/v1/account-service/accounts/profile", f)
+}
+
+// NewGetProfileHandler creates a HTTP handler which loads the HTTP request and
+// calls the "account" service "getProfile" endpoint.
+func NewGetProfileHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeGetProfileRequest(mux, decoder)
+		encodeResponse = EncodeGetProfileResponse(encoder)
+		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "getProfile")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "account")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+		}
+	})
+}
+
 // MountCORSHandler configures the mux to serve the CORS endpoints for the
 // service account.
 func MountCORSHandler(mux goahttp.Muxer, h http.Handler) {
 	h = HandleAccountOrigin(h)
 	mux.Handle("OPTIONS", "/api/v1/account-service/accounts/register", h.ServeHTTP)
 	mux.Handle("OPTIONS", "/api/v1/account-service/accounts/login", h.ServeHTTP)
+	mux.Handle("OPTIONS", "/api/v1/account-service/accounts/profile", h.ServeHTTP)
 }
 
 // NewCORSHandler creates a HTTP handler which returns a simple 200 response.

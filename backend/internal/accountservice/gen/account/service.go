@@ -19,6 +19,8 @@ type Service interface {
 	Register(context.Context, *RegisterPayload) (res *RegisterResponse, err error)
 	// Login implements login.
 	Login(context.Context, *LoginPayload) (res *LoginResponse, err error)
+	// GetProfile implements getProfile.
+	GetProfile(context.Context, *GetProfilePayload) (res *ProfileResponse, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -29,7 +31,14 @@ const ServiceName = "account"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [2]string{"register", "login"}
+var MethodNames = [3]string{"register", "login", "getProfile"}
+
+// GetProfilePayload is the payload type of the account service getProfile
+// method.
+type GetProfilePayload struct {
+	// Resource array size
+	PaymentsLimit int
+}
 
 // LoginPayload is the payload type of the account service login method.
 type LoginPayload struct {
@@ -51,6 +60,27 @@ type LoginResponse struct {
 	Role string
 	// User's role
 	AccountID *string
+}
+
+type PaymentResponse struct {
+	ID            uint
+	CreatedAt     string
+	PaymentNumber string
+	Amount        float32
+}
+
+// ProfileResponse is the result type of the account service getProfile method.
+type ProfileResponse struct {
+	// Operation completion status
+	Email string
+	// First Name
+	FirstName string
+	// Last Name
+	LastName string
+	// Username
+	Username string
+	// Array of last payments
+	LastPayments []*PaymentResponse
 }
 
 // RegisterPayload is the payload type of the account service register method.

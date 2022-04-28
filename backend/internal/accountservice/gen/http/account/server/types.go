@@ -60,6 +60,29 @@ type LoginResponseBody struct {
 	AccountID *string `form:"accountID,omitempty" json:"accountID,omitempty" xml:"accountID,omitempty"`
 }
 
+// GetProfileResponseBody is the type of the "account" service "getProfile"
+// endpoint HTTP response body.
+type GetProfileResponseBody struct {
+	// Operation completion status
+	Email string `form:"email" json:"email" xml:"email"`
+	// First Name
+	FirstName string `form:"first_name" json:"first_name" xml:"first_name"`
+	// Last Name
+	LastName string `form:"last_name" json:"last_name" xml:"last_name"`
+	// Username
+	Username string `form:"username" json:"username" xml:"username"`
+	// Array of last payments
+	LastPayments []*PaymentResponseResponseBody `form:"last_payments" json:"last_payments" xml:"last_payments"`
+}
+
+// PaymentResponseResponseBody is used to define fields on response body types.
+type PaymentResponseResponseBody struct {
+	ID            uint    `form:"id" json:"id" xml:"id"`
+	CreatedAt     string  `form:"createdAt" json:"createdAt" xml:"createdAt"`
+	PaymentNumber string  `form:"paymentNumber" json:"paymentNumber" xml:"paymentNumber"`
+	Amount        float32 `form:"amount" json:"amount" xml:"amount"`
+}
+
 // NewRegisterResponseBody builds the HTTP response body from the result of the
 // "register" endpoint of the "account" service.
 func NewRegisterResponseBody(res *account.RegisterResponse) *RegisterResponseBody {
@@ -78,6 +101,24 @@ func NewLoginResponseBody(res *account.LoginResponse) *LoginResponseBody {
 		RefreshToken: res.RefreshToken,
 		Role:         res.Role,
 		AccountID:    res.AccountID,
+	}
+	return body
+}
+
+// NewGetProfileResponseBody builds the HTTP response body from the result of
+// the "getProfile" endpoint of the "account" service.
+func NewGetProfileResponseBody(res *account.ProfileResponse) *GetProfileResponseBody {
+	body := &GetProfileResponseBody{
+		Email:     res.Email,
+		FirstName: res.FirstName,
+		LastName:  res.LastName,
+		Username:  res.Username,
+	}
+	if res.LastPayments != nil {
+		body.LastPayments = make([]*PaymentResponseResponseBody, len(res.LastPayments))
+		for i, val := range res.LastPayments {
+			body.LastPayments[i] = marshalAccountPaymentResponseToPaymentResponseResponseBody(val)
+		}
 	}
 	return body
 }
@@ -101,6 +142,14 @@ func NewLoginPayload(body *LoginRequestBody) *account.LoginPayload {
 		Email:    *body.Email,
 		Password: *body.Password,
 	}
+
+	return v
+}
+
+// NewGetProfilePayload builds a account service getProfile endpoint payload.
+func NewGetProfilePayload(paymentsLimit int) *account.GetProfilePayload {
+	v := &account.GetProfilePayload{}
+	v.PaymentsLimit = paymentsLimit
 
 	return v
 }

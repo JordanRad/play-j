@@ -13,6 +13,7 @@ import (
 	"context"
 	"io"
 	"net/http"
+	"strconv"
 
 	account "github.com/JordanRad/play-j/backend/internal/accountservice/gen/account"
 	goahttp "goa.design/goa/v3/http"
@@ -91,4 +92,58 @@ func DecodeLoginRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.D
 
 		return payload, nil
 	}
+}
+
+// EncodeGetProfileResponse returns an encoder for responses returned by the
+// account getProfile endpoint.
+func EncodeGetProfileResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res, _ := v.(*account.ProfileResponse)
+		enc := encoder(ctx, w)
+		body := NewGetProfileResponseBody(res)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeGetProfileRequest returns a decoder for requests sent to the account
+// getProfile endpoint.
+func DecodeGetProfileRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			paymentsLimit int
+			err           error
+		)
+		{
+			paymentsLimitRaw := r.URL.Query().Get("payments_limit")
+			if paymentsLimitRaw == "" {
+				err = goa.MergeErrors(err, goa.MissingFieldError("payments_limit", "query string"))
+			}
+			v, err2 := strconv.ParseInt(paymentsLimitRaw, 10, strconv.IntSize)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("paymentsLimit", paymentsLimitRaw, "integer"))
+			}
+			paymentsLimit = int(v)
+		}
+		if err != nil {
+			return nil, err
+		}
+		payload := NewGetProfilePayload(paymentsLimit)
+
+		return payload, nil
+	}
+}
+
+// marshalAccountPaymentResponseToPaymentResponseResponseBody builds a value of
+// type *PaymentResponseResponseBody from a value of type
+// *account.PaymentResponse.
+func marshalAccountPaymentResponseToPaymentResponseResponseBody(v *account.PaymentResponse) *PaymentResponseResponseBody {
+	res := &PaymentResponseResponseBody{
+		ID:            v.ID,
+		CreatedAt:     v.CreatedAt,
+		PaymentNumber: v.PaymentNumber,
+		Amount:        v.Amount,
+	}
+
+	return res
 }

@@ -26,6 +26,10 @@ type Client struct {
 	// Login Doer is the HTTP client used to make requests to the login endpoint.
 	LoginDoer goahttp.Doer
 
+	// GetProfile Doer is the HTTP client used to make requests to the getProfile
+	// endpoint.
+	GetProfileDoer goahttp.Doer
+
 	// CORS Doer is the HTTP client used to make requests to the  endpoint.
 	CORSDoer goahttp.Doer
 
@@ -51,6 +55,7 @@ func NewClient(
 	return &Client{
 		RegisterDoer:        doer,
 		LoginDoer:           doer,
+		GetProfileDoer:      doer,
 		CORSDoer:            doer,
 		RestoreResponseBody: restoreBody,
 		scheme:              scheme,
@@ -103,6 +108,30 @@ func (c *Client) Login() goa.Endpoint {
 		resp, err := c.LoginDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("account", "login", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// GetProfile returns an endpoint that makes HTTP requests to the account
+// service getProfile server.
+func (c *Client) GetProfile() goa.Endpoint {
+	var (
+		encodeRequest  = EncodeGetProfileRequest(c.encoder)
+		decodeResponse = DecodeGetProfileResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildGetProfileRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.GetProfileDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("account", "getProfile", err)
 		}
 		return decodeResponse(resp)
 	}

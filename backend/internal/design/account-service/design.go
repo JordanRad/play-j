@@ -50,9 +50,14 @@ var _ = Service("account", func() {
 	})
 
 	Method("getProfile", func() {
+		Payload(func() {
+			Attribute("payments_limit", Int, "Resource array size")
+			Required("payments_limit")
+		})
 		Result(ProfileResponse)
 		HTTP(func() {
 			GET("/profile")
+			Param("payments_limit")
 		})
 	})
 })
@@ -193,8 +198,20 @@ var LoginResponse = Type("LoginResponse", func() {
 })
 
 var ProfileResponse = Type("ProfileResponse", func() {
-	Attribute("message", String, "Operation completion status")
-	Required("message")
+	Attribute("email", String, "Operation completion status")
+	Attribute("first_name", String, "First Name")
+	Attribute("last_name", String, "Last Name")
+	Attribute("username", String, "Username")
+	Attribute("last_payments", ArrayOf(PaymentResponse), "Array of last payments")
+	Required("email", "first_name", "last_name", "username", "last_payments")
+})
+
+var PaymentResponse = Type("PaymentResponse", func() {
+	Field(1, "id", UInt)
+	Field(2, "createdAt", String)
+	Field(3, "paymentNumber", String)
+	Field(4, "amount", Float32)
+	Required("id", "createdAt", "paymentNumber", "amount")
 })
 
 var AccountPlaylistCollectionResponse = Type("AccountPlaylistCollectionResponse", func() {

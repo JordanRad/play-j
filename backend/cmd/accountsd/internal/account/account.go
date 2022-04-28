@@ -102,3 +102,27 @@ func (s *Service) Login(ctx context.Context, p *account.LoginPayload) (*account.
 	}
 	return response, nil
 }
+
+func (s *Service) GetProfile(ctx context.Context, p *account.GetProfilePayload) (*account.ProfileResponse, error) {
+	// Extract claims from token
+	tokenClaims, err := auth.ExtractJWTCLaims(ctx.Value("jwt").(string))
+	if err != nil {
+		return nil, fmt.Errorf("error extracting token claims: %w", err)
+	}
+
+	// Get the user by email
+	foundAccount, err := s.store.GetUserByEmail(ctx, tokenClaims.Email)
+
+	if err != nil {
+		return nil, errors.New("invalid credentials")
+	}
+
+	response := &account.ProfileResponse{
+		Email:        foundAccount.Email,
+		FirstName:    foundAccount.FirstName,
+		LastName:     foundAccount.LastName,
+		Username:     foundAccount.Username,
+		LastPayments: make([]*account.PaymentResponse, 0),
+	}
+	return response, nil
+}

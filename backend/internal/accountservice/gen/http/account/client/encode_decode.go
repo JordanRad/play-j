@@ -12,6 +12,7 @@ package client
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -160,4 +161,88 @@ func DecodeLoginResponse(decoder func(*http.Response) goahttp.Decoder, restoreBo
 			return nil, goahttp.ErrInvalidResponse("account", "login", resp.StatusCode, string(body))
 		}
 	}
+}
+
+// BuildGetProfileRequest instantiates a HTTP request object with method and
+// path set to call the "account" service "getProfile" endpoint
+func (c *Client) BuildGetProfileRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: GetProfileAccountPath()}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("account", "getProfile", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeGetProfileRequest returns an encoder for requests sent to the account
+// getProfile server.
+func EncodeGetProfileRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*account.GetProfilePayload)
+		if !ok {
+			return goahttp.ErrInvalidType("account", "getProfile", "*account.GetProfilePayload", v)
+		}
+		values := req.URL.Query()
+		values.Add("payments_limit", fmt.Sprintf("%v", p.PaymentsLimit))
+		req.URL.RawQuery = values.Encode()
+		return nil
+	}
+}
+
+// DecodeGetProfileResponse returns a decoder for responses returned by the
+// account getProfile endpoint. restoreBody controls whether the response body
+// should be restored after having been read.
+func DecodeGetProfileResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body GetProfileResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("account", "getProfile", err)
+			}
+			err = ValidateGetProfileResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("account", "getProfile", err)
+			}
+			res := NewGetProfileProfileResponseOK(&body)
+			return res, nil
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("account", "getProfile", resp.StatusCode, string(body))
+		}
+	}
+}
+
+// unmarshalPaymentResponseResponseBodyToAccountPaymentResponse builds a value
+// of type *account.PaymentResponse from a value of type
+// *PaymentResponseResponseBody.
+func unmarshalPaymentResponseResponseBodyToAccountPaymentResponse(v *PaymentResponseResponseBody) *account.PaymentResponse {
+	res := &account.PaymentResponse{
+		ID:            *v.ID,
+		CreatedAt:     *v.CreatedAt,
+		PaymentNumber: *v.PaymentNumber,
+		Amount:        *v.Amount,
+	}
+
+	return res
 }

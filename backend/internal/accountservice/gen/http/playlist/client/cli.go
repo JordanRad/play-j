@@ -38,7 +38,7 @@ func BuildCreateAccountPlaylistPayload(playlistCreateAccountPlaylistBody string,
 	{
 		err = json.Unmarshal([]byte(playlistCreateAccountPlaylistBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"name\": \"Cum corporis autem repellendus.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"name\": \"A praesentium rerum accusamus occaecati velit et.\"\n   }'")
 		}
 	}
 	var auth string
@@ -61,7 +61,7 @@ func BuildRenameAccountPlaylistPayload(playlistRenameAccountPlaylistBody string,
 	{
 		err = json.Unmarshal([]byte(playlistRenameAccountPlaylistBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"name\": \"Voluptatem sequi adipisci iure dolorem nesciunt itaque.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"name\": \"Vitae dolore temporibus dolore.\"\n   }'")
 		}
 	}
 	var playlistID uint

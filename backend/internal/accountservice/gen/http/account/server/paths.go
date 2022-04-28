@@ -18,3 +18,8 @@ func RegisterAccountPath() string {
 func LoginAccountPath() string {
 	return "/api/v1/account-service/accounts/login"
 }
+
+// GetProfileAccountPath returns the URL path to the account service getProfile HTTP endpoint.
+func GetProfileAccountPath() string {
+	return "/api/v1/account-service/accounts/profile"
+}

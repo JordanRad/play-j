@@ -12,6 +12,7 @@ package client
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	account "github.com/JordanRad/play-j/backend/internal/accountservice/gen/account"
 )
@@ -24,7 +25,7 @@ func BuildRegisterPayload(accountRegisterBody string) (*account.RegisterPayload,
 	{
 		err = json.Unmarshal([]byte(accountRegisterBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"confirmedPassword\": \"Numquam quos excepturi vero ad est.\",\n      \"email\": \"Dolorum et labore cumque quisquam dolorem adipisci.\",\n      \"firstName\": \"Quibusdam omnis nemo provident eos quis ut.\",\n      \"lastName\": \"Ipsum et molestiae.\",\n      \"password\": \"Voluptates id recusandae temporibus et dolore.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"confirmedPassword\": \"Expedita quidem cupiditate ipsam quis.\",\n      \"email\": \"Ipsum illum cupiditate corporis aut.\",\n      \"firstName\": \"Minus sint rerum exercitationem.\",\n      \"lastName\": \"Quo et quasi sint.\",\n      \"password\": \"Natus et enim consectetur sit.\"\n   }'")
 		}
 	}
 	v := &account.RegisterPayload{
@@ -46,13 +47,32 @@ func BuildLoginPayload(accountLoginBody string) (*account.LoginPayload, error) {
 	{
 		err = json.Unmarshal([]byte(accountLoginBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"email\": \"Iusto non mollitia qui non culpa laborum.\",\n      \"password\": \"Corrupti voluptas officia nostrum quia voluptatum.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"email\": \"Et repudiandae cum corporis autem repellendus laudantium.\",\n      \"password\": \"Veniam est fuga vel et est quasi.\"\n   }'")
 		}
 	}
 	v := &account.LoginPayload{
 		Email:    body.Email,
 		Password: body.Password,
 	}
+
+	return v, nil
+}
+
+// BuildGetProfilePayload builds the payload for the account getProfile
+// endpoint from CLI flags.
+func BuildGetProfilePayload(accountGetProfilePaymentsLimit string) (*account.GetProfilePayload, error) {
+	var err error
+	var paymentsLimit int
+	{
+		var v int64
+		v, err = strconv.ParseInt(accountGetProfilePaymentsLimit, 10, 64)
+		paymentsLimit = int(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for paymentsLimit, must be INT")
+		}
+	}
+	v := &account.GetProfilePayload{}
+	v.PaymentsLimit = paymentsLimit
 
 	return v, nil
 }

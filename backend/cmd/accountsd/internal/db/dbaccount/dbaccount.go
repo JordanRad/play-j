@@ -37,10 +37,10 @@ func (s *Store) GetUserByEmail(ctx context.Context, email string) (*dbmodels.Acc
 
 	row := s.DB.QueryRow(`SELECT * FROM accounts WHERE email = $1;`, email)
 	err := row.Scan(&result.ID, &result.FirstName, &result.LastName,
-		&result.Username, &result.Email, &result.Password)
+		&result.Username, &result.Email, &result.Password, &result.IsActive, &result.HasActiveSubscription)
 
 	if err == sql.ErrNoRows {
-		return nil, fmt.Errorf("invalid credentials: %w", err)
+		return nil, fmt.Errorf("cannot find account by email: %w", err)
 	}
 
 	return &result, nil

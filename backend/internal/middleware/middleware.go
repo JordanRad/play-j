@@ -39,6 +39,10 @@ var protectedRoutes = []ProtectedRoute{
 		HTTPMethod:  "GET",
 		URLContains: "/subscriptions",
 	},
+	{
+		HTTPMethod:  "GET",
+		URLContains: "/profile",
+	},
 }
 
 func isRouteProtected(method string, URL *url.URL) bool {
