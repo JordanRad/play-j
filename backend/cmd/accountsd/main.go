@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 
@@ -15,7 +14,7 @@ import (
 	playlistsvc "github.com/JordanRad/play-j/backend/internal/accountservice/gen/playlist"
 	goahttp "goa.design/goa/v3/http"
 
-	pb "github.com/JordanRad/play-j/backend/internal/paymentservice/gen/grpc/payment/pb"
+	payment_pb "github.com/JordanRad/play-j/backend/internal/paymentservice/gen/grpc/payment/pb"
 
 	"google.golang.org/grpc"
 
@@ -56,31 +55,28 @@ func connectDB(config *config) *sql.DB {
 }
 
 func main() {
+	// TODO add interface and create a new instance
+	// and add it to the service
+	var conn *grpc.ClientConn
+	conn, err := grpc.Dial(":5002", grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("cannot connect to gRPC server: %s", err)
+	}
+	defer conn.Close()
 
-	go func() {
-		var conn *grpc.ClientConn
-		conn, err := grpc.Dial(":5002", grpc.WithInsecure())
-		if err != nil {
-			log.Fatalf("cannot connect to gRPC server: %s", err)
-		}
-		defer conn.Close()
+	paymentClient := payment_pb.NewPaymentClient(conn)
+	// fmt.Printf("gRPC client is connected to gRPC server on localhost:%d ...\n", 5002)
+	// ctx := context.Background()
+	// p := &payment_pb.GetPaymentsByAccountIDRequest{
+	// 	AccountId: 3,
+	// 	Limit:     2,
+	// }
+	// _, err = paymentClient.GetPaymentsByAccountID(ctx, p)
 
-		paymentClient := pb.NewPaymentClient(conn)
-		fmt.Printf("gRPC client is connected to gRPC server on localhost:%d ...\n", 5002)
-		ctx := context.Background()
-		p := &pb.GetPaymentsByAccountIDRequest{
-			AccountId: 3,
-			Limit:     2,
-		}
-		resp, err := paymentClient.GetPaymentsByAccountID(ctx, p)
+	// if err != nil {
+	// 	fmt.Printf("error gRPC response: %s", err)
+	// }
 
-		if err != nil {
-			fmt.Printf("error gRPC response: %s", err)
-		}
-
-		fmt.Print(resp)
-
-	}()
 	config, err := configFromEnv()
 
 	if err != nil {
@@ -97,7 +93,7 @@ func main() {
 		DB: db,
 	}
 
-	accountService := account.NewService(dbAccountStore)
+	accountService := account.NewService(dbAccountStore, paymentClient)
 	var accountEndpoints *accountsvc.Endpoints = accountsvc.NewEndpoints(accountService)
 
 	playlistService := playlist.NewService(dbPlaylistStore)

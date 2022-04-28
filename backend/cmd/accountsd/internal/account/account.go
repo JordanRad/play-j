@@ -8,6 +8,8 @@ import (
 	"github.com/JordanRad/play-j/backend/cmd/accountsd/internal/db/dbmodels"
 	"github.com/JordanRad/play-j/backend/internal/accountservice/gen/account"
 	auth "github.com/JordanRad/play-j/backend/internal/auth"
+	payment_pb "github.com/JordanRad/play-j/backend/internal/paymentservice/gen/grpc/payment/pb"
+	"google.golang.org/grpc"
 )
 
 // You only need **one** of these per package!
@@ -19,8 +21,14 @@ type Store interface {
 	GetUserByEmail(context.Context, string) (*dbmodels.Account, error)
 }
 
+//counterfeiter:generate . PaymentService
+type PaymentService interface {
+	GetPaymentsByAccountID(context.Context, *payment_pb.GetPaymentsByAccountIDRequest, ...grpc.CallOption) (*payment_pb.GetPaymentsByAccountIDResponse, error)
+}
+
 type Service struct {
-	store Store
+	store          Store
+	paymentService PaymentService
 }
 
 type User struct {
@@ -32,14 +40,30 @@ type User struct {
 	ConfirmPassword string
 }
 
-func NewService(store Store) *Service {
+func NewService(s Store, ps PaymentService) *Service {
 	return &Service{
-		store: store,
+		store:          s,
+		paymentService: ps,
 	}
 }
 
 // Compile-time assertion that *Service implements the user.Service interface.
 var _ account.Service = (*Service)(nil)
+
+func convertToPaymentResponse(payments *payment_pb.GetPaymentsByAccountIDResponse) []*account.PaymentResponse {
+	arr := make([]*account.PaymentResponse, 0, payments.Total)
+
+	for _, payment := range payments.Resources {
+		dto := &account.PaymentResponse{
+			ID:            uint(payment.Id),
+			CreatedAt:     payment.CreatedAt,
+			PaymentNumber: payment.PaymentNumber,
+			Amount:        payment.Amount,
+		}
+		arr = append(arr, dto)
+	}
+	return arr
+}
 
 func (s *Service) Register(ctx context.Context, p *account.RegisterPayload) (*account.RegisterResponse, error) {
 	// Check passwords
@@ -117,12 +141,23 @@ func (s *Service) GetProfile(ctx context.Context, p *account.GetProfilePayload) 
 		return nil, errors.New("invalid credentials")
 	}
 
+	// Get the payments from payment service
+	grpcPayload := &payment_pb.GetPaymentsByAccountIDRequest{
+		AccountId: 3,
+		Limit:     2,
+	}
+	grpcResponse, err := s.paymentService.GetPaymentsByAccountID(ctx, grpcPayload)
+
+	paymentDtos := convertToPaymentResponse(grpcResponse)
+	if err != nil {
+		fmt.Printf("error gRPC response: %s", err)
+	}
 	response := &account.ProfileResponse{
 		Email:        foundAccount.Email,
 		FirstName:    foundAccount.FirstName,
 		LastName:     foundAccount.LastName,
 		Username:     foundAccount.Username,
-		LastPayments: make([]*account.PaymentResponse, 0),
+		LastPayments: paymentDtos,
 	}
 	return response, nil
 }
