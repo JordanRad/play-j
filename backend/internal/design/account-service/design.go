@@ -48,6 +48,13 @@ var _ = Service("account", func() {
 			POST("/login")
 		})
 	})
+
+	Method("getProfile", func() {
+		Result(ProfileResponse)
+		HTTP(func() {
+			GET("/profile")
+		})
+	})
 })
 
 var _ = Service("playlist", func() {
@@ -183,6 +190,11 @@ var LoginResponse = Type("LoginResponse", func() {
 	Attribute("role", String, "User's role")
 	Attribute("accountID", String, "User's role")
 	Required("email", "token", "refresh_token", "role")
+})
+
+var ProfileResponse = Type("ProfileResponse", func() {
+	Attribute("message", String, "Operation completion status")
+	Required("message")
 })
 
 var AccountPlaylistCollectionResponse = Type("AccountPlaylistCollectionResponse", func() {

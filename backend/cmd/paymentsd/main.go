@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"time"
 
@@ -13,6 +14,10 @@ import (
 	"github.com/JordanRad/play-j/backend/internal/middleware"
 	paymentsrv "github.com/JordanRad/play-j/backend/internal/paymentservice/gen/http/payment/server"
 	paymentsvc "github.com/JordanRad/play-j/backend/internal/paymentservice/gen/payment"
+	"google.golang.org/grpc"
+
+	paymentpb "github.com/JordanRad/play-j/backend/internal/paymentservice/gen/grpc/payment/pb"
+	paymentgrpcsrv "github.com/JordanRad/play-j/backend/internal/paymentservice/gen/grpc/payment/server"
 
 	subscription "github.com/JordanRad/play-j/backend/cmd/paymentsd/internal/subscription"
 	subscriptionsrv "github.com/JordanRad/play-j/backend/internal/paymentservice/gen/http/subscription/server"
@@ -92,7 +97,25 @@ func main() {
 	subscriptionServer.Use(middleware.AuthenticateRequest())
 	subscriptionsrv.Mount(mux, subscriptionServer)
 
+	go func() {
+		grpcEndpoints := paymentsvc.NewEndpoints(paymentService)
+		grpcsrv := paymentgrpcsrv.New(grpcEndpoints, nil)
+
+		grpcServer := grpc.NewServer()
+		fmt.Printf("Payment gRPC server has just started on %d ...\n", 5002)
+		paymentpb.RegisterPaymentServer(grpcServer, grpcsrv)
+		lis, err := net.Listen("tcp", "localhost:5002")
+
+		if err != nil {
+			panic(err)
+		}
+		if err := grpcServer.Serve(lis); err != nil {
+			panic(err)
+		}
+	}()
+
 	address := fmt.Sprintf("%s:%d", config.HTTP.Host, config.HTTP.Port)
 	fmt.Printf("Payment service has just started on %s ...\n", address)
 	http.ListenAndServe(address, mux)
+
 }

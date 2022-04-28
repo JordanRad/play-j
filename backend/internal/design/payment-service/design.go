@@ -37,6 +37,25 @@ var _ = Service("payment", func() {
 			GET("/")
 			Param("limit")
 		})
+
+	})
+
+	Method("getPaymentsByAccountID", func() {
+		Result(PaymentListResponse)
+		Payload(func() {
+			Attribute("accountID", Int, "Account ID", func() {
+				Meta("rpc:tag", "1")
+			})
+			Attribute("limit", Int, "Resource array size", func() {
+				Meta("rpc:tag", "2")
+			})
+			Required("accountID", "limit")
+		})
+
+		GRPC(func() {
+
+		})
+
 	})
 
 	Method("createAccountPayment", func() {
@@ -79,16 +98,22 @@ var _ = Service("subscription", func() {
 })
 
 var PaymentListResponse = Type("PaymentListResponse", func() {
-	Attribute("total", UInt, "Total number of resources")
-	Attribute("resources", ArrayOf(PaymentResponse), "Resournces")
+	// Attribute("total", UInt, "Total number of resources")
+	// Attribute("resources", ArrayOf(PaymentResponse), "Resournces")
+	Field(1, "total", UInt)
+	Field(2, "resources", ArrayOf(PaymentResponse))
 	Required("total", "resources")
 })
 
 var PaymentResponse = Type("PaymentResponse", func() {
-	Attribute("id", UInt, "Id")
-	Attribute("createdAt", String, "Time of creation")
-	Attribute("paymentNumber", String, "Payment Number")
-	Attribute("amount", Float32, "Payment amount")
+	// Attribute("id", UInt, "Id")
+	// Attribute("createdAt", String, "Time of creation")
+	// Attribute("paymentNumber", String, "Payment Number")
+	// Attribute("amount", Float32, "Payment amount")
+	Field(1, "id", UInt)
+	Field(2, "createdAt", String)
+	Field(3, "paymentNumber", String)
+	Field(4, "amount", Float32)
 	Required("id", "createdAt", "paymentNumber", "amount")
 })
 

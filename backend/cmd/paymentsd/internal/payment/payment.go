@@ -70,6 +70,28 @@ func (s *Service) GetAccountPayments(ctx context.Context, p *payment.GetAccountP
 	return response, nil
 }
 
+func (s *Service) GetPaymentsByAccountID(ctx context.Context, p *payment.GetPaymentsByAccountIDPayload) (*payment.PaymentListResponse, error) {
+
+	paymentEntities, err := s.paymentStore.GetAccountPayments(ctx, uint(p.AccountID), uint(p.Limit))
+
+	if err != nil {
+		return nil, fmt.Errorf("error getting payments: %w", err)
+	}
+
+	paymentResponseList := make([]*payment.PaymentResponse, 0, len(paymentEntities))
+
+	for _, paymentEntity := range paymentEntities {
+		payment := toPaymentResponse(paymentEntity)
+		paymentResponseList = append(paymentResponseList, payment)
+	}
+
+	response := &payment.PaymentListResponse{
+		Total:     uint(len(paymentEntities)),
+		Resources: paymentResponseList,
+	}
+	return response, nil
+}
+
 func (s *Service) CreateAccountPayment(ctx context.Context, p *payment.CreateAccountPaymentPayload) (*payment.TransactionResponse, error) {
 	// Extract claims from token
 	tokenClaims, err := auth.ExtractJWTCLaims(ctx.Value("jwt").(string))

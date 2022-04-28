@@ -95,14 +95,14 @@ definitions:
       message:
         type: string
         description: Operation status
-        example: Nostrum mollitia error laudantium voluptatem laudantium.
+        example: Sed debitis autem eum laboriosam accusantium.
       paymentNumber:
         type: string
         description: Payment Unique Number
-        example: Eligendi esse iste quia.
+        example: Laudantium doloribus ex quisquam velit non.
     example:
-      message: Non modi sed debitis autem.
-      paymentNumber: Ex quisquam.
+      message: Sunt dolores tempore illo vel voluptatum.
+      paymentNumber: Provident voluptatem.
     required:
     - paymentNumber
     - message
@@ -114,7 +114,6 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/PaymentResponseResponseBody'
-        description: Resournces
         example:
         - amount: 0.045109253
           createdAt: Repudiandae dolores nostrum harum.
@@ -130,8 +129,7 @@ definitions:
           paymentNumber: Dolor impedit rerum.
       total:
         type: integer
-        description: Total number of resources
-        example: 12576430019621352510
+        example: 14118431998277998239
         format: int64
     example:
       resources:
@@ -143,7 +141,7 @@ definitions:
         createdAt: Repudiandae dolores nostrum harum.
         id: 5614265788585208775
         paymentNumber: Dolor impedit rerum.
-      total: 4396716847613175530
+      total: 17046792413239464317
     required:
     - total
     - resources
@@ -153,27 +151,23 @@ definitions:
     properties:
       amount:
         type: number
-        description: Payment amount
-        example: 0.5583874
+        example: 0.65015614
         format: float
       createdAt:
         type: string
-        description: Time of creation
-        example: Rerum animi.
+        example: Sint esse maxime.
       id:
         type: integer
-        description: Id
-        example: 9981160763808931699
+        example: 9278332640818235837
         format: int64
       paymentNumber:
         type: string
-        description: Payment Number
-        example: Excepturi sint.
+        example: Ut sed vitae.
     example:
-      amount: 0.5680312
-      createdAt: Ut sed vitae.
-      id: 6047946286363235355
-      paymentNumber: Non eum omnis est.
+      amount: 0.9000871
+      createdAt: Omnis est voluptatum blanditiis.
+      id: 5149910871047572115
+      paymentNumber: Eveniet voluptate eligendi esse iste quia nihil.
     required:
     - id
     - createdAt
@@ -190,15 +184,15 @@ definitions:
       type:
         type: string
         description: Subscription type
-        example: Voluptatem facilis sunt dolores tempore.
+        example: Velit autem amet perferendis eaque adipisci.
       validUntil:
         type: string
         description: Subscription end date
-        example: Accusantium commodi.
+        example: Ipsa blanditiis ipsam amet aperiam et.
     example:
-      hasPaid: false
-      type: Blanditiis ipsam amet.
-      validUntil: Voluptatum quia et.
+      hasPaid: true
+      type: Provident vel.
+      validUntil: Id doloribus qui.
     required:
     - hasPaid
     - validUntil

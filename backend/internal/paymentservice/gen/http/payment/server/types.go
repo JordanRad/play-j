@@ -16,9 +16,7 @@ import (
 // GetAccountPaymentsResponseBody is the type of the "payment" service
 // "getAccountPayments" endpoint HTTP response body.
 type GetAccountPaymentsResponseBody struct {
-	// Total number of resources
-	Total uint `form:"total" json:"total" xml:"total"`
-	// Resournces
+	Total     uint                           `form:"total" json:"total" xml:"total"`
 	Resources []*PaymentResponseResponseBody `form:"resources" json:"resources" xml:"resources"`
 }
 
@@ -33,14 +31,10 @@ type CreateAccountPaymentResponseBody struct {
 
 // PaymentResponseResponseBody is used to define fields on response body types.
 type PaymentResponseResponseBody struct {
-	// Id
-	ID uint `form:"id" json:"id" xml:"id"`
-	// Time of creation
-	CreatedAt string `form:"createdAt" json:"createdAt" xml:"createdAt"`
-	// Payment Number
-	PaymentNumber string `form:"paymentNumber" json:"paymentNumber" xml:"paymentNumber"`
-	// Payment amount
-	Amount float32 `form:"amount" json:"amount" xml:"amount"`
+	ID            uint    `form:"id" json:"id" xml:"id"`
+	CreatedAt     string  `form:"createdAt" json:"createdAt" xml:"createdAt"`
+	PaymentNumber string  `form:"paymentNumber" json:"paymentNumber" xml:"paymentNumber"`
+	Amount        float32 `form:"amount" json:"amount" xml:"amount"`
 }
 
 // NewGetAccountPaymentsResponseBody builds the HTTP response body from the

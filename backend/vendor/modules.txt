@@ -181,7 +181,9 @@ goa.design/goa/v3/codegen/service
 goa.design/goa/v3/dsl
 goa.design/goa/v3/eval
 goa.design/goa/v3/expr
+goa.design/goa/v3/grpc
 goa.design/goa/v3/grpc/codegen
+goa.design/goa/v3/grpc/pb
 goa.design/goa/v3/http
 goa.design/goa/v3/http/codegen
 goa.design/goa/v3/http/codegen/openapi

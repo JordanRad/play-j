@@ -17,21 +17,24 @@ import (
 
 // Endpoints wraps the "payment" service endpoints.
 type Endpoints struct {
-	GetAccountPayments   goa.Endpoint
-	CreateAccountPayment goa.Endpoint
+	GetAccountPayments     goa.Endpoint
+	GetPaymentsByAccountID goa.Endpoint
+	CreateAccountPayment   goa.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "payment" service with endpoints.
 func NewEndpoints(s Service) *Endpoints {
 	return &Endpoints{
-		GetAccountPayments:   NewGetAccountPaymentsEndpoint(s),
-		CreateAccountPayment: NewCreateAccountPaymentEndpoint(s),
+		GetAccountPayments:     NewGetAccountPaymentsEndpoint(s),
+		GetPaymentsByAccountID: NewGetPaymentsByAccountIDEndpoint(s),
+		CreateAccountPayment:   NewCreateAccountPaymentEndpoint(s),
 	}
 }
 
 // Use applies the given middleware to all the "payment" service endpoints.
 func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.GetAccountPayments = m(e.GetAccountPayments)
+	e.GetPaymentsByAccountID = m(e.GetPaymentsByAccountID)
 	e.CreateAccountPayment = m(e.CreateAccountPayment)
 }
 
@@ -41,6 +44,15 @@ func NewGetAccountPaymentsEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*GetAccountPaymentsPayload)
 		return s.GetAccountPayments(ctx, p)
+	}
+}
+
+// NewGetPaymentsByAccountIDEndpoint returns an endpoint function that calls
+// the method "getPaymentsByAccountID" of service "payment".
+func NewGetPaymentsByAccountIDEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*GetPaymentsByAccountIDPayload)
+		return s.GetPaymentsByAccountID(ctx, p)
 	}
 }
 

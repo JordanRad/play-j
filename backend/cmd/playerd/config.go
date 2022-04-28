@@ -31,7 +31,7 @@ type dbConfig struct {
 
 type serverConfig struct {
 	Host string `envconfig:"HOST" default:"localhost"`
-	Port int    `envconfig:"PORT" default:"8092"`
+	Port int    `envconfig:"PORT" default:"8093"`
 }
 
 type gcsConfig struct {

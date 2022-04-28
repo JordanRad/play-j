@@ -1,0 +1,39 @@
+// Code generated with goa v3.7.0, DO NOT EDIT.
+//
+// payment protocol buffer definition
+//
+// Command:
+// $ goa gen
+// github.com/JordanRad/play-j/backend/internal/design/payment-service -o
+// ./internal/paymentservice
+
+syntax = "proto3";
+
+package payment;
+
+option go_package = "/paymentpb";
+
+// Payment operations
+service Payment {
+	// GetPaymentsByAccountID implements getPaymentsByAccountID.
+	rpc GetPaymentsByAccountID (GetPaymentsByAccountIDRequest) returns (GetPaymentsByAccountIDResponse);
+}
+
+message GetPaymentsByAccountIDRequest {
+	// Account ID
+	sint32 account_id = 1;
+	// Resource array size
+	sint32 limit = 2;
+}
+
+message GetPaymentsByAccountIDResponse {
+	uint32 total = 1;
+	repeated PaymentResponse resources = 2;
+}
+
+message PaymentResponse {
+	uint32 id = 1;
+	string created_at = 2;
+	string payment_number = 3;
+	float amount = 4;
+}

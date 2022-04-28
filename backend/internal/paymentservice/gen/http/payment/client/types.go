@@ -17,9 +17,7 @@ import (
 // GetAccountPaymentsResponseBody is the type of the "payment" service
 // "getAccountPayments" endpoint HTTP response body.
 type GetAccountPaymentsResponseBody struct {
-	// Total number of resources
-	Total *uint `form:"total,omitempty" json:"total,omitempty" xml:"total,omitempty"`
-	// Resournces
+	Total     *uint                          `form:"total,omitempty" json:"total,omitempty" xml:"total,omitempty"`
 	Resources []*PaymentResponseResponseBody `form:"resources,omitempty" json:"resources,omitempty" xml:"resources,omitempty"`
 }
 
@@ -34,14 +32,10 @@ type CreateAccountPaymentResponseBody struct {
 
 // PaymentResponseResponseBody is used to define fields on response body types.
 type PaymentResponseResponseBody struct {
-	// Id
-	ID *uint `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
-	// Time of creation
-	CreatedAt *string `form:"createdAt,omitempty" json:"createdAt,omitempty" xml:"createdAt,omitempty"`
-	// Payment Number
-	PaymentNumber *string `form:"paymentNumber,omitempty" json:"paymentNumber,omitempty" xml:"paymentNumber,omitempty"`
-	// Payment amount
-	Amount *float32 `form:"amount,omitempty" json:"amount,omitempty" xml:"amount,omitempty"`
+	ID            *uint    `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	CreatedAt     *string  `form:"createdAt,omitempty" json:"createdAt,omitempty" xml:"createdAt,omitempty"`
+	PaymentNumber *string  `form:"paymentNumber,omitempty" json:"paymentNumber,omitempty" xml:"paymentNumber,omitempty"`
+	Amount        *float32 `form:"amount,omitempty" json:"amount,omitempty" xml:"amount,omitempty"`
 }
 
 // NewGetAccountPaymentsPaymentListResponseOK builds a "payment" service

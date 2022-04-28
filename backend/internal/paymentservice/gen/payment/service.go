@@ -17,6 +17,8 @@ import (
 type Service interface {
 	// GetAccountPayments implements getAccountPayments.
 	GetAccountPayments(context.Context, *GetAccountPaymentsPayload) (res *PaymentListResponse, err error)
+	// GetPaymentsByAccountID implements getPaymentsByAccountID.
+	GetPaymentsByAccountID(context.Context, *GetPaymentsByAccountIDPayload) (res *PaymentListResponse, err error)
 	// CreateAccountPayment implements createAccountPayment.
 	CreateAccountPayment(context.Context, *CreateAccountPaymentPayload) (res *TransactionResponse, err error)
 }
@@ -29,7 +31,7 @@ const ServiceName = "payment"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [2]string{"getAccountPayments", "createAccountPayment"}
+var MethodNames = [3]string{"getAccountPayments", "getPaymentsByAccountID", "createAccountPayment"}
 
 // CreateAccountPaymentPayload is the payload type of the payment service
 // createAccountPayment method.
@@ -47,24 +49,27 @@ type GetAccountPaymentsPayload struct {
 	Limit int
 }
 
+// GetPaymentsByAccountIDPayload is the payload type of the payment service
+// getPaymentsByAccountID method.
+type GetPaymentsByAccountIDPayload struct {
+	// Account ID
+	AccountID int
+	// Resource array size
+	Limit int
+}
+
 // PaymentListResponse is the result type of the payment service
 // getAccountPayments method.
 type PaymentListResponse struct {
-	// Total number of resources
-	Total uint
-	// Resournces
+	Total     uint
 	Resources []*PaymentResponse
 }
 
 type PaymentResponse struct {
-	// Id
-	ID uint
-	// Time of creation
-	CreatedAt string
-	// Payment Number
+	ID            uint
+	CreatedAt     string
 	PaymentNumber string
-	// Payment amount
-	Amount float32
+	Amount        float32
 }
 
 // TransactionResponse is the result type of the payment service

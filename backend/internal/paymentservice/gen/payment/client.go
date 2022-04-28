@@ -17,15 +17,17 @@ import (
 
 // Client is the "payment" service client.
 type Client struct {
-	GetAccountPaymentsEndpoint   goa.Endpoint
-	CreateAccountPaymentEndpoint goa.Endpoint
+	GetAccountPaymentsEndpoint     goa.Endpoint
+	GetPaymentsByAccountIDEndpoint goa.Endpoint
+	CreateAccountPaymentEndpoint   goa.Endpoint
 }
 
 // NewClient initializes a "payment" service client given the endpoints.
-func NewClient(getAccountPayments, createAccountPayment goa.Endpoint) *Client {
+func NewClient(getAccountPayments, getPaymentsByAccountID, createAccountPayment goa.Endpoint) *Client {
 	return &Client{
-		GetAccountPaymentsEndpoint:   getAccountPayments,
-		CreateAccountPaymentEndpoint: createAccountPayment,
+		GetAccountPaymentsEndpoint:     getAccountPayments,
+		GetPaymentsByAccountIDEndpoint: getPaymentsByAccountID,
+		CreateAccountPaymentEndpoint:   createAccountPayment,
 	}
 }
 
@@ -34,6 +36,17 @@ func NewClient(getAccountPayments, createAccountPayment goa.Endpoint) *Client {
 func (c *Client) GetAccountPayments(ctx context.Context, p *GetAccountPaymentsPayload) (res *PaymentListResponse, err error) {
 	var ires interface{}
 	ires, err = c.GetAccountPaymentsEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*PaymentListResponse), nil
+}
+
+// GetPaymentsByAccountID calls the "getPaymentsByAccountID" endpoint of the
+// "payment" service.
+func (c *Client) GetPaymentsByAccountID(ctx context.Context, p *GetPaymentsByAccountIDPayload) (res *PaymentListResponse, err error) {
+	var ires interface{}
+	ires, err = c.GetPaymentsByAccountIDEndpoint(ctx, p)
 	if err != nil {
 		return
 	}
