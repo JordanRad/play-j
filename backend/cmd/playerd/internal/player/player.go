@@ -2,6 +2,7 @@ package player
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -12,7 +13,8 @@ import (
 )
 
 type Store interface {
-	GetTrackByID(id uint) (*dbmodels.Track, error)
+	GetTrackByID(ctx context.Context, id uint) (*dbmodels.Track, error)
+	Search(ctx context.Context, searchInput string, limit uint) ([]*dbmodels.PlayerSearch, error)
 }
 
 type CloudStorage interface {
@@ -36,9 +38,21 @@ var _ PlayerService = (*Service)(nil)
 func (s *Service) StreamTrackByID(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	vars := mux.Vars(r)
+
 	trackID, err := strconv.Atoi(vars["trackID"])
+	if err != nil {
+		fmt.Printf("error getting the vars: %v", err)
+		w.Write([]byte("Cannot find the file: "))
+	}
+
 	fmt.Println(trackID)
-	track, err := s.store.GetTrackByID(uint(trackID))
+
+	track, err := s.store.GetTrackByID(ctx, uint(trackID))
+	if err != nil {
+		fmt.Printf("error getting the file location from the database: %v", err)
+		w.Write([]byte("Cannot find the file: "))
+	}
+
 	fmt.Println(track)
 	musicFile, err := s.cloudStorage.ReadFileFromFolder(ctx, "Metallica", "One.mp3")
 
@@ -71,5 +85,32 @@ func (s *Service) StreamTrackByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Service) Search(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Background()
+	limit := r.URL.Query().Get("limit")
 
+	limitInt, err := strconv.Atoi(limit)
+
+	if err != nil {
+		fmt.Printf("error: %v\n", err)
+		w.Write([]byte("limit query paramter has not been found"))
+	}
+
+	searchInput := r.URL.Query().Get("search_input")
+
+	fmt.Printf("limit: %d, search_input: %s", limitInt, searchInput)
+
+	databaseResults, err := s.store.Search(ctx, searchInput, uint(limitInt))
+
+	if err != nil {
+		fmt.Printf("error: %v\n", err)
+		w.Write([]byte("db error"))
+	}
+
+	responseBody := &SearchResponse{
+		Total:         1,
+		SearchResults: databaseResults,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(responseBody)
 }

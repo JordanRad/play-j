@@ -15,13 +15,14 @@ import (
 var _ = Describe("Account Service", func() {
 
 	var (
-		fakeStore *accountfakes.FakeStore
-		service   *account.Service
+		fakeStore          *accountfakes.FakeStore
+		fakePaymentService *accountfakes.FakePaymentService
+		service            *account.Service
 	)
 
 	BeforeEach(func() {
 		fakeStore = new(accountfakes.FakeStore)
-		service = account.NewService(fakeStore)
+		service = account.NewService(fakeStore, fakePaymentService)
 	})
 
 	Describe("Register", func() {

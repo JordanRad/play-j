@@ -27,3 +27,12 @@ type Track struct {
 	AlbumID        uint
 	ArtistID       uint
 }
+
+type PlayerSearch struct {
+	TrackID    uint
+	TrackName  string
+	ArtistID   uint
+	ArtistName string
+	AlbumID    uint
+	AlbumName  string
+}

@@ -2,18 +2,13 @@ package player
 
 import (
 	"net/http"
-)
 
-type SearchResult struct {
-	TrackID uint
-	AlbumID uint
-	Artist  uint
-	Result  string
-}
+	"github.com/JordanRad/play-j/backend/cmd/playerd/internal/db/dbmodels"
+)
 
 type SearchResponse struct {
 	Total         uint
-	SearchResults []SearchResult
+	SearchResults []*dbmodels.PlayerSearch
 }
 
 type PlayerService interface {
