@@ -12,11 +12,16 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// You only need **one** of these per package!
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -generate
+
+//counterfeiter:generate . Store
 type Store interface {
 	GetTrackByID(ctx context.Context, id uint) (*dbmodels.Track, error)
 	Search(ctx context.Context, searchInput string, limit uint) ([]*dbmodels.PlayerSearch, error)
 }
 
+//counterfeiter:generate . CloudStorage
 type CloudStorage interface {
 	ReadFileFromFolder(ctx context.Context, folderName string, fileName string) ([]byte, error)
 }

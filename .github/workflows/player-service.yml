@@ -1,15 +1,15 @@
-name: Go Account Service CI
+name: Go Player Service CI
 
 on:
   push:
     branches: [ main ]
     paths: 
-    - 'backend/cmd/accountsd/**'
-    - '.github/workflows/account-service.yml'
+    - 'backend/cmd/playerd/**'
+    - '.github/workflows/player-service.yml'
   pull_request:
     branches: [ main ]
     paths: 
-    - 'backend/cmd/accountsd/**'
+    - 'backend/cmd/playerd/**'
 
 jobs:
   build:
@@ -27,12 +27,12 @@ jobs:
       working-directory: ./backend/internal
       run: go test ./... -v --cover
 
-    - name: Run account service tests
-      working-directory: ./backend/cmd/accountsd
+    - name: Run player service tests
+      working-directory: ./backend/cmd/playerd
       run: go test ./... -v --cover
 
     - name: Build
-      working-directory: ./backend/cmd/accountsd
+      working-directory: ./backend/cmd/playerd
       run: go build -v 
       
       
@@ -53,18 +53,18 @@ jobs:
       - name: Docker Build Image
         working-directory: ./backend
         run: |
-          docker build --tag account-service -f Dockerfile.accountsd .
+          docker build --tag player-service -f Dockerfile.playerd .
           
           
       - name: Retag Docker Image
         working-directory: ./backend
         run: |
-          docker tag account-service:latest ${{ secrets.DOCKERHUB_USERNAME }}/playj:account-service
+          docker tag player-service:latest ${{ secrets.DOCKERHUB_USERNAME }}/playj:player-service
 
           
       - name: Docker Push
         run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/playj:account-service
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/playj:player-service
           
           
         
