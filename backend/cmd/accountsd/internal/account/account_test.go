@@ -8,9 +8,12 @@ import (
 	"github.com/JordanRad/play-j/backend/cmd/accountsd/internal/account/accountfakes"
 	"github.com/JordanRad/play-j/backend/cmd/accountsd/internal/db/dbmodels"
 	accountgen "github.com/JordanRad/play-j/backend/internal/accountservice/gen/account"
+	payment_pb "github.com/JordanRad/play-j/backend/internal/paymentservice/gen/grpc/payment/pb"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
+
+var TestToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImFjY291bnRJRCI6IjEiLCJlbWFpbCI6ImpvZXNtaXRoQGFidi5iZyJ9LCJleHAiOjM5OTk5OTE1MjgsImlzcyI6InBsYXlqLWFjY291bnQtc2VydmljZSJ9.fMaYAI_qnb97cfI7bsYT-WK8U9FAT0_DGXLJi5ejmPA"
 
 var _ = Describe("Account Service", func() {
 
@@ -22,6 +25,7 @@ var _ = Describe("Account Service", func() {
 
 	BeforeEach(func() {
 		fakeStore = new(accountfakes.FakeStore)
+		fakePaymentService = new(accountfakes.FakePaymentService)
 		service = account.NewService(fakeStore, fakePaymentService)
 	})
 
@@ -95,7 +99,6 @@ var _ = Describe("Account Service", func() {
 
 	Describe("Login", func() {
 		Describe("Given correct password", func() {
-
 			var (
 				ctx      context.Context
 				response *accountgen.LoginResponse
@@ -147,7 +150,6 @@ var _ = Describe("Account Service", func() {
 		})
 
 		Describe("Given INCORECT password", func() {
-
 			var (
 				ctx      context.Context
 				response *accountgen.LoginResponse
@@ -183,4 +185,118 @@ var _ = Describe("Account Service", func() {
 		})
 	})
 
+	Describe("GetPaymentsByAccountID", func() {
+		Describe("Given a valid JWT", func() {
+			var (
+				ctx      context.Context
+				response *accountgen.ProfileResponse
+				err      error
+			)
+
+			JustBeforeEach(func() {
+				ctx = context.Background()
+				ctx = context.WithValue(ctx, "jwt", TestToken)
+				payload := &accountgen.GetProfilePayload{
+					PaymentsLimit: 3,
+				}
+				response, err = service.GetProfile(ctx, payload)
+			})
+
+			When("such account exists", func() {
+				account := &dbmodels.Account{
+					ID:        1,
+					Email:     "joesmith@abv.bg",
+					FirstName: "Batman",
+					LastName:  "Smith",
+					Username:  "underground_rat",
+				}
+				BeforeEach(func() {
+					fakeStore.GetUserByEmailReturns(account, nil)
+				})
+				When("and payment service responds with OK", func() {
+					payment := &payment_pb.PaymentResponse{
+						Id:            1,
+						CreatedAt:     "02/05/2022",
+						PaymentNumber: "JJSHD_121qq",
+						Amount:        11.99,
+					}
+					list := make([]*payment_pb.PaymentResponse, 0, 1)
+					list = append(list, payment)
+					payments := &payment_pb.GetPaymentsByAccountIDResponse{
+						Total:     1,
+						Resources: list,
+					}
+					BeforeEach(func() {
+						fakePaymentService.GetPaymentsByAccountIDReturns(payments, nil)
+					})
+					It("should return profile details and payments", func() {
+						Expect(response.Email).To(Equal(account.Email))
+						Expect(response.FirstName).To(Equal(account.FirstName))
+						Expect(response.LastName).To(Equal(account.LastName))
+						Expect(response.Username).To(Equal(account.Username))
+						Expect(len(response.LastPayments)).To(Equal(1))
+						Expect(response.LastPayments[0].ID).To(Equal(uint(payment.Id)))
+						Expect(response.LastPayments[0].PaymentNumber).To(Equal(payment.PaymentNumber))
+						Expect(response.LastPayments[0].CreatedAt).To(Equal(payment.CreatedAt))
+					})
+					It("should not return an error", func() {
+						Expect(err).To(Not(HaveOccurred()))
+					})
+				})
+
+				When("but payment service responds with Error", func() {
+					BeforeEach(func() {
+						fakePaymentService.GetPaymentsByAccountIDReturns(nil, errors.New("grpc error"))
+					})
+					It("should return profile details and payments", func() {
+						Expect(response.Email).To(Equal(account.Email))
+						Expect(response.FirstName).To(Equal(account.FirstName))
+						Expect(response.LastName).To(Equal(account.LastName))
+						Expect(response.Username).To(Equal(account.Username))
+						Expect(response.LastPayments).To(BeNil())
+					})
+					It("should not return an error", func() {
+						Expect(err).To(Not(HaveOccurred()))
+					})
+				})
+
+			})
+
+			When("such account does not exist", func() {
+				BeforeEach(func() {
+					fakeStore.GetUserByEmailReturns(nil, errors.New("Such account does not exist"))
+				})
+				It("should return an erorr", func() {
+					Expect(response).To(BeNil())
+					Expect(err).To(HaveOccurred())
+					Expect(err.Error()).To(Equal("such account does not exist"))
+				})
+			})
+		})
+	})
+
+	Describe("Given an INVALID JWT", func() {
+		var (
+			ctx      context.Context
+			response *accountgen.ProfileResponse
+			err      error
+		)
+
+		JustBeforeEach(func() {
+			ctx = context.Background()
+			ctx = context.WithValue(ctx, "jwt", "eyJhbGpXVCJ9.eyJkYX9.fMfUPA")
+			payload := &accountgen.GetProfilePayload{
+				PaymentsLimit: 3,
+			}
+			response, err = service.GetProfile(ctx, payload)
+		})
+
+		When("operation is unathorized", func() {
+
+			It("should return an error", func() {
+				Expect(response).To(BeNil())
+				Expect(err).To(HaveOccurred())
+			})
+		})
+	})
 })

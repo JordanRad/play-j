@@ -138,26 +138,31 @@ func (s *Service) GetProfile(ctx context.Context, p *account.GetProfilePayload) 
 	foundAccount, err := s.store.GetUserByEmail(ctx, tokenClaims.Email)
 
 	if err != nil {
-		return nil, errors.New("invalid credentials")
+		return nil, errors.New("such account does not exist")
 	}
 
 	// Get the payments from payment service
 	grpcPayload := &payment_pb.GetPaymentsByAccountIDRequest{
-		AccountId: 3,
-		Limit:     2,
+		AccountId: int32(foundAccount.ID),
+		Limit:     int32(p.PaymentsLimit),
 	}
+
 	grpcResponse, err := s.paymentService.GetPaymentsByAccountID(ctx, grpcPayload)
 
-	paymentDtos := convertToPaymentResponse(grpcResponse)
-	if err != nil {
-		fmt.Printf("error gRPC response: %s", err)
-	}
 	response := &account.ProfileResponse{
 		Email:        foundAccount.Email,
 		FirstName:    foundAccount.FirstName,
 		LastName:     foundAccount.LastName,
 		Username:     foundAccount.Username,
-		LastPayments: paymentDtos,
+		LastPayments: nil,
 	}
+	if err != nil {
+		return response, nil
+	}
+	paymentDtos := convertToPaymentResponse(grpcResponse)
+	if err != nil {
+		fmt.Printf("error gRPC response: %s", err)
+	}
+	response.LastPayments = paymentDtos
 	return response, nil
 }
