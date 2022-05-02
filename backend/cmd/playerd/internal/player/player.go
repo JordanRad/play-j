@@ -23,12 +23,17 @@ type Store interface {
 
 //counterfeiter:generate . CloudStorage
 type CloudStorage interface {
-	ReadFileFromFolder(ctx context.Context, folderName string, fileName string) ([]byte, error)
+	ReadFileFromFolder(ctx context.Context, filePath string) ([]byte, error)
 }
 
 type Service struct {
 	store        Store
 	cloudStorage CloudStorage
+}
+
+type SearchResponse struct {
+	Total         uint
+	SearchResults []*dbmodels.PlayerSearch
 }
 
 func NewService(store Store, cloudStorage CloudStorage) *Service {
@@ -37,8 +42,6 @@ func NewService(store Store, cloudStorage CloudStorage) *Service {
 		cloudStorage: cloudStorage,
 	}
 }
-
-var _ PlayerService = (*Service)(nil)
 
 func (s *Service) StreamTrackByID(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
@@ -50,16 +53,13 @@ func (s *Service) StreamTrackByID(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Cannot find the file: "))
 	}
 
-	fmt.Println(trackID)
-
 	track, err := s.store.GetTrackByID(ctx, uint(trackID))
 	if err != nil {
 		fmt.Printf("error getting the file location from the database: %v", err)
 		w.Write([]byte("Cannot find the file: "))
 	}
 
-	fmt.Println(track)
-	musicFile, err := s.cloudStorage.ReadFileFromFolder(ctx, "Metallica", "One.mp3")
+	musicFile, err := s.cloudStorage.ReadFileFromFolder(ctx, track.StorageLocation)
 
 	if err != nil {
 		fmt.Printf("error getting the file: %v", err)

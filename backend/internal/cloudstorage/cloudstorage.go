@@ -18,20 +18,18 @@ func NewCloudStorage(url string) *CloudStorage {
 	}
 }
 
-func (cs *CloudStorage) ReadFileFromFolder(ctx context.Context, folderName string, fileName string) ([]byte, error) {
-	bucketURL := fmt.Sprintf("%s?prefix=%s/", "gs://playj-music-storage", folderName)
-	bucket, err := blob.OpenBucket(ctx, bucketURL)
+func (cs *CloudStorage) ReadFileFromFolder(ctx context.Context, filePath string) ([]byte, error) {
+	bucket, err := blob.OpenBucket(ctx, "gs://playj-music-storage")
 
 	if err != nil {
 		return nil, fmt.Errorf("could not open bucket: %v", err)
 	}
 	defer bucket.Close()
-	file, err := bucket.ReadAll(ctx, "One.mp3")
+
+	file, err := bucket.ReadAll(ctx, filePath)
 
 	if err != nil {
 		return nil, fmt.Errorf("error reading the file")
 	}
 	return file, nil
 }
-
-// func (cs *CloudStorage) getBucket(ctx context.Context, )

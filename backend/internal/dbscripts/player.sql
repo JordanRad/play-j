@@ -22,3 +22,5 @@ create table if not exists tracks (
 	artistID bigserial references artists(id),
     albumID bigserial references albums(id)
 );
+
+alter table tracks rename column storageTrackID to storageLocation;

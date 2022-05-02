@@ -19,13 +19,13 @@ type Album struct {
 }
 
 type Track struct {
-	ID             uint
-	Name           string
-	FullName       string
-	StorageTrackID string
-	CreatedAt      time.Time
-	AlbumID        uint
-	ArtistID       uint
+	ID              uint
+	Name            string
+	FullName        string
+	StorageLocation string
+	CreatedAt       time.Time
+	AlbumID         uint
+	ArtistID        uint
 }
 
 type PlayerSearch struct {

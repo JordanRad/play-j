@@ -20,7 +20,7 @@ func (s *Store) GetTrackByID(ctx context.Context, id uint) (*dbmodels.Track, err
 
 	row := s.DB.QueryRow(`SELECT * FROM tracks WHERE id = $1;`, id)
 	err := row.Scan(&result.ID, &result.Name, &result.FullName,
-		&result.StorageTrackID, &result.CreatedAt, &result.ArtistID, &result.AlbumID)
+		&result.StorageLocation, &result.CreatedAt, &result.ArtistID, &result.AlbumID)
 
 	if err == sql.ErrNoRows {
 		return nil, fmt.Errorf("invalid credentials: %w", err)
