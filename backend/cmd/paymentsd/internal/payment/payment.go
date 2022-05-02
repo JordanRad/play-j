@@ -9,11 +9,13 @@ import (
 	"github.com/JordanRad/play-j/backend/internal/paymentservice/gen/payment"
 )
 
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . PaymentStore
 type PaymentStore interface {
 	GetAccountPayments(context.Context, uint, uint) ([]*dbmodels.Payment, error)
 	CreatePayment(context.Context, uint, float32) (string, error)
 }
 
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . SubscriptionStore
 type SubscriptionStore interface {
 	CreateSubscription(context.Context, uint) error
 }

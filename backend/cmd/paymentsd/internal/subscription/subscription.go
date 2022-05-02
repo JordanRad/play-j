@@ -9,6 +9,7 @@ import (
 	"github.com/JordanRad/play-j/backend/internal/paymentservice/gen/subscription"
 )
 
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Store
 type Store interface {
 	GetAccountSubscription(context.Context, uint) (*dbmodels.Subscription, error)
 }

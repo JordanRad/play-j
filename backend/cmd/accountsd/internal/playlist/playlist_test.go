@@ -13,6 +13,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+var TestToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImFjY291bnRJRCI6IjEiLCJlbWFpbCI6ImpvZXNtaXRoQGFidi5iZyJ9LCJleHAiOjM5OTk5OTE1MjgsImlzcyI6InBsYXlqLWFjY291bnQtc2VydmljZSJ9.fMaYAI_qnb97cfI7bsYT-WK8U9FAT0_DGXLJi5ejmPA"
 var _ = Describe("Playlist Service", func() {
 
 	var (
@@ -26,7 +27,7 @@ var _ = Describe("Playlist Service", func() {
 	})
 
 	Describe("GetAccountPlaylistCollection", func() {
-		Describe("Given a valid JWT", func() {
+		Describe("on given a valid token", func() {
 			var (
 				ctx      context.Context
 				response *playlistgen.AccountPlaylistCollectionResponse
@@ -35,7 +36,7 @@ var _ = Describe("Playlist Service", func() {
 
 			JustBeforeEach(func() {
 				ctx = context.Background()
-				ctx = context.WithValue(ctx, "jwt", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImFjY291bnRJRCI6IjEiLCJlbWFpbCI6ImpvZXNtaXRoQGFidi5iZyJ9LCJleHAiOjM5OTk5OTE1MjgsImlzcyI6InBsYXlqLWFjY291bnQtc2VydmljZSJ9.fMaYAI_qnb97cfI7bsYT-WK8U9FAT0_DGXLJi5ejmPA")
+				ctx = context.WithValue(ctx, "jwt", TestToken)
 				payload := &playlistgen.GetAccountPlaylistCollectionPayload{
 					Auth: "Bearer token",
 				}
@@ -74,7 +75,7 @@ var _ = Describe("Playlist Service", func() {
 			})
 		})
 
-		Describe("Given an INVALID JWT", func() {
+		Describe("on given an INVALID token", func() {
 			var (
 				ctx      context.Context
 				response *playlistgen.AccountPlaylistCollectionResponse
@@ -101,7 +102,7 @@ var _ = Describe("Playlist Service", func() {
 	})
 
 	Describe("CreateAccountPlaylist", func() {
-		Describe("Given a valid JWT", func() {
+		Describe("on given a valid token", func() {
 			var (
 				ctx      context.Context
 				response *playlistgen.PlaylistModificationResponse
@@ -110,7 +111,7 @@ var _ = Describe("Playlist Service", func() {
 
 			JustBeforeEach(func() {
 				ctx = context.Background()
-				ctx = context.WithValue(ctx, "jwt", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImFjY291bnRJRCI6IjEiLCJlbWFpbCI6ImpvZXNtaXRoQGFidi5iZyJ9LCJleHAiOjM5OTk5OTE1MjgsImlzcyI6InBsYXlqLWFjY291bnQtc2VydmljZSJ9.fMaYAI_qnb97cfI7bsYT-WK8U9FAT0_DGXLJi5ejmPA")
+				ctx = context.WithValue(ctx, "jwt", TestToken)
 				payload := &playlistgen.CreateAccountPlaylistPayload{
 					Auth: "Bearer token",
 					Name: "New test playlist",
@@ -133,7 +134,7 @@ var _ = Describe("Playlist Service", func() {
 			})
 		})
 
-		Describe("Given an INVALID JWT", func() {
+		Describe("on given an INVALID token", func() {
 			var (
 				ctx      context.Context
 				response *playlistgen.PlaylistModificationResponse
@@ -161,7 +162,7 @@ var _ = Describe("Playlist Service", func() {
 	})
 
 	Describe("GetAccountPlaylist", func() {
-		Describe("Given a valid JWT", func() {
+		Describe("on given a valid token", func() {
 			var (
 				ctx      context.Context
 				response *playlistgen.AccountPlaylistResponse
@@ -170,7 +171,7 @@ var _ = Describe("Playlist Service", func() {
 
 			JustBeforeEach(func() {
 				ctx = context.Background()
-				ctx = context.WithValue(ctx, "jwt", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImFjY291bnRJRCI6IjEiLCJlbWFpbCI6ImpvZXNtaXRoQGFidi5iZyJ9LCJleHAiOjM5OTk5OTE1MjgsImlzcyI6InBsYXlqLWFjY291bnQtc2VydmljZSJ9.fMaYAI_qnb97cfI7bsYT-WK8U9FAT0_DGXLJi5ejmPA")
+				ctx = context.WithValue(ctx, "jwt", TestToken)
 				payload := &playlistgen.GetAccountPlaylistPayload{
 					Auth:       "Bearer token",
 					PlaylistID: 1,
@@ -206,7 +207,7 @@ var _ = Describe("Playlist Service", func() {
 			})
 		})
 
-		Describe("Given an INVALID JWT", func() {
+		Describe("on given an INVALID token", func() {
 			var (
 				ctx      context.Context
 				response *playlistgen.AccountPlaylistResponse
@@ -234,7 +235,7 @@ var _ = Describe("Playlist Service", func() {
 	})
 
 	Describe("RenameAccountPlaylist", func() {
-		Describe("Given a valid JWT", func() {
+		Describe("on given a valid token", func() {
 			var (
 				ctx      context.Context
 				response *playlistgen.PlaylistModificationResponse
@@ -243,7 +244,7 @@ var _ = Describe("Playlist Service", func() {
 
 			JustBeforeEach(func() {
 				ctx = context.Background()
-				ctx = context.WithValue(ctx, "jwt", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImFjY291bnRJRCI6IjEiLCJlbWFpbCI6ImpvZXNtaXRoQGFidi5iZyJ9LCJleHAiOjM5OTk5OTE1MjgsImlzcyI6InBsYXlqLWFjY291bnQtc2VydmljZSJ9.fMaYAI_qnb97cfI7bsYT-WK8U9FAT0_DGXLJi5ejmPA")
+				ctx = context.WithValue(ctx, "jwt", TestToken)
 				payload := &playlistgen.RenameAccountPlaylistPayload{
 					Auth:       "Bearer token",
 					PlaylistID: 1,
@@ -267,7 +268,7 @@ var _ = Describe("Playlist Service", func() {
 
 		})
 
-		Describe("Given an INVALID JWT", func() {
+		Describe("on given an INVALID token", func() {
 			var (
 				ctx      context.Context
 				response *playlistgen.PlaylistModificationResponse
@@ -296,7 +297,7 @@ var _ = Describe("Playlist Service", func() {
 	})
 
 	Describe("AddTrackToAccountPlaylist", func() {
-		Describe("Given a valid JWT", func() {
+		Describe("on given a valid token", func() {
 			var (
 				ctx      context.Context
 				response *playlistgen.PlaylistModificationResponse
@@ -305,7 +306,7 @@ var _ = Describe("Playlist Service", func() {
 
 			JustBeforeEach(func() {
 				ctx = context.Background()
-				ctx = context.WithValue(ctx, "jwt", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImFjY291bnRJRCI6IjEiLCJlbWFpbCI6ImpvZXNtaXRoQGFidi5iZyJ9LCJleHAiOjM5OTk5OTE1MjgsImlzcyI6InBsYXlqLWFjY291bnQtc2VydmljZSJ9.fMaYAI_qnb97cfI7bsYT-WK8U9FAT0_DGXLJi5ejmPA")
+				ctx = context.WithValue(ctx, "jwt", TestToken)
 				payload := &playlistgen.AddTrackToAccountPlaylistPayload{
 					Auth:       "Bearer token",
 					PlaylistID: 1,
@@ -329,7 +330,7 @@ var _ = Describe("Playlist Service", func() {
 
 		})
 
-		Describe("Given an INVALID JWT", func() {
+		Describe("on given an INVALID token", func() {
 			var (
 				ctx      context.Context
 				response *playlistgen.PlaylistModificationResponse
@@ -358,7 +359,7 @@ var _ = Describe("Playlist Service", func() {
 	})
 
 	Describe("RemoveTrackFromAccountPlaylist", func() {
-		Describe("Given a valid JWT", func() {
+		Describe("on given a valid token", func() {
 			var (
 				ctx      context.Context
 				response *playlistgen.PlaylistModificationResponse
@@ -367,7 +368,7 @@ var _ = Describe("Playlist Service", func() {
 
 			JustBeforeEach(func() {
 				ctx = context.Background()
-				ctx = context.WithValue(ctx, "jwt", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImFjY291bnRJRCI6IjEiLCJlbWFpbCI6ImpvZXNtaXRoQGFidi5iZyJ9LCJleHAiOjM5OTk5OTE1MjgsImlzcyI6InBsYXlqLWFjY291bnQtc2VydmljZSJ9.fMaYAI_qnb97cfI7bsYT-WK8U9FAT0_DGXLJi5ejmPA")
+				ctx = context.WithValue(ctx, "jwt", TestToken)
 				payload := &playlistgen.RemoveTrackFromAccountPlaylistPayload{
 					Auth:       "Bearer token",
 					PlaylistID: 1,
@@ -391,7 +392,7 @@ var _ = Describe("Playlist Service", func() {
 
 		})
 
-		Describe("Given an INVALID JWT", func() {
+		Describe("on given an INVALID token", func() {
 			var (
 				ctx      context.Context
 				response *playlistgen.PlaylistModificationResponse
@@ -420,7 +421,7 @@ var _ = Describe("Playlist Service", func() {
 	})
 
 	Describe("DeleteAccountPlaylist", func() {
-		Describe("Given a valid JWT", func() {
+		Describe("on given a valid token", func() {
 			var (
 				ctx      context.Context
 				response *playlistgen.PlaylistModificationResponse
@@ -429,7 +430,7 @@ var _ = Describe("Playlist Service", func() {
 
 			JustBeforeEach(func() {
 				ctx = context.Background()
-				ctx = context.WithValue(ctx, "jwt", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImFjY291bnRJRCI6IjEiLCJlbWFpbCI6ImpvZXNtaXRoQGFidi5iZyJ9LCJleHAiOjM5OTk5OTE1MjgsImlzcyI6InBsYXlqLWFjY291bnQtc2VydmljZSJ9.fMaYAI_qnb97cfI7bsYT-WK8U9FAT0_DGXLJi5ejmPA")
+				ctx = context.WithValue(ctx, "jwt", TestToken)
 				payload := &playlistgen.DeleteAccountPlaylistPayload{
 					Auth:       "Bearer token",
 					PlaylistID: 1,
@@ -452,7 +453,7 @@ var _ = Describe("Playlist Service", func() {
 
 		})
 
-		Describe("Given an INVALID JWT", func() {
+		Describe("on given an INVALID token", func() {
 			var (
 				ctx      context.Context
 				response *playlistgen.PlaylistModificationResponse

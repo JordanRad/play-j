@@ -186,7 +186,7 @@ var _ = Describe("Account Service", func() {
 	})
 
 	Describe("GetPaymentsByAccountID", func() {
-		Describe("Given a valid JWT", func() {
+		Describe("on given a valid token", func() {
 			var (
 				ctx      context.Context
 				response *accountgen.ProfileResponse
@@ -274,7 +274,7 @@ var _ = Describe("Account Service", func() {
 			})
 		})
 
-		Describe("Given an INVALID JWT", func() {
+		Describe("on given an INVALID token", func() {
 			var (
 				ctx      context.Context
 				response *accountgen.ProfileResponse
