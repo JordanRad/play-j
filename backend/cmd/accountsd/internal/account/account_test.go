@@ -273,30 +273,31 @@ var _ = Describe("Account Service", func() {
 				})
 			})
 		})
-	})
 
-	Describe("Given an INVALID JWT", func() {
-		var (
-			ctx      context.Context
-			response *accountgen.ProfileResponse
-			err      error
-		)
+		Describe("Given an INVALID JWT", func() {
+			var (
+				ctx      context.Context
+				response *accountgen.ProfileResponse
+				err      error
+			)
 
-		JustBeforeEach(func() {
-			ctx = context.Background()
-			ctx = context.WithValue(ctx, "jwt", "eyJhbGpXVCJ9.eyJkYX9.fMfUPA")
-			payload := &accountgen.GetProfilePayload{
-				PaymentsLimit: 3,
-			}
-			response, err = service.GetProfile(ctx, payload)
-		})
+			JustBeforeEach(func() {
+				ctx = context.Background()
+				ctx = context.WithValue(ctx, "jwt", "eyJhbGpXVCJ9.eyJkYX9.fMfUPA")
+				payload := &accountgen.GetProfilePayload{
+					PaymentsLimit: 3,
+				}
+				response, err = service.GetProfile(ctx, payload)
+			})
 
-		When("operation is unathorized", func() {
+			When("operation is unathorized", func() {
 
-			It("should return an error", func() {
-				Expect(response).To(BeNil())
-				Expect(err).To(HaveOccurred())
+				It("should return an error", func() {
+					Expect(response).To(BeNil())
+					Expect(err).To(HaveOccurred())
+				})
 			})
 		})
 	})
+
 })
