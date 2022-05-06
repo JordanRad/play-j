@@ -4,11 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/JordanRad/play-j/backend/cmd/accountsd/internal/db/dbmodels"
 	"github.com/JordanRad/play-j/backend/internal/accountservice/gen/account"
 	auth "github.com/JordanRad/play-j/backend/internal/auth"
 	payment_pb "github.com/JordanRad/play-j/backend/internal/paymentservice/gen/grpc/payment/pb"
+	"github.com/google/uuid"
 	"google.golang.org/grpc"
 )
 
@@ -34,6 +36,7 @@ type Service struct {
 type User struct {
 	ID              string
 	Email           string
+	Username        string
 	FirstName       string
 	LastName        string
 	Password        string
@@ -76,10 +79,12 @@ func (s *Service) Register(ctx context.Context, p *account.RegisterPayload) (*ac
 	if encryptErr != nil {
 		return nil, fmt.Errorf("error encrypting the password: %w", encryptErr)
 	}
+	log.Println("Password has been encrypted successfully.")
 
 	newUser := &User{
 		Email:     p.Email,
 		FirstName: p.FirstName,
+		Username:  uuid.New().String(),
 		LastName:  p.LastName,
 		Password:  encryptedPassword,
 	}
@@ -111,6 +116,7 @@ func (s *Service) Login(ctx context.Context, p *account.LoginPayload) (*account.
 	if !isPasswordCorrect {
 		return nil, errors.New("invalid credentials")
 	}
+	log.Println("Password has been verified successfully.")
 
 	// Generate JWT
 	token, err := auth.GenerateJWT(foundAccount.ID, foundAccount.Email)

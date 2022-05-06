@@ -55,27 +55,16 @@ func connectDB(config *config) *sql.DB {
 }
 
 func main() {
-	// TODO add interface and create a new instance
-	// and add it to the service
+	// Initialize gRPC connection
 	var conn *grpc.ClientConn
 	conn, err := grpc.Dial(":5002", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("cannot connect to gRPC server: %s", err)
 	}
 	defer conn.Close()
+	log.Println("gRPC connection has been established successfully.")
 
 	paymentClient := payment_pb.NewPaymentClient(conn)
-	// fmt.Printf("gRPC client is connected to gRPC server on localhost:%d ...\n", 5002)
-	// ctx := context.Background()
-	// p := &payment_pb.GetPaymentsByAccountIDRequest{
-	// 	AccountId: 3,
-	// 	Limit:     2,
-	// }
-	// _, err = paymentClient.GetPaymentsByAccountID(ctx, p)
-
-	// if err != nil {
-	// 	fmt.Printf("error gRPC response: %s", err)
-	// }
 
 	config, err := configFromEnv()
 
