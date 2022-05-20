@@ -13,3 +13,5 @@ create table if not exists subscriptions (
 	subscriptionType varchar,
     accountID bigserial not null
 );
+
+alter table subscriptions add column paymentID bigserial;

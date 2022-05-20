@@ -17,3 +17,8 @@ type Subscription struct {
 	SubscriptionType string
 	AccountID        uint
 }
+
+type PaymentDetails struct {
+	ID     uint
+	Number string
+}

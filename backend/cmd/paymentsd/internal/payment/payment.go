@@ -12,12 +12,12 @@ import (
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . PaymentStore
 type PaymentStore interface {
 	GetAccountPayments(context.Context, uint, uint) ([]*dbmodels.Payment, error)
-	CreatePayment(context.Context, uint, float32) (string, error)
+	CreatePayment(context.Context, uint, float32) (*dbmodels.PaymentDetails, error)
 }
 
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . SubscriptionStore
 type SubscriptionStore interface {
-	CreateSubscription(context.Context, uint) error
+	CreateSubscription(context.Context, uint, uint) error
 }
 
 type Service struct {
@@ -101,22 +101,20 @@ func (s *Service) CreateAccountPayment(ctx context.Context, p *payment.CreateAcc
 		return nil, fmt.Errorf("error extracting token claims: %w", err)
 	}
 
-	//TODO: Turn this operation into one transaction
 	// Insert the payment in the database
-	paymentNumber, err := s.paymentStore.CreatePayment(ctx, tokenClaims.AccountID, 11.99)
+	paymentDetails, err := s.paymentStore.CreatePayment(ctx, tokenClaims.AccountID, 11.99)
 	if err != nil {
 		return nil, fmt.Errorf("error creating a payment: %w", err)
 	}
 
 	// Insert a new subscription in the database
-	err = s.subscriptionStore.CreateSubscription(ctx, tokenClaims.AccountID)
-
+	err = s.subscriptionStore.CreateSubscription(ctx, tokenClaims.AccountID, paymentDetails.ID)
 	if err != nil {
 		return nil, fmt.Errorf("error creating a payment: %w", err)
 	}
 
 	response := &payment.TransactionResponse{
-		PaymentNumber: paymentNumber,
+		PaymentNumber: paymentDetails.Number,
 		Message:       "Payment completed successfully",
 	}
 

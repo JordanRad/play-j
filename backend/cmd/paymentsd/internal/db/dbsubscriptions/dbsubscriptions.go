@@ -35,8 +35,8 @@ func (s *Store) GetAccountSubscription(ctx context.Context, accountID uint) (*db
 	return &result, nil
 }
 
-func (s *Store) CreateSubscription(ctx context.Context, accountID uint) error {
-	result, err := s.DB.Exec("INSERT INTO subscriptions (validuntil, linkedaccountids, subscriptiontype,accountid) VALUES ((select date_trunc('day', NOW() + interval '1 month')),$1,$2,$3);", "{10,20,30}", "family", accountID)
+func (s *Store) CreateSubscription(ctx context.Context, accountID uint, paymentID uint) error {
+	result, err := s.DB.Exec("INSERT INTO subscriptions (validuntil, linkedaccountids, subscriptiontype,accountid,paymentid) VALUES ((select date_trunc('day', NOW() + interval '1 month')),$1,$2,$3,$4);", "{10,20,30}", "family", accountID, paymentID)
 
 	if err != nil {
 		return fmt.Errorf("error creating a new subscription: %w", err)

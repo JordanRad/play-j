@@ -56,24 +56,19 @@ func (s *Store) GetAccountPayments(ctx context.Context, accountID uint, limit ui
 	return payments, nil
 }
 
-func (s *Store) CreatePayment(ctx context.Context, accountID uint, amount float32) (string, error) {
+func (s *Store) CreatePayment(ctx context.Context, accountID uint, amount float32) (*dbmodels.PaymentDetails, error) {
 	paymentNumber := generatePaymentNumber(accountID)
 
-	result, err := s.DB.Exec("INSERT INTO payments (paymentnumber,paidby,amount) VALUES ($1,$2,$3);", paymentNumber, accountID, amount)
+	var paymentID uint
+	err := s.DB.QueryRow("INSERT INTO payments (paymentnumber,paidby,amount) VALUES ($1,$2,$3) RETURNING id;", paymentNumber, accountID, amount).Scan(&paymentID)
 
 	if err != nil {
-		return "", fmt.Errorf("error creating a new payment: %w", err)
+		return nil, fmt.Errorf("error creating a new payment: %w", err)
 	}
 
-	rowsAffected, err := result.RowsAffected()
+	return &dbmodels.PaymentDetails{
+		ID:     uint(paymentID),
+		Number: paymentNumber,
+	}, nil
 
-	if err != nil {
-		return "", fmt.Errorf("rows affected error: %w", err)
-	}
-
-	if rowsAffected == 1 {
-		return paymentNumber, nil
-	}
-
-	return "", fmt.Errorf("error inserting a payment")
 }
