@@ -36,7 +36,7 @@ async function play() {
     } catch (error) {
       console.log(error);
     }
-    
+
     console.log(audio);
     const source = context.createBufferSource();
     source.buffer = audio;
@@ -62,6 +62,12 @@ onMounted(async () => {
     <div class="flex m-4">
       <div class="p-component text-2xl text-white">Discover</div>
       <div>
+        <audio controls>
+          <source
+            src="https://storage.googleapis.com/playj-music-storage/Drake%20-%20Nonstop.mp3"
+            type="audio/mpeg"
+          />
+        </audio>
         <Button
           v-if="!isPlaying"
           @click="play"
