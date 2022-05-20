@@ -6,10 +6,8 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/JordanRad/play-j/backend/cmd/playerd/internal/db/dbmodels"
-	"github.com/gorilla/mux"
 )
 
 // You only need **one** of these per package!
@@ -40,52 +38,6 @@ func NewService(store Store, cloudStorage CloudStorage) *Service {
 	return &Service{
 		store:        store,
 		cloudStorage: cloudStorage,
-	}
-}
-
-func (s *Service) StreamTrackByID(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
-	vars := mux.Vars(r)
-
-	trackID, err := strconv.Atoi(vars["trackID"])
-	if err != nil {
-		fmt.Printf("error getting the vars: %v", err)
-		w.Write([]byte("Cannot find the file: "))
-	}
-
-	track, err := s.store.GetTrackByID(ctx, uint(trackID))
-	if err != nil {
-		fmt.Printf("error getting the file location from the database: %v", err)
-		w.Write([]byte("Cannot find the file: "))
-	}
-
-	musicFile, err := s.cloudStorage.ReadFileFromFolder(ctx, track.StorageLocation)
-
-	if err != nil {
-		fmt.Printf("error getting the file: %v", err)
-		w.Write([]byte("Cannot find the file: "))
-	}
-
-	fmt.Println(len(musicFile))
-
-	flusher, ok := w.(http.Flusher)
-
-	if !ok {
-		panic("expected http.ResponseWriter to be an http.Flusher")
-	}
-
-	w.Header().Set("Content-Type", "audio/mpegurl")
-	w.Header().Set("Transfer-encoding", "chunked")
-	w.Header().Set("X-Content-Type-Options", "nosniff")
-
-	for i := 0; i < 5; i++ {
-		start := (i * len(musicFile) / 5)
-		end := ((i + 1) * len(musicFile)) / 5
-
-		fmt.Printf("Chunk #%v sent...\n", i+1)
-		w.Write(musicFile[start:end])
-		flusher.Flush() // Trigger "chunked" encoding and send a chunk...
-		time.Sleep(500 * time.Millisecond)
 	}
 }
 

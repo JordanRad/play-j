@@ -58,11 +58,10 @@ func main() {
 	playerService := player.NewService(dbPlayerStore, musicStorage)
 
 	router := mux.NewRouter()
-	router.HandleFunc("/api/v1/player-service/audio/{trackID}", playerService.StreamTrackByID)
 	router.HandleFunc("/api/v1/player-service/search", playerService.Search)
 	http.Handle("/api/v1/player-service/", router)
 
 	address := fmt.Sprintf("%s:%d", config.HTTP.Host, config.HTTP.Port)
-	fmt.Printf("Player streaming service has just started on %s ...\n", address)
+	fmt.Printf("Player service has just started on %s ...\n", address)
 	http.ListenAndServe(address, router)
 }
