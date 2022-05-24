@@ -9,11 +9,12 @@ import (
 )
 
 type FakeSubscriptionStore struct {
-	CreateSubscriptionStub        func(context.Context, uint) error
+	CreateSubscriptionStub        func(context.Context, uint, uint) error
 	createSubscriptionMutex       sync.RWMutex
 	createSubscriptionArgsForCall []struct {
 		arg1 context.Context
 		arg2 uint
+		arg3 uint
 	}
 	createSubscriptionReturns struct {
 		result1 error
@@ -25,19 +26,20 @@ type FakeSubscriptionStore struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeSubscriptionStore) CreateSubscription(arg1 context.Context, arg2 uint) error {
+func (fake *FakeSubscriptionStore) CreateSubscription(arg1 context.Context, arg2 uint, arg3 uint) error {
 	fake.createSubscriptionMutex.Lock()
 	ret, specificReturn := fake.createSubscriptionReturnsOnCall[len(fake.createSubscriptionArgsForCall)]
 	fake.createSubscriptionArgsForCall = append(fake.createSubscriptionArgsForCall, struct {
 		arg1 context.Context
 		arg2 uint
-	}{arg1, arg2})
+		arg3 uint
+	}{arg1, arg2, arg3})
 	stub := fake.CreateSubscriptionStub
 	fakeReturns := fake.createSubscriptionReturns
-	fake.recordInvocation("CreateSubscription", []interface{}{arg1, arg2})
+	fake.recordInvocation("CreateSubscription", []interface{}{arg1, arg2, arg3})
 	fake.createSubscriptionMutex.Unlock()
 	if stub != nil {
-		return stub(arg1, arg2)
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
@@ -51,17 +53,17 @@ func (fake *FakeSubscriptionStore) CreateSubscriptionCallCount() int {
 	return len(fake.createSubscriptionArgsForCall)
 }
 
-func (fake *FakeSubscriptionStore) CreateSubscriptionCalls(stub func(context.Context, uint) error) {
+func (fake *FakeSubscriptionStore) CreateSubscriptionCalls(stub func(context.Context, uint, uint) error) {
 	fake.createSubscriptionMutex.Lock()
 	defer fake.createSubscriptionMutex.Unlock()
 	fake.CreateSubscriptionStub = stub
 }
 
-func (fake *FakeSubscriptionStore) CreateSubscriptionArgsForCall(i int) (context.Context, uint) {
+func (fake *FakeSubscriptionStore) CreateSubscriptionArgsForCall(i int) (context.Context, uint, uint) {
 	fake.createSubscriptionMutex.RLock()
 	defer fake.createSubscriptionMutex.RUnlock()
 	argsForCall := fake.createSubscriptionArgsForCall[i]
-	return argsForCall.arg1, argsForCall.arg2
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
 func (fake *FakeSubscriptionStore) CreateSubscriptionReturns(result1 error) {

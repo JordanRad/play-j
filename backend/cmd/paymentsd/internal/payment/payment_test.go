@@ -81,9 +81,10 @@ var _ = Describe("Payment Service", func() {
 	Describe("CreateAccountPayment", func() {
 		Describe("on given a valid token", func() {
 			var (
-				ctx      context.Context
-				response *payment.TransactionResponse
-				err      error
+				ctx            context.Context
+				response       *payment.TransactionResponse
+				paymentDetails *dbmodels.PaymentDetails
+				err            error
 			)
 			JustBeforeEach(func() {
 				ctx = context.Background()
@@ -98,7 +99,11 @@ var _ = Describe("Payment Service", func() {
 			When("the service creates new payment successfully", func() {
 				When("the service returns the payments successfully", func() {
 					BeforeEach(func() {
-						fakePaymentStore.CreatePaymentReturns("123456", nil)
+						paymentDetails = &dbmodels.PaymentDetails{
+							ID:     1,
+							Number: "1A2B3C",
+						}
+						fakePaymentStore.CreatePaymentReturns(paymentDetails, nil)
 					})
 					When("and subscription service creates new subscription successfully", func() {
 
@@ -107,7 +112,7 @@ var _ = Describe("Payment Service", func() {
 						})
 
 						It("should return a list of payments", func() {
-							Expect(response.PaymentNumber).To(Equal("123456"))
+							Expect(response.PaymentNumber).To(Equal(paymentDetails.Number))
 							Expect(response.Message).To(Equal("Payment completed successfully"))
 						})
 						It("should NOT return an error", func() {
@@ -119,7 +124,7 @@ var _ = Describe("Payment Service", func() {
 			When("the service DOES NOT create new payments successfully", func() {
 
 				BeforeEach(func() {
-					fakePaymentStore.CreatePaymentReturns("", errors.New("error"))
+					fakePaymentStore.CreatePaymentReturns(nil, errors.New("error"))
 				})
 
 				It("should return an error", func() {

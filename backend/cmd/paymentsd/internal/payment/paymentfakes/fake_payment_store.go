@@ -10,7 +10,7 @@ import (
 )
 
 type FakePaymentStore struct {
-	CreatePaymentStub        func(context.Context, uint, float32) (string, error)
+	CreatePaymentStub        func(context.Context, uint, float32) (*dbmodels.PaymentDetails, error)
 	createPaymentMutex       sync.RWMutex
 	createPaymentArgsForCall []struct {
 		arg1 context.Context
@@ -18,11 +18,11 @@ type FakePaymentStore struct {
 		arg3 float32
 	}
 	createPaymentReturns struct {
-		result1 string
+		result1 *dbmodels.PaymentDetails
 		result2 error
 	}
 	createPaymentReturnsOnCall map[int]struct {
-		result1 string
+		result1 *dbmodels.PaymentDetails
 		result2 error
 	}
 	GetAccountPaymentsStub        func(context.Context, uint, uint) ([]*dbmodels.Payment, error)
@@ -44,7 +44,7 @@ type FakePaymentStore struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakePaymentStore) CreatePayment(arg1 context.Context, arg2 uint, arg3 float32) (string, error) {
+func (fake *FakePaymentStore) CreatePayment(arg1 context.Context, arg2 uint, arg3 float32) (*dbmodels.PaymentDetails, error) {
 	fake.createPaymentMutex.Lock()
 	ret, specificReturn := fake.createPaymentReturnsOnCall[len(fake.createPaymentArgsForCall)]
 	fake.createPaymentArgsForCall = append(fake.createPaymentArgsForCall, struct {
@@ -71,7 +71,7 @@ func (fake *FakePaymentStore) CreatePaymentCallCount() int {
 	return len(fake.createPaymentArgsForCall)
 }
 
-func (fake *FakePaymentStore) CreatePaymentCalls(stub func(context.Context, uint, float32) (string, error)) {
+func (fake *FakePaymentStore) CreatePaymentCalls(stub func(context.Context, uint, float32) (*dbmodels.PaymentDetails, error)) {
 	fake.createPaymentMutex.Lock()
 	defer fake.createPaymentMutex.Unlock()
 	fake.CreatePaymentStub = stub
@@ -84,28 +84,28 @@ func (fake *FakePaymentStore) CreatePaymentArgsForCall(i int) (context.Context, 
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakePaymentStore) CreatePaymentReturns(result1 string, result2 error) {
+func (fake *FakePaymentStore) CreatePaymentReturns(result1 *dbmodels.PaymentDetails, result2 error) {
 	fake.createPaymentMutex.Lock()
 	defer fake.createPaymentMutex.Unlock()
 	fake.CreatePaymentStub = nil
 	fake.createPaymentReturns = struct {
-		result1 string
+		result1 *dbmodels.PaymentDetails
 		result2 error
 	}{result1, result2}
 }
 
-func (fake *FakePaymentStore) CreatePaymentReturnsOnCall(i int, result1 string, result2 error) {
+func (fake *FakePaymentStore) CreatePaymentReturnsOnCall(i int, result1 *dbmodels.PaymentDetails, result2 error) {
 	fake.createPaymentMutex.Lock()
 	defer fake.createPaymentMutex.Unlock()
 	fake.CreatePaymentStub = nil
 	if fake.createPaymentReturnsOnCall == nil {
 		fake.createPaymentReturnsOnCall = make(map[int]struct {
-			result1 string
+			result1 *dbmodels.PaymentDetails
 			result2 error
 		})
 	}
 	fake.createPaymentReturnsOnCall[i] = struct {
-		result1 string
+		result1 *dbmodels.PaymentDetails
 		result2 error
 	}{result1, result2}
 }
