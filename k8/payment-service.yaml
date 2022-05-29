@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: playj-paymentsd
+  labels:
+    app: playj-paymentsd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: playj-paymentsd
+  template:
+    metadata:
+      labels:
+        app: playj-paymentsd
+    spec:
+      containers:
+      - name: paymentsd
+        image: gcr.io/avian-altar-346111/playj-payment-service:latest
+        imagePullPolicy: Always
+        env:
+        - name: PAYMENTSD_HTTP_HOST
+          value: "0.0.0.0"
+        - name: PAYMENTSD_HTTP_PORT
+          value: "8092"
+        - name: PAYMENTSD_POSTGRES_HOST
+          value: <db_ip>
+        - name: PAYMENTSD_POSTGRES_PORT
+          value: "5432"
+        - name: PAYMENTSD_POSTGRES_USER
+          value: <db_user>
+        - name: PAYMENTSD_POSTGRES_PASSWORD
+          value: <db_password>
+        - name: PAYMENTSD_POSTGRES_DB_NAME
+          value: <db_name>
+        ports:
+        - containerPort: 8092
+          name: "http"
+        - containerPort: 5002
+          name: "grpc"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: playj-paymentsd
+  labels:
+    app: playj-paymentsd
+spec:
+  ports:
+    - protocol: TCP
+      port: 8092
+      targetPort: 8092
+      name: "http"
+    - protocol: TCP
+      port: 5002
+      targetPort: 5002
+      name: "grpc"
+  selector:
+    app: playj-paymentsd
+        

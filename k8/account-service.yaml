@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: playj-accountsd
+  labels:
+    app: playj-accountsd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: playj-accountsd
+  template:
+    metadata:
+      labels:
+        app: playj-accountsd
+    spec:
+      containers:
+      - name: accountsd
+        image: gcr.io/avian-altar-346111/playj-account-service:latest
+        imagePullPolicy: Always
+        env:
+        - name: ACCOUNTSD_HTTP_HOST
+          value: "0.0.0.0"
+        - name: ACCOUNTSD_HTTP_PORT
+          value: "8091"
+        - name: ACCOUNTSD_POSTGRES_HOST
+          value: <db_ip>
+        - name: ACCOUNTSD_POSTGRES_PORT
+          value: "5432"
+        - name: ACCOUNTSD_POSTGRES_USER
+          value: <db_user>
+        - name: ACCOUNTSD_POSTGRES_PASSWORD
+          value: <db_password>
+        - name: ACCOUNTSD_POSTGRES_DB_NAME
+          value: <db_name>
+        ports:
+        - containerPort: 8091
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: playj-accountsd
+  labels:
+    app: playj-accountsd
+spec:
+  ports:
+    - protocol: TCP
+      port: 8091
+      targetPort: 8091
+  selector:
+    app: playj-accountsd
+        

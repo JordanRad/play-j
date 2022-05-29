@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-kong
+  namespace: default
+ 
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - path: /api/v1/account-service
+        pathType: Prefix
+        backend:
+          service:
+            name: playj-accountsd
+            port:
+              number: 8091
+      - path: /api/v1/payment-service
+        pathType: Prefix
+        backend:
+          service:
+            name: playj-paymentsd
+            port:
+              number: 8092
+      - path: /api/v1/player-service
+        pathType: Prefix
+        backend:
+          service:
+            name: playj-playerd
+            port:
+              number: 8093
