@@ -34,6 +34,7 @@ All subprojects, related to this project, are part of this repository. Here is a
               - accountsd   // Account microservice
               - playerd     // Player microservice
               - paymentsd   // Payment microservice
-            - internal      // Shared microservice code 
+            - internal      // Shared code (internal for all microservices)
         - compose           // Docker enviroment (compose files)
+        - k8                // Kubernetes manifests
         - resources         // Documents, diagrams, etc.
