@@ -3,7 +3,11 @@
 This is my portoflio repository for the Individual project 
 
 ## About the project
-This project is a web-based music player *(such as Spotify)*. It is a Progressive Web application **(PWA)** which means it could be downloaded on your mobile device through the browser and the application supports offline mode and some native features such as accessing the file system to store the songs for offline mode.
+This project is a web-based music player API *(such as Spotify)*. It is built upon the concept of microservices, makes use of Kubernetes. The main requirements for the project were:
+- Good system design, resulting in scalable (cloud) architecture.
+- Security which covers at least the OWASP top 10 security vulnerabilities (when applicable)
+- Automated CI/CD pipeline
+- Integration with other cloud services 
 
 ### Tech stack
 
@@ -29,8 +33,8 @@ This project is a web-based music player *(such as Spotify)*. It is a Progressiv
 All subprojects, related to this project, are part of this repository. Here is a brief explanation about the strucutre:
 
     -play-j
-        - backend           // All backend code
-            - cmd           // Microservices directory 
+        - backend           // Main folder
+            - cmd           // Microservices directory (starting point for each microservice)
               - accountsd   // Account microservice
               - playerd     // Player microservice
               - paymentsd   // Payment microservice
